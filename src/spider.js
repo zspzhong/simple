@@ -1,10 +1,9 @@
-global._ = require('lodash');
-global.async = require('async');
+init();
 
 var fs = require('fs');
 
 var cheerio = require('cheerio');
-var browserRequest = require("./browserRequest.js");
+var browserRequest = require(global.appSrcDir + "/browserRequest.js");
 
 spiderStart();
 
@@ -13,11 +12,11 @@ function spiderStart() {
 	var imageSrcList = [];
 
 	var writeStart = 0;
-	var oneTimesWriteCount = 1000;
+	var oneTimesWriteCount = 20;
 
-	var urlLimit = 50000;
+	var urlLimit = 100;
 
-	var concurrency = 50;
+	var concurrency = 10;
 	var queue = async.queue(_spiderOne, concurrency);
 
 	queue.push('https://500px.com/popular');
@@ -63,7 +62,7 @@ function spiderStart() {
 
 			var readyToWrite = imageSrcList.slice(writeStart, writeEnd);
 
-			fs.appendFileSync(__dirname + '/output/result', readyToWrite.join('\n') + '\n');
+			fs.appendFileSync(global.appDir + '/output/result', readyToWrite.join('\n') + '\n');
 
 			writeStart = writeEnd;
 
@@ -111,4 +110,8 @@ function findLinkAndImg(url, html) {
 
 		return aUrl;
 	}
+}
+
+function init() {
+	require('./initSystemVar.js').init();
 }

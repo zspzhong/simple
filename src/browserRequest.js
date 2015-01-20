@@ -3,7 +3,7 @@ var childProcess = require('child_process');
 exports.request = request;
 
 function request(url, callback) {
-	var args = ['--load-images=false', __dirname + '/browserParse.js', url];
+	var args = ['--load-images=false', global.appSrcDir + '/browserParse.js', url];
 	var child = childProcess.spawn('phantomjs', args);
 
 	var html = "";
