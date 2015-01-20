@@ -13,20 +13,25 @@ function spiderStart() {
 
 	var writeStart = 0;
 	var oneTimesWriteCount = 20;
-
 	var urlLimit = 100;
 
-	var concurrency = 10;
-	var queue = async.queue(_spiderOne, concurrency);
+	_initWorkerQueue();
 
-	queue.push('https://500px.com/popular');
+	console.log('start ok!');
 
-	var start = new Date().getTime();
-	queue.drain = function() {
-		console.log('total url count: ' + pageUrlList.length);
-		console.log('total image count: ' + imageSrcList.length);
-		console.log('total cost time: ' + (new Date().getTime() - start));
-	};
+	function _initWorkerQueue() {
+		var concurrency = 10;
+		var queue = async.queue(_spiderOne, concurrency);
+
+		queue.push('https://500px.com/popular');
+
+		var start = new Date().getTime();
+		queue.drain = function() {
+			console.log('total url count: ' + pageUrlList.length);
+			console.log('total image count: ' + imageSrcList.length);
+			console.log('total cost time: ' + (new Date().getTime() - start));
+		};
+	}
 
 	function _spiderOne(url, callback) {
 		browserRequest.request(url, function (err, html) {
