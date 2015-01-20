@@ -8,15 +8,15 @@ var browserRequest = require(global.appSrcDir + "/browserRequest.js");
 spiderStart();
 
 function spiderStart() {
-	var pageUrlList = ['https://500px.com/popular'];
+	var pageUrlList = [global.initUrl];
 	var imageSrcList = [];
 
 	var imgWriteStart = 0;
-	var imgOneTimesWriteCount = 20;//每爬取到多少个img记录一次
+	var imgOneTimesWriteCount = 50;//每爬取到多少个img记录一次
 
 	var urlWriteStart = 0;
-	var urlOneTimesWriteCount = 50;//每爬取到多少个url记录一次
-	var urlLimit = 100;//url爬取上限
+	var urlOneTimesWriteCount = 100;//每爬取到多少个url记录一次
+	var urlLimit = 10000;//url爬取上限
 
 	var currentSpiderIndex = 0;
 	var spiderCounterCircle = 0;//爬取循环计数器
@@ -32,7 +32,7 @@ function spiderStart() {
 		var concurrency = 10;
 		queue = async.queue(_spiderOne, concurrency);
 
-		queue.push('https://500px.com/popular');
+		queue.push(pageUrlList[0]);
 
 		queue.drain = function() {
 			var imgReadyToWrite = imageSrcList.slice(imgWriteStart);
@@ -46,10 +46,7 @@ function spiderStart() {
 	}
 
 	function _spiderOne(url, callback) {
-		console.log('spider ' + url + ' start');
 		browserRequest.request(url, function (err, html) {
-			console.log('spider ' + url + ' end');
-
 			if (err) {
 				console.error(err);
 				callback(err);
@@ -141,7 +138,7 @@ function findLinkAndImg(url, html) {
 	_.each($('a'), function (item) {
 		var href = _fillFull(item.attribs.href);
 
-		if (href && _.contains(href, '500px')) {
+		if (href && _isUrlPass(href)) {
 			linkUrlList.push(href);
 		}
 	});
@@ -149,7 +146,7 @@ function findLinkAndImg(url, html) {
 	_.each($('img'), function (item) {
 		var src = _fillFull(item.attribs.src);
 
-		if (src) {
+		if (src && _isImgSrcPass(src)) {
 			imageSrcList.push(src);
 		}
 	});
@@ -170,6 +167,31 @@ function findLinkAndImg(url, html) {
 		}
 
 		return aUrl;
+	}
+
+	// 根据配置的urlWhiteList判断是否通过该url
+	function _isUrlPass(aUrl) {
+		var flag = _.isEmpty(global.urlWhiteList);
+
+		_.each(global.urlWhiteList, function (item) {
+			if (_.contains(aUrl, item)) {
+				flag = true;
+			}
+		});
+
+		return flag;
+	}
+
+	function _isImgSrcPass(imgSrc) {
+		var flag = _.isEmpty(global.imgWhiteList);
+
+		_.each(global.imgWhiteList, function (item) {
+			if (_.contains(imgSrc, item)) {
+				flag = true;
+			}
+		});
+
+		return flag;
 	}
 }
 

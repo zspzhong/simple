@@ -2,6 +2,12 @@
     "name": "spider",
     "mode": "dev",
     "appDir": "/Users/shasharoman/private/spider",
-    "appSrcDir": "/Users/shasharoman/private/spider/src"
+    "appSrcDir": "/Users/shasharoman/private/spider/src",
+    "urlWhiteList": [
+        "http://huaban.com"
+    ],
+    "imgWhiteList": [
 
+    ],
+    "initUrl": "http://www.huaban.com"
 }

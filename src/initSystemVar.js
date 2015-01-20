@@ -18,9 +18,14 @@ function initConfig() {
         _.extend(terminalArg, config);
     }
 
+    //_.extend(global, terminalArg);
+
     global.appDir = terminalArg.appDir;
     global.appSrcDir = terminalArg.appSrcDir;
     global.mode = terminalArg.mode;
+    global.initUrl = terminalArg.initUrl;
+    global.urlWhiteList = terminalArg.urlWhiteList;
+    global.imgWhiteList = terminalArg.imgWhiteList;
 
     function _parseArg() {
         var result = {};
