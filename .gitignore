@@ -3,6 +3,3 @@ result
 access.log
 error.log
 node_modules
-output/image
-output/process
-output/url

@@ -4,10 +4,10 @@
     "appDir": "/Users/shasharoman/private/spider",
     "appSrcDir": "/Users/shasharoman/private/spider/src",
     "urlWhiteList": [
-        "http://huaban.com"
+        "500px.com"
     ],
     "imgWhiteList": [
 
     ],
-    "initUrl": "http://www.huaban.com"
+    "initUrl": "https://500px.com/popular"
 }

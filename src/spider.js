@@ -5,23 +5,88 @@ var fs = require('fs');
 var cheerio = require('cheerio');
 var browserRequest = require(global.appSrcDir + "/browserRequest.js");
 
+var pageUrlList = [global.initUrl];
+var imageSrcList = [];
+
+var imgWriteStart = 0;
+var imgOneTimesWriteCount = 20;//每爬取到多少个img记录一次
+
+var urlWriteStart = 0;
+var urlOneTimesWriteCount = 50;//每爬取到多少个url记录一次
+var urlLimit = 1000;//url爬取上限
+
+var currentSpiderIndex = 0;
+var spiderCounterCircle = 0;//爬取循环计数器
+var spiderUrlOneTimesCount = 5;//分析多少个url记录一次，用于支持续爬
+
+
+resumeProcess();
 spiderStart();
 
+function init() {
+	require('./initSystemVar.js').init();
+}
+
+function resumeProcess() {
+	_resumeUrl();
+	_resumeImg();
+	_resumeIndex();
+
+	function _resumeUrl() {
+		var urlPath = global.appDir + '/output/url';
+
+		if (!fs.existsSync(urlPath)) {
+			return;
+		}
+
+		var previousUrlContent = fs.readFileSync(urlPath).toString();
+		if (!_.isEmpty(previousUrlContent)) {
+			pageUrlList = previousUrlContent.split('\n');
+			pageUrlList.splice(pageUrlList.length - 1);
+
+			urlWriteStart = pageUrlList.length;
+
+			console.log('resume url count ' + pageUrlList.length);
+		}
+	}
+
+	function _resumeImg() {
+		var imgPath = global.appDir + '/output/image';
+
+		if (!fs.existsSync(imgPath)) {
+			return;
+		}
+
+		var previousImgContent = fs.readFileSync(imgPath).toString();
+		if (!_.isEmpty(previousImgContent)) {
+			imageSrcList = previousImgContent.split('\n');
+			imageSrcList.splice(imageSrcList.length - 1);
+
+			imgWriteStart = imageSrcList.length;
+
+			console.log('resume img count ' + imageSrcList.length);
+		}
+	}
+
+	function _resumeIndex() {
+		var processPath = global.appDir + '/output/process';
+
+		if (!fs.existsSync(processPath)) {
+			return;
+		}
+
+		var previousProcess = JSON.parse(fs.readFileSync(processPath));
+		if (!_.isElement(previousProcess)) {
+			currentSpiderIndex = previousProcess.current;
+
+			spiderCounterCircle = currentSpiderIndex % spiderUrlOneTimesCount;
+
+			console.log('resume spider index from ' + currentSpiderIndex);
+		}
+	}
+}
+
 function spiderStart() {
-	var pageUrlList = [global.initUrl];
-	var imageSrcList = [];
-
-	var imgWriteStart = 0;
-	var imgOneTimesWriteCount = 50;//每爬取到多少个img记录一次
-
-	var urlWriteStart = 0;
-	var urlOneTimesWriteCount = 100;//每爬取到多少个url记录一次
-	var urlLimit = 10000;//url爬取上限
-
-	var currentSpiderIndex = 0;
-	var spiderCounterCircle = 0;//爬取循环计数器
-	var spiderUrlOneTimesCount = 5;//分析多少个url记录一次，用于支持续爬
-
 	var queue = null;
 
 	_initWorkerQueue();
@@ -32,14 +97,22 @@ function spiderStart() {
 		var concurrency = 10;
 		queue = async.queue(_spiderOne, concurrency);
 
-		queue.push(pageUrlList[0]);
+		console.log("queue start from " + currentSpiderIndex);
+
+		queue.push(pageUrlList.splice(currentSpiderIndex));
 
 		queue.drain = function() {
 			var imgReadyToWrite = imageSrcList.slice(imgWriteStart);
-			fs.appendFileSync(global.appDir + '/output/image', imgReadyToWrite.join('\n') + '\n');
+
+			if (!_.isEmpty(imgReadyToWrite)) {
+				fs.appendFileSync(global.appDir + '/output/image', imgReadyToWrite.join('\n') + '\n');
+			}
 
 			var urlReadyToWrite = pageUrlList.slice(urlWriteStart);
-			fs.appendFileSync(global.appDir + '/output/url', urlReadyToWrite.join('\n') + '\n');
+
+			if (!_.isEmpty(urlReadyToWrite)) {
+				fs.appendFileSync(global.appDir + '/output/url', urlReadyToWrite.join('\n') + '\n');
+			}
 
 			console.log('spider done');
 		};
@@ -55,8 +128,8 @@ function spiderStart() {
 
 			_extractFromHtml(url, html);
 
-			_writeResult2File();
 			_writeUrl2File();
+			_writeImage2File();
 			_writeProcess2File();
 
 			callback(null);
@@ -78,20 +151,6 @@ function spiderStart() {
 			}
 		}
 
-		function _writeResult2File() {
-			var writeEnd = imgWriteStart + imgOneTimesWriteCount;
-			if (imageSrcList.length < writeEnd) {
-				return;
-			}
-
-			var imgReadyToWrite = imageSrcList.slice(imgWriteStart, writeEnd);
-			fs.appendFileSync(global.appDir + '/output/image', imgReadyToWrite.join('\n') + '\n');
-
-			imgWriteStart = writeEnd;
-
-			console.log('write success, image count: ' + writeEnd);
-		}
-
 		function _writeUrl2File() {
 			var writeEnd = urlWriteStart + urlOneTimesWriteCount;
 
@@ -104,7 +163,21 @@ function spiderStart() {
 
 			urlWriteStart = writeEnd;
 
-			console.log('write success, url count: ' + writeEnd);
+			console.log('write success, url count ' + writeEnd);
+		}
+
+		function _writeImage2File() {
+			var writeEnd = imgWriteStart + imgOneTimesWriteCount;
+			if (imageSrcList.length < writeEnd) {
+				return;
+			}
+
+			var imgReadyToWrite = imageSrcList.slice(imgWriteStart, writeEnd);
+			fs.appendFileSync(global.appDir + '/output/image', imgReadyToWrite.join('\n') + '\n');
+
+			imgWriteStart = writeEnd;
+
+			console.log('write success, image count ' + writeEnd);
 		}
 
 		function _writeProcess2File() {
@@ -117,10 +190,9 @@ function spiderStart() {
 
 			var processStr = JSON.stringify({
 				current: currentSpiderIndex,
-				totalImgCount: imageSrcList.length,
-				totalUrlCount: pageUrlList.length
+				urlCount: urlWriteStart,
+				imgCount: imgWriteStart
 			});
-
 
 			fs.writeFileSync(global.appDir + '/output/process', processStr);
 
@@ -195,6 +267,3 @@ function findLinkAndImg(url, html) {
 	}
 }
 
-function init() {
-	require('./initSystemVar.js').init();
-}
