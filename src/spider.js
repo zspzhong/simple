@@ -9,15 +9,15 @@ var pageUrlList = [global.initUrl];
 var imageSrcList = [];
 
 var imgWriteStart = 0;
-var imgOneTimesWriteCount = 20;//每爬取到多少个img记录一次
+var imgOneTimesWriteCount = 500;//每爬取到多少个img记录一次
 
 var urlWriteStart = 0;
-var urlOneTimesWriteCount = 50;//每爬取到多少个url记录一次
-var urlLimit = 1000;//url爬取上限
+var urlOneTimesWriteCount = 5000;//每爬取到多少个url记录一次
+var urlLimit = 5000;//url爬取队列上限
 
 var currentSpiderIndex = 0;
 var spiderCounterCircle = 0;//爬取循环计数器
-var spiderUrlOneTimesCount = 5;//分析多少个url记录一次，用于支持续爬
+var spiderUrlOneTimesCount = 20;//分析多少个url记录一次，用于支持续爬
 
 
 resumeProcess();
@@ -113,6 +113,14 @@ function spiderStart() {
 			if (!_.isEmpty(urlReadyToWrite)) {
 				fs.appendFileSync(global.appDir + '/output/url', urlReadyToWrite.join('\n') + '\n');
 			}
+
+			var processStr = JSON.stringify({
+				current: currentSpiderIndex,
+				urlCount: urlWriteStart,
+				imgCount: imgWriteStart
+			});
+
+			fs.writeFileSync(global.appDir + '/output/process', processStr);
 
 			console.log('spider done');
 		};
