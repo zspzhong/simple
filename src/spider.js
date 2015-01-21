@@ -160,8 +160,6 @@ function spiderStart() {
 		}
 
 		function _writeUrl2File() {
-			console.log(pageUrlList.length - urlWriteStart);
-
 			if (pageUrlList.length - urlWriteStart < urlOneTimesWriteCount) {
 				return;
 			}
