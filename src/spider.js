@@ -160,7 +160,9 @@ function spiderStart() {
 		}
 
 		function _writeUrl2File() {
-			if (pageUrlList.length - urlWriteStart > urlOneTimesWriteCount) {
+			console.log(pageUrlList.length - urlWriteStart);
+
+			if (pageUrlList.length - urlWriteStart < urlOneTimesWriteCount) {
 				return;
 			}
 
@@ -173,7 +175,7 @@ function spiderStart() {
 		}
 
 		function _writeImage2File() {
-			if (imageSrcList.length - imgWriteStart > imgOneTimesWriteCount) {
+			if (imageSrcList.length - imgWriteStart < imgOneTimesWriteCount) {
 				return;
 			}
 
