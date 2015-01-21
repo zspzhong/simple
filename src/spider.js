@@ -17,7 +17,7 @@ var urlLimit = 5000;//url爬取队列上限
 
 var currentSpiderIndex = 0;
 var spiderCounterCircle = 0;//爬取循环计数器
-var spiderUrlOneTimesCount = 20;//分析多少个url记录一次，用于支持续爬
+var spiderUrlOneTimesCount = 200;//分析多少个url记录一次，用于支持续爬
 
 
 resumeProcess();
@@ -160,32 +160,29 @@ function spiderStart() {
 		}
 
 		function _writeUrl2File() {
-			var writeEnd = urlWriteStart + urlOneTimesWriteCount;
-
-			if (pageUrlList.length < writeEnd) {
+			if (pageUrlList.length - urlWriteStart > urlOneTimesWriteCount) {
 				return;
 			}
 
-			var urlReadyToWrite = pageUrlList.slice(urlWriteStart, writeEnd);
+			var urlReadyToWrite = pageUrlList.slice(urlWriteStart);
 			fs.appendFileSync(global.appDir + '/output/url', urlReadyToWrite.join('\n') + '\n');
 
-			urlWriteStart = writeEnd;
+			urlWriteStart = pageUrlList.length;
 
-			console.log('write success, url count ' + writeEnd);
+			console.log('write success, url count ' + pageUrlList.length);
 		}
 
 		function _writeImage2File() {
-			var writeEnd = imgWriteStart + imgOneTimesWriteCount;
-			if (imageSrcList.length < writeEnd) {
+			if (imageSrcList.length - imgWriteStart > imgOneTimesWriteCount) {
 				return;
 			}
 
-			var imgReadyToWrite = imageSrcList.slice(imgWriteStart, writeEnd);
+			var imgReadyToWrite = imageSrcList.slice(imgWriteStart);
 			fs.appendFileSync(global.appDir + '/output/image', imgReadyToWrite.join('\n') + '\n');
 
-			imgWriteStart = writeEnd;
+			imgWriteStart = imageSrcList.length;
 
-			console.log('write success, image count ' + writeEnd);
+			console.log('write success, image count ' + imageSrcList.length);
 		}
 
 		function _writeProcess2File() {
@@ -203,6 +200,19 @@ function spiderStart() {
 			});
 
 			fs.writeFileSync(global.appDir + '/output/process', processStr);
+
+			if (pageUrlList.length > urlWriteStart) {
+				var urlReadyToWrite = pageUrlList.slice(urlWriteStart);
+				fs.appendFileSync(global.appDir + '/output/url', urlReadyToWrite.join('\n') + '\n');
+
+				urlWriteStart = pageUrlList.length;
+			}
+
+			if (imageSrcList.length > imgWriteStart) {
+				var imgReadyToWrite = imageSrcList.slice(urlWriteStart);
+
+				fs.appendFileSync(global.appDir + '/output/image', imgReadyToWrite.join('\n') + '\n');
+			}
 
 			console.log('write success, process: ' + processStr);
 		}

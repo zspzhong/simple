@@ -1,8 +1,8 @@
 {
     "name": "spider",
     "mode": "production",
-    "appDir": "/Users/shasharoman/private/spider",
-    "appSrcDir": "/Users/shasharoman/private/spider/src",
+    "appDir": "/root/spider",
+    "appSrcDir": "/root/spider/src",
     "urlWhiteList": [
         "500px.com"
     ],
