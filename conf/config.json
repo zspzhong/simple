@@ -2,12 +2,20 @@
     "name": "spider",
     "mode": "production",
     "appDir": "/root/spider",
-    "appSrcDir": "/root/spider/src",
+    "srcDir": "/root/spider/src",
+    "libDir": "/root/spider/lib",
     "urlWhiteList": [
         "500px.com"
     ],
     "imgWhiteList": [
 
     ],
-    "initUrl": "https://500px.com/popular"
+    "initUrl": "https://500px.com/popular",
+    "mysqlPool": {
+        "connectionLimit": 10,
+        "host" : "127.0.0.1",
+        "user" : "root",
+        "password" : " ",
+        "database": "spider"
+    }
 }

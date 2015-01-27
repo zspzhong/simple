@@ -2,12 +2,20 @@
     "name": "spider",
     "mode": "dev",
     "appDir": "/Users/shasharoman/private/spider",
-    "appSrcDir": "/Users/shasharoman/private/spider/src",
+    "srcDir": "/Users/shasharoman/private/spider/src",
+    "libDir": "/Users/shasharoman/private/spider/lib",
     "urlWhiteList": [
-        "500px.com"
+        "huaban.com"
     ],
     "imgWhiteList": [
 
     ],
-    "initUrl": "https://500px.com/popular"
+    "initUrl": "http://huaban.com",
+    "mysqlPool": {
+        "connectionLimit": 10,
+        "host" : "127.0.0.1",
+        "user" : "root",
+        "password" : " ",
+        "database": "spider"
+    }
 }

@@ -1,9 +1,10 @@
-init();
+exports.init = init;
 
 var fs = require('fs');
 
 var cheerio = require('cheerio');
-var browserRequest = require(global.appSrcDir + "/browserRequest.js");
+var browserRequest = require(global.srcDir + "/spider/browserRequest.js");
+
 
 var pageUrlList = [global.initUrl];
 var imageSrcList = [];
@@ -20,11 +21,9 @@ var spiderCounterCircle = 0;//爬取循环计数器
 var spiderUrlOneTimesCount = 200;//分析多少个url记录一次，用于支持续爬
 
 
-resumeProcess();
-spiderStart();
-
 function init() {
-	require('./initSystemVar.js').init();
+	resumeProcess();
+	spiderStart();
 }
 
 function resumeProcess() {
@@ -106,12 +105,16 @@ function spiderStart() {
 
 			if (!_.isEmpty(imgReadyToWrite)) {
 				fs.appendFileSync(global.appDir + '/output/image', imgReadyToWrite.join('\n') + '\n');
+
+				imgWriteStart = imageSrcList.length;
 			}
 
 			var urlReadyToWrite = pageUrlList.slice(urlWriteStart);
 
 			if (!_.isEmpty(urlReadyToWrite)) {
 				fs.appendFileSync(global.appDir + '/output/url', urlReadyToWrite.join('\n') + '\n');
+
+				urlWriteStart = pageUrlList.length;
 			}
 
 			var processStr = JSON.stringify({

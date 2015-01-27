@@ -1,1 +1,1 @@
-node ../src/spider.js -c ../conf/config-dev.json
+node ../lib/master.js -c ../conf/config-dev.json
