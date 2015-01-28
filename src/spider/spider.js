@@ -1,135 +1,82 @@
-exports.init = init;
-
-var fs = require('fs');
+exports.spiderStart = spiderStart;
 
 var cheerio = require('cheerio');
 var browserRequest = require(global.srcDir + "/spider/browserRequest.js");
+var spiderDao = require(global.srcDir + "/spider/spiderDao.js");
 
-
-var pageUrlList = [global.initUrl];
-var imageSrcList = [];
-
-var imgWriteStart = 0;
-var imgOneTimesWriteCount = 500;//每爬取到多少个img记录一次
-
-var urlWriteStart = 0;
-var urlOneTimesWriteCount = 5000;//每爬取到多少个url记录一次
-var urlLimit = 5000;//url爬取队列上限
-
-var currentSpiderIndex = 0;
-var spiderCounterCircle = 0;//爬取循环计数器
-var spiderUrlOneTimesCount = 200;//分析多少个url记录一次，用于支持续爬
-
-
-function init() {
-	resumeProcess();
-	spiderStart();
-}
-
-function resumeProcess() {
-	_resumeUrl();
-	_resumeImg();
-	_resumeIndex();
-
-	function _resumeUrl() {
-		var urlPath = global.appDir + '/output/url';
-
-		if (!fs.existsSync(urlPath)) {
-			return;
-		}
-
-		var previousUrlContent = fs.readFileSync(urlPath).toString();
-		if (!_.isEmpty(previousUrlContent)) {
-			pageUrlList = previousUrlContent.split('\n');
-			pageUrlList.splice(pageUrlList.length - 1);
-
-			urlWriteStart = pageUrlList.length;
-
-			console.log('resume url count ' + pageUrlList.length);
-		}
-	}
-
-	function _resumeImg() {
-		var imgPath = global.appDir + '/output/image';
-
-		if (!fs.existsSync(imgPath)) {
-			return;
-		}
-
-		var previousImgContent = fs.readFileSync(imgPath).toString();
-		if (!_.isEmpty(previousImgContent)) {
-			imageSrcList = previousImgContent.split('\n');
-			imageSrcList.splice(imageSrcList.length - 1);
-
-			imgWriteStart = imageSrcList.length;
-
-			console.log('resume img count ' + imageSrcList.length);
-		}
-	}
-
-	function _resumeIndex() {
-		var processPath = global.appDir + '/output/process';
-
-		if (!fs.existsSync(processPath)) {
-			return;
-		}
-
-		var previousProcess = JSON.parse(fs.readFileSync(processPath));
-		if (!_.isElement(previousProcess)) {
-			currentSpiderIndex = previousProcess.current;
-
-			spiderCounterCircle = currentSpiderIndex % spiderUrlOneTimesCount;
-
-			console.log('resume spider index from ' + currentSpiderIndex);
-		}
-	}
-}
+var alreadySpider = 0;//本次已爬取url数量
+var oneTimesSpiderLimit = 5000;//每次url爬取队列上限
 
 function spiderStart() {
-	var queue = null;
+	spiderDao.querySpiderUrl(function (err, result) {
+		if (err) {
+			console.log(err);
+			return;
+		}
 
-	_initWorkerQueue();
+		if (_.isEmpty(result)) {
+			console.log("无可爬取链接");
+			return;
+		}
+
+		spiderUrlList(result);
+	});
+}
+
+function spiderUrlList(urlList) {
+	var concurrency = 10;
+	var queue = async.queue(spiderOne, concurrency);
+
+	queue.push(urlList);
+
+	queue.drain = function () {
+		console.log('spider done');
+	};
 
 	console.log('start ok!');
+}
 
-	function _initWorkerQueue() {
-		var concurrency = 10;
-		queue = async.queue(_spiderOne, concurrency);
+function spiderOne(url, callback) {
+	var isRepeat = false;
 
-		console.log("queue start from " + currentSpiderIndex);
+	var imageList = [];
+	var urlList = [];
 
-		queue.push(pageUrlList.splice(currentSpiderIndex));
+	async.series([_isRepeat, _spider, _url2Persistence, _image2Persistence], function(err) {
+		if (err) {
+			callback(err);
+			return;
+		}
 
-		queue.drain = function() {
-			var imgReadyToWrite = imageSrcList.slice(imgWriteStart);
+		if (!isRepeat) {
+			alreadySpider++;
+		}
 
-			if (!_.isEmpty(imgReadyToWrite)) {
-				fs.appendFileSync(global.appDir + '/output/image', imgReadyToWrite.join('\n') + '\n');
+		if (alreadySpider % 10 === 0) {
+			console.log("已爬取: " + alreadySpider);
+		}
 
-				imgWriteStart = imageSrcList.length;
+		callback(null);
+	});
+
+	function _isRepeat(callback) {
+		spiderDao.isUrlHasBeenSpider(url, function (err, result) {
+			if (err) {
+				callback(err);
+				return;
 			}
 
-			var urlReadyToWrite = pageUrlList.slice(urlWriteStart);
-
-			if (!_.isEmpty(urlReadyToWrite)) {
-				fs.appendFileSync(global.appDir + '/output/url', urlReadyToWrite.join('\n') + '\n');
-
-				urlWriteStart = pageUrlList.length;
-			}
-
-			var processStr = JSON.stringify({
-				current: currentSpiderIndex,
-				urlCount: urlWriteStart,
-				imgCount: imgWriteStart
-			});
-
-			fs.writeFileSync(global.appDir + '/output/process', processStr);
-
-			console.log('spider done');
-		};
+			isRepeat = result;
+			callback(null);
+		});
 	}
 
-	function _spiderOne(url, callback) {
+	function _spider(callback) {
+		if (isRepeat) {
+			callback(null);
+			return;
+		}
+
 		browserRequest.request(url, function (err, html) {
 			if (err) {
 				console.error(err);
@@ -137,88 +84,36 @@ function spiderStart() {
 				return;
 			}
 
-			_extractFromHtml(url, html);
+			var parseResult = findLinkAndImg(url, html);
 
-			_writeUrl2File();
-			_writeImage2File();
-			_writeProcess2File();
+			imageList = parseResult.image;
+			urlList = parseResult.url;
+
+
+			if (alreadySpider < oneTimesSpiderLimit) {
+				queue.push(urlList);
+			}
 
 			callback(null);
 		});
+	}
 
-		function _extractFromHtml(url, html) {
-			var parseResult = findLinkAndImg(url, html);
-
-			imageSrcList = _.uniq(imageSrcList.concat(parseResult.image));
-
-			var withoutRepeat = _.filter(parseResult.link, function (url) {
-				return !_.contains(pageUrlList, url);
-			});
-
-			pageUrlList = pageUrlList.concat(withoutRepeat);
-
-			if (pageUrlList.length <= urlLimit) {
-				queue.push(withoutRepeat);
-			}
+	function _url2Persistence(callback) {
+		if (_.isEmpty(urlList)) {
+			callback(null);
+			return;
 		}
 
-		function _writeUrl2File() {
-			if (pageUrlList.length - urlWriteStart < urlOneTimesWriteCount) {
-				return;
-			}
+		spiderDao.addUrlIgnoreRepeat(urlList, callback);
+	}
 
-			var urlReadyToWrite = pageUrlList.slice(urlWriteStart);
-			fs.appendFileSync(global.appDir + '/output/url', urlReadyToWrite.join('\n') + '\n');
-
-			urlWriteStart = pageUrlList.length;
-
-			console.log('write success, url count ' + pageUrlList.length);
+	function _image2Persistence(callback) {
+		if (_.isEmpty(imageList)) {
+			callback(null);
+			return;
 		}
 
-		function _writeImage2File() {
-			if (imageSrcList.length - imgWriteStart < imgOneTimesWriteCount) {
-				return;
-			}
-
-			var imgReadyToWrite = imageSrcList.slice(imgWriteStart);
-			fs.appendFileSync(global.appDir + '/output/image', imgReadyToWrite.join('\n') + '\n');
-
-			imgWriteStart = imageSrcList.length;
-
-			console.log('write success, image count ' + imageSrcList.length);
-		}
-
-		function _writeProcess2File() {
-			currentSpiderIndex++;
-			spiderCounterCircle++;
-
-			if (spiderCounterCircle % spiderUrlOneTimesCount !== 0) {
-				return;
-			}
-
-			var processStr = JSON.stringify({
-				current: currentSpiderIndex,
-				urlCount: urlWriteStart,
-				imgCount: imgWriteStart
-			});
-
-			fs.writeFileSync(global.appDir + '/output/process', processStr);
-
-			if (pageUrlList.length > urlWriteStart) {
-				var urlReadyToWrite = pageUrlList.slice(urlWriteStart);
-				fs.appendFileSync(global.appDir + '/output/url', urlReadyToWrite.join('\n') + '\n');
-
-				urlWriteStart = pageUrlList.length;
-			}
-
-			if (imageSrcList.length > imgWriteStart) {
-				var imgReadyToWrite = imageSrcList.slice(urlWriteStart);
-
-				fs.appendFileSync(global.appDir + '/output/image', imgReadyToWrite.join('\n') + '\n');
-			}
-
-			console.log('write success, process: ' + processStr);
-		}
+		spiderDao.addImageIgnoreRepeat(imageList, callback);
 	}
 }
 

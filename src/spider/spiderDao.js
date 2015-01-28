@@ -1,10 +1,12 @@
-exports.insertUrlIgnoreRepeat = insertUrlIgnoreRepeat;
+exports.addUrlIgnoreRepeat = addUrlIgnoreRepeat;
 exports.isUrlHasBeenSpider = isUrlHasBeenSpider;
-exports.insertImageIgnoreRepeat = insertImageIgnoreRepeat;
+exports.addImageIgnoreRepeat = addImageIgnoreRepeat;
+exports.querySpiderUrl = querySpiderUrl;
+
 
 var mysql = require(global.libDir + "/dao/mysql.js");
 
-function insertUrlIgnoreRepeat(urlList, callback) {
+function addUrlIgnoreRepeat(urlList, callback) {
     callback(null);
 }
 
@@ -12,7 +14,10 @@ function isUrlHasBeenSpider(url, callback) {
     callback(null, false);
 }
 
-function insertImageIgnoreRepeat(imageList, callback) {
+function addImageIgnoreRepeat(imageList, callback) {
     callback(null);
 }
 
+function querySpiderUrl(callback) {
+    callback(null, ['http://huaban.com']);
+}
