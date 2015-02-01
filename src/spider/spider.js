@@ -1,11 +1,14 @@
 exports.spiderStart = spiderStart;
 
 var cheerio = require('cheerio');
+var uuid = require('uuid');
 var browserRequest = require(global.srcDir + "/spider/browserRequest.js");
 var spiderDao = require(global.srcDir + "/spider/spiderDao.js");
 
 var alreadySpider = 0;//本次已爬取url数量
 var oneTimesSpiderLimit = 5000;//每次url爬取队列上限
+
+var queue = null;
 
 function spiderStart() {
 	spiderDao.querySpiderUrl(function (err, result) {
@@ -25,7 +28,7 @@ function spiderStart() {
 
 function spiderUrlList(urlList) {
 	var concurrency = 10;
-	var queue = async.queue(spiderOne, concurrency);
+	queue = async.queue(spiderOne, concurrency);
 
 	queue.push(urlList);
 
@@ -42,14 +45,19 @@ function spiderOne(url, callback) {
 	var imageList = [];
 	var urlList = [];
 
-	async.series([_isRepeat, _spider, _url2Persistence, _image2Persistence], function(err) {
+	async.series([_isRepeat, _spider, _url2Persistence, _image2Persistence, _markUrlSpider], function(err) {
 		if (err) {
+			console.error(err);
 			callback(err);
 			return;
 		}
 
 		if (!isRepeat) {
 			alreadySpider++;
+		}
+
+		if (!_.isEmpty(urlList) && alreadySpider < oneTimesSpiderLimit) {
+			queue.push(urlList);
 		}
 
 		if (alreadySpider % 10 === 0) {
@@ -86,13 +94,8 @@ function spiderOne(url, callback) {
 
 			var parseResult = findLinkAndImg(url, html);
 
-			imageList = parseResult.image;
-			urlList = parseResult.url;
-
-
-			if (alreadySpider < oneTimesSpiderLimit) {
-				queue.push(urlList);
-			}
+			imageList = _.uniq(parseResult.image);
+			urlList = _.uniq(parseResult.url);
 
 			callback(null);
 		});
@@ -104,7 +107,19 @@ function spiderOne(url, callback) {
 			return;
 		}
 
-		spiderDao.addUrlIgnoreRepeat(urlList, callback);
+		var urlObjList = [];
+
+		_.each(urlList, function (item) {
+			urlObjList.push({
+				id: uuid.v1(),
+				url: item,
+				init_url: global.initUrl,
+				source_url: url,
+				spider_status: 0
+			});
+		});
+
+		spiderDao.addUrlIgnoreRepeat(urlObjList, callback);
 	}
 
 	function _image2Persistence(callback) {
@@ -113,7 +128,28 @@ function spiderOne(url, callback) {
 			return;
 		}
 
-		spiderDao.addImageIgnoreRepeat(imageList, callback);
+		var imageObjList = [];
+
+		_.each(imageList, function(item) {
+			imageObjList.push({
+				id: uuid.v1(),
+				image_url: item,
+				init_url: global.initUrl,
+				source_url: url,
+				download_status: 0
+			});
+		});
+
+		spiderDao.addImageIgnoreRepeat(imageObjList, callback);
+	}
+
+	function _markUrlSpider(callback) {
+		if (isRepeat) {
+			callback(null);
+			return;
+		}
+
+		spiderDao.markUrlSpider(url, callback);
 	}
 }
 
@@ -140,7 +176,7 @@ function findLinkAndImg(url, html) {
 	});
 
 	return {
-		link: linkUrlList,
+		url: linkUrlList,
 		image: imageSrcList
 	};
 
