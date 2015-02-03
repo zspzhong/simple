@@ -7,7 +7,14 @@ exports.markUrlSpider = markUrlSpider;
 var dataUtils = require(global.libDir + '/dao/dataUtils.js');
 
 function querySpiderUrl(callback) {
-    callback(null, ['http://huaban.com']);
+    dataUtils.query('spider_url', {spider_status: 0}, function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        callback(null, _.pluck(result, 'url'));
+    });
 }
 
 function isUrlHasBeenSpider(url, callback) {
@@ -42,7 +49,7 @@ function addUrlIgnoreRepeat(urlObjList, callback) {
     }
 
     function _add2DB(callback) {
-        dataUtils.list2DB('spider_url', urlObjList, callback);
+        dataUtils.listIgnore2DB('spider_url', urlObjList, callback);
     }
 }
 
@@ -67,7 +74,7 @@ function addImageIgnoreRepeat(imageObjList, callback) {
     }
 
     function _add2DB(callback) {
-        dataUtils.list2DB('image_url', imageObjList, callback);
+        dataUtils.listIgnore2DB('image_url', imageObjList, callback);
     }
 }
 

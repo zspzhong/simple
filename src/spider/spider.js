@@ -36,7 +36,7 @@ function spiderUrlList(urlList) {
 		console.log('spider done');
 	};
 
-	console.log('start ok!');
+	console.log('start ok, wait to spider url count ' + urlList.length);
 }
 
 function spiderOne(url, callback) {
@@ -45,7 +45,7 @@ function spiderOne(url, callback) {
 	var imageList = [];
 	var urlList = [];
 
-	async.series([_isRepeat, _spider, _url2Persistence, _image2Persistence, _markUrlSpider], function(err) {
+	async.series([_isRepeat, _spider, _url2Persistence, _image2Persistence, _markUrlSpider], function (err) {
 		if (err) {
 			console.error(err);
 			callback(err);
@@ -130,7 +130,7 @@ function spiderOne(url, callback) {
 
 		var imageObjList = [];
 
-		_.each(imageList, function(item) {
+		_.each(imageList, function (item) {
 			imageObjList.push({
 				id: uuid.v1(),
 				image_url: item,
