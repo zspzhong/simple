@@ -13,6 +13,11 @@ function querySpiderUrl(callback) {
             return;
         }
 
+        if (_.isEmpty(result)) {
+            callback(null, [global.initUrl]);
+            return;
+        }
+
         callback(null, _.pluck(result, 'url'));
     });
 }

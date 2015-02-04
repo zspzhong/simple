@@ -6,7 +6,7 @@ var browserRequest = require(global.srcDir + "/spider/browserRequest.js");
 var spiderDao = require(global.srcDir + "/spider/spiderDao.js");
 
 var alreadySpider = 0;//本次已爬取url数量
-var oneTimesSpiderLimit = 5000;//每次url爬取队列上限
+var oneTimesSpiderLimit = 10000;//每次url爬取队列上限
 
 var queue = null;
 
@@ -23,6 +23,7 @@ function spiderStart() {
 		}
 
 		spiderUrlList(result);
+		alreadySpider = result.length;
 	});
 }
 
