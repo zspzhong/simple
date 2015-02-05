@@ -18,7 +18,7 @@ function querySpiderUrl(callback) {
             return;
         }
 
-        callback(null, _.pluck(result, 'url'));
+        callback(null, _.pluck(result, 'url').splice(0, 10000));
     });
 }
 
