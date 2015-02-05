@@ -5,6 +5,7 @@ var uuid = require('uuid');
 var browserRequest = require(global.srcDir + "/spider/browserRequest.js");
 var spiderDao = require(global.srcDir + "/spider/spiderDao.js");
 
+var queueLength = 0;//队列长度
 var alreadySpider = 0;//本次已爬取url数量
 var oneTimesSpiderLimit = 10000;//每次url爬取队列上限
 
@@ -23,7 +24,7 @@ function spiderStart() {
 		}
 
 		spiderUrlList(result);
-		alreadySpider = result.length;
+		queueLength = result.length;
 	});
 }
 
@@ -57,8 +58,9 @@ function spiderOne(url, callback) {
 			alreadySpider++;
 		}
 
-		if (!_.isEmpty(urlList) && alreadySpider < oneTimesSpiderLimit) {
+		if (!_.isEmpty(urlList) && queueLength < oneTimesSpiderLimit) {
 			queue.push(urlList);
+			queueLength += urlList;
 		}
 
 		if (alreadySpider % 10 === 0) {
