@@ -7,7 +7,12 @@ exports.markUrlSpider = markUrlSpider;
 var dataUtils = require(global.libDir + '/dao/dataUtils.js');
 
 function querySpiderUrl(callback) {
-    dataUtils.query('spider_url', {spider_status: 0}, function (err, result) {
+    var condition = {
+        spider_status: 0,
+        limitCondition: [0, 10000]
+    };
+
+    dataUtils.query('spider_url', condition, function (err, result) {
         if (err) {
             callback(err);
             return;
@@ -18,7 +23,7 @@ function querySpiderUrl(callback) {
             return;
         }
 
-        callback(null, _.pluck(result, 'url').splice(0, 10000));
+        callback(null, _.pluck(result, 'url'));
     });
 }
 

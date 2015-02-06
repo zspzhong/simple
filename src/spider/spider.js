@@ -4,9 +4,7 @@ var cheerio = require('cheerio');
 var uuid = require('uuid');
 var browserRequest = require(global.srcDir + "/spider/browserRequest.js");
 var spiderDao = require(global.srcDir + "/spider/spiderDao.js");
-
 var logger = global.logger;
-
 var queueLength = 0;//队列长度
 var alreadySpider = 0;//本次已爬取url数量
 var oneTimesSpiderLimit = 10000;//每次url爬取队列上限
@@ -21,7 +19,7 @@ function spiderStart() {
 		}
 
 		if (_.isEmpty(result)) {
-			logger.info("无可爬取链接");
+			logger.info("no spider url");
 			return;
 		}
 
@@ -56,17 +54,17 @@ function spiderOne(url, callback) {
 			return;
 		}
 
-		if (!isRepeat) {
-			alreadySpider++;
-		}
-
 		if (!_.isEmpty(urlList) && queueLength < oneTimesSpiderLimit) {
 			queue.push(urlList);
 			queueLength += urlList;
 		}
 
+		if (!isRepeat) {
+			alreadySpider++;
+		}
+
 		if (alreadySpider % 10 === 0) {
-			logger.info("已爬取: " + alreadySpider);
+			logger.info('already spider url count ' + alreadySpider);
 		}
 
 		callback(null);
