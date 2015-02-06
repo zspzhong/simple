@@ -6,7 +6,7 @@ var fs = require('fs');
 //        return;
 //    }
 //
-//    console.log();
+//    logger.info();
 //});
 
 //request('http://www.baidu.com/img/bd_logo1.png', function (err, response, body) {
@@ -14,9 +14,9 @@ var fs = require('fs');
 //        return;
 //    }
 //
-//    //console.log(response.headers);
+//    //logger.info(response.headers);
 //
-//    console.log(Buffer.isBuffer(body));
+//    logger.info(Buffer.isBuffer(body));
 //
 //    //var stream = fs.createWriteStream('../../output/baidu');
 //    //stream.write(body);
@@ -24,5 +24,5 @@ var fs = require('fs');
 
 //
 //request.head('http://www.baidu.com/img/bd_logo1.png', function (err, response, body) {
-//    console.log(response.headers);
+//    logger.info(response.headers);
 //});

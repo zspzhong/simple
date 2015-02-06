@@ -5,6 +5,8 @@ var uuid = require('uuid');
 var browserRequest = require(global.srcDir + "/spider/browserRequest.js");
 var spiderDao = require(global.srcDir + "/spider/spiderDao.js");
 
+var logger = global.logger;
+
 var queueLength = 0;//队列长度
 var alreadySpider = 0;//本次已爬取url数量
 var oneTimesSpiderLimit = 10000;//每次url爬取队列上限
@@ -14,12 +16,12 @@ var queue = null;
 function spiderStart() {
 	spiderDao.querySpiderUrl(function (err, result) {
 		if (err) {
-			console.log(err);
+			logger.info(err);
 			return;
 		}
 
 		if (_.isEmpty(result)) {
-			console.log("无可爬取链接");
+			logger.info("无可爬取链接");
 			return;
 		}
 
@@ -35,10 +37,10 @@ function spiderUrlList(urlList) {
 	queue.push(urlList);
 
 	queue.drain = function () {
-		console.log('spider done');
+		logger.info('spider done');
 	};
 
-	console.log('start ok, wait to spider url count ' + urlList.length);
+	logger.info('start ok, wait to spider url count ' + urlList.length);
 }
 
 function spiderOne(url, callback) {
@@ -49,7 +51,7 @@ function spiderOne(url, callback) {
 
 	async.series([_isRepeat, _spider, _url2Persistence, _image2Persistence, _markUrlSpider], function (err) {
 		if (err) {
-			console.error(err);
+			logger.error(err);
 			callback(err);
 			return;
 		}
@@ -64,7 +66,7 @@ function spiderOne(url, callback) {
 		}
 
 		if (alreadySpider % 10 === 0) {
-			console.log("已爬取: " + alreadySpider);
+			logger.info("已爬取: " + alreadySpider);
 		}
 
 		callback(null);
@@ -90,7 +92,7 @@ function spiderOne(url, callback) {
 
 		browserRequest.request(url, function (err, html) {
 			if (err) {
-				console.error(err);
+				logger.error(err);
 				callback(err);
 				return;
 			}
