@@ -2,6 +2,7 @@ exports.spiderStart = spiderStart;
 
 var cheerio = require('cheerio');
 var uuid = require('uuid');
+var urlModule = require('url');
 var browserRequest = require(global.srcDir + "/spider/browserRequest.js");
 var spiderDao = require(global.srcDir + "/spider/spiderDao.js");
 var logger = global.logger;
@@ -185,12 +186,16 @@ function findLinkAndImg(url, html) {
 
 	// 补齐相对路径的url
 	function _fillFull(aUrl) {
-		if (!aUrl) {
+		if (!aUrl || _.indexOf(aUrl, '#') === 0) {
 			return;
 		}
 
+		if (aUrl.indexOf('//') === 0) {
+			aUrl = 'http:' + aUrl;
+		}
+
 		if (!_.contains(aUrl, 'http')) {
-			aUrl = url + aUrl;
+			aUrl = urlModule.resolve(url, aUrl);
 		}
 
 		return aUrl;
