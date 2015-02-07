@@ -19,7 +19,7 @@ function startDownload() {
         }
 
         logger.info('start to download');
-        async.eachLimit(imageList, 20, downloadOne, function (err) {
+        async.eachLimit(imageList, 1, downloadOne, function (err) {
             if (err) {
                 logger.error(err);
                 return;
@@ -33,6 +33,7 @@ function startDownload() {
 
 function downloadOne(image, callback) {
     var isImage = false;
+    var errorHappen = false;
 
     async.series([_isImage, _download, _markDownload], function (err) {
         if (err) {
@@ -58,7 +59,9 @@ function downloadOne(image, callback) {
     function _isImage(callback) {
         request.head(image.image_url, function (err, response) {
             if (err) {
-                callback(err);
+                logger.error(err);
+                errorHappen = true;
+                callback(null);
                 return;
             }
 
@@ -75,21 +78,41 @@ function downloadOne(image, callback) {
             return;
         }
 
-        var downloadRequest = request.get(image.image_url);
+        if (errorHappen) {
+            callback(null);
+            return;
+        }
+
+        var downloadRequest = request.get({
+            url: image.image_url,
+            timeout: 120000
+        });
+
         downloadRequest.on('response', function (res) {
             if (res.statusCode !== 200) {
-                callback('fail request');
+                errorHappen = true;
+                callback(null);
                 return;
             }
 
             callback(null);
         });
-        downloadRequest.on('error', callback);
+        downloadRequest.on('error', function (err) {
+            if (err) {
+                logger.error(err);
+                errorHappen = true;
+            }
+        });
         downloadRequest.pipe(fs.createWriteStream(global.appDir + '/output/' + image.id));
     }
 
     function _markDownload(callback) {
         if (!isImage) {
+            callback(null);
+            return;
+        }
+
+        if (errorHappen) {
             callback(null);
             return;
         }
