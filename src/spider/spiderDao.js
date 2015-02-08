@@ -9,7 +9,7 @@ var dataUtils = require(global.libDir + '/dao/dataUtils.js');
 function querySpiderUrl(callback) {
     var condition = {
         spider_status: 0,
-        limitCondition: [0, 10000]
+        limitCondition: [0, 50000]
     };
 
     dataUtils.query('spider_url', condition, function (err, result) {
