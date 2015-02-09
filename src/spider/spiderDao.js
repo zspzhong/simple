@@ -39,53 +39,11 @@ function isUrlHasBeenSpider(url, callback) {
 }
 
 function addUrlIgnoreRepeat(urlObjList, callback) {
-    var urlList = _.pluck(urlObjList, 'url');
-
-    async.series([_filterRepeat, _add2DB], callback);
-
-    function _filterRepeat(callback) {
-        dataUtils.subListOfList('spider_url', 'url', urlList, function (err, result) {
-            if (err) {
-                callback(err);
-                return;
-            }
-
-            urlObjList = _.filter(urlObjList, function (item) {
-                return !_.contains(result, item.url);
-            });
-
-            callback(null);
-        });
-    }
-
-    function _add2DB(callback) {
-        dataUtils.listIgnore2DB('spider_url', urlObjList, callback);
-    }
+    dataUtils.listIgnore2DB('spider_url', urlObjList, callback);
 }
 
 function addImageIgnoreRepeat(imageObjList, callback) {
-    var imageList = _.pluck(imageObjList, 'image_url');
-
-    async.series([_filterRepeat, _add2DB], callback);
-
-    function _filterRepeat(callback) {
-        dataUtils.subListOfList('image_url', 'image_url', imageList, function (err, result) {
-            if (err) {
-                callback(err);
-                return;
-            }
-
-            imageObjList = _.filter(imageObjList, function (item) {
-                return !_.contains(result, item.image_url);
-            });
-
-            callback(null);
-        });
-    }
-
-    function _add2DB(callback) {
-        dataUtils.listIgnore2DB('image_url', imageObjList, callback);
-    }
+    dataUtils.listIgnore2DB('image_url', imageObjList, callback);
 }
 
 function markUrlSpider(url, callback) {

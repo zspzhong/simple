@@ -64,7 +64,7 @@ function spiderOne(url, callback) {
 			alreadySpider++;
 		}
 
-		if (alreadySpider % 10 === 0) {
+		if (alreadySpider % 100 === 0) {
 			logger.info('already spider url count ' + alreadySpider);
 		}
 
