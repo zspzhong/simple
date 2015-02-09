@@ -101,10 +101,6 @@ function spiderOne(url, callback) {
 			imageList = _.uniq(parseResult.image);
 			urlList = _.uniq(parseResult.url);
 
-			if (imageList.length < 10) {
-				logger.error(url + ' spider image count ' + imageList.length);
-			}
-
 			callback(null);
 		});
 	}
@@ -195,7 +191,7 @@ function findLinkAndImg(url, html) {
 		}
 
 		if (aUrl.indexOf('//') === 0) {
-			aUrl = 'http:' + aUrl;
+			aUrl =  urlModule.parse(url).protocol + aUrl;
 		}
 
 		if (!_.contains(aUrl, 'http')) {
