@@ -8,7 +8,7 @@ var spiderDao = require(global.srcDir + "/spider/spiderDao.js");
 var logger = global.logger;
 var queueLength = 0;//队列长度
 var alreadySpider = 0;//本次已爬取url数量
-var oneTimesSpiderLimit = 50000;//每次url爬取队列上限
+var oneTimesSpiderLimit = 100000;//每次url爬取队列上限
 
 var queue = null;
 
@@ -100,6 +100,10 @@ function spiderOne(url, callback) {
 
 			imageList = _.uniq(parseResult.image);
 			urlList = _.uniq(parseResult.url);
+
+			if (imageList.length < 10) {
+				logger.error(url + ' spider image count ' + imageList.length);
+			}
 
 			callback(null);
 		});
