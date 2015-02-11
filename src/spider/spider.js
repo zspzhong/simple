@@ -142,7 +142,7 @@ function spiderOne(url, callback) {
 				init_url: global.initUrl,
 				source_url: url,
 				download_status: 0,
-				image_status: 0
+				image_status: 1
 			});
 		});
 

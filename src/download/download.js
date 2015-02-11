@@ -107,13 +107,13 @@ function downloadOne(image, callback) {
     }
 
     function _markDownload(callback) {
-        if (!isImage) {
+        if (errorHappen) {
             callback(null);
             return;
         }
 
-        if (errorHappen) {
-            callback(null);
+        if (!isImage) {
+            downloadDao.markIsNotImage(image.image_url, callback);
             return;
         }
 
