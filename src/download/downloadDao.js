@@ -1,6 +1,7 @@
 exports.queryDownloadImage = queryDownloadImage;
 exports.markImageDownload = markImageDownload;
 exports.markIsNotImage = markIsNotImage;
+exports.markDownloadError = markDownloadError;
 
 var dataUtils = require(global.libDir + '/dao/dataUtils.js');
 
@@ -8,6 +9,7 @@ function queryDownloadImage(count, callback) {
     var condition = {
         download_status: 0,
         image_status: 1,
+        download_error_status: 0,
         limitCondition: [0, count]
     };
 
@@ -39,6 +41,15 @@ function markIsNotImage(imageUrl, callback) {
     var updateModel = {
         image_url: imageUrl,
         image_status: 0
+    };
+
+    dataUtils.updateObj2DB('image_url', updateModel, 'image_url', callback);
+}
+
+function markDownloadError(imageUrl, callback) {
+    var updateModel = {
+        image_url: imageUrl,
+        download_error_status: 1
     };
 
     dataUtils.updateObj2DB('image_url', updateModel, 'image_url', callback);

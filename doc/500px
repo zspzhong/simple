@@ -3,3 +3,8 @@ https://500px.com/popular
 url规则：
 
 img规则：
+blackList = [
+    'maps.googleapis.com',
+    'stumbleupon-com-ded5f3.c-col.com',
+    'support.500px.com'
+]

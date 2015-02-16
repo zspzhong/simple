@@ -193,7 +193,7 @@ function findLinkAndImg(url, html) {
 		}
 
 		if (aUrl.indexOf('//') === 0) {
-			aUrl =  urlModule.parse(url).protocol + aUrl;
+			aUrl = urlModule.parse(url).protocol + aUrl;
 		}
 
 		if (!_.contains(aUrl, 'http')) {
@@ -228,4 +228,3 @@ function findLinkAndImg(url, html) {
 		return flag;
 	}
 }
-

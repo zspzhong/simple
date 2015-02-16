@@ -108,7 +108,7 @@ function downloadOne(image, callback) {
 
     function _markDownload(callback) {
         if (errorHappen) {
-            callback(null);
+            downloadDao.markDownloadError(image.image_url, callback);
             return;
         }
 
