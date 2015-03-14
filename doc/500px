@@ -3,8 +3,15 @@ https://500px.com/popular
 url规则：
 
 img规则：
-blackList = [
+无用图片url：[
     'maps.googleapis.com',
     'stumbleupon-com-ded5f3.c-col.com',
-    'support.500px.com'
+    'support.500px.com',
+    'tiles.mapbox.com'
+]
+
+主要图片url：[
+    'pacdn.500px.org',
+    'drscdn.500px.org',
+    'ppcdn.500px.org'
 ]
