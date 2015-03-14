@@ -1,0 +1,1 @@
+node /root/spider/src/tools/yyetsLogin.js 1>>/root/spider/logs/yyetsLogin_access.log 2>>/root/spider/logs/yyetsLogin_error.log &
