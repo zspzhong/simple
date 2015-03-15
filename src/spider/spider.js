@@ -31,7 +31,7 @@ function run() {
 }
 
 function spiderUrlList(urlList) {
-    var concurrency = 10;
+    var concurrency = 5;
     queue = async.queue(spiderOne, concurrency);
 
     queue.push(urlList);
