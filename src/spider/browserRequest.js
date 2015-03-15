@@ -1,4 +1,5 @@
 var childProcess = require('child_process');
+var logger = global.logger;
 
 exports.request = request;
 
@@ -13,6 +14,7 @@ function request(url, callback) {
 	});
 
 	child.on('exit', function () {
+		logger.info(url);
 		callback(null, html);
 	});
 
