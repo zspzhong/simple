@@ -14,7 +14,6 @@ function request(url, callback) {
 	});
 
 	child.on('exit', function () {
-		logger.info(url);
 		callback(null, html);
 	});
 

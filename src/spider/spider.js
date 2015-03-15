@@ -9,222 +9,229 @@ var logger = global.logger;
 var queueLength = 0;//队列长度
 var alreadySpider = 0;//本次已爬取url数量
 var oneTimesSpiderLimit = 10000;//每次url爬取队列上限
+var recordDetailInfo = true;
 
 var queue = null;
 
 function run() {
-	spiderDao.querySpiderUrl(function (err, result) {
-		if (err) {
-			logger.info(err);
-			return;
-		}
+    spiderDao.querySpiderUrl(function (err, result) {
+        if (err) {
+            logger.info(err);
+            return;
+        }
 
-		if (_.isEmpty(result)) {
-			logger.info("no spider url");
-			return;
-		}
+        if (_.isEmpty(result)) {
+            logger.info("no spider url");
+            return;
+        }
 
-		spiderUrlList(result);
-		queueLength = result.length;
-	});
+        spiderUrlList(result);
+        queueLength = result.length;
+    });
 }
 
 function spiderUrlList(urlList) {
-	var concurrency = 10;
-	queue = async.queue(spiderOne, concurrency);
+    var concurrency = 10;
+    queue = async.queue(spiderOne, concurrency);
 
-	queue.push(urlList);
+    queue.push(urlList);
 
-	queue.drain = function () {
-		logger.info('spider done');
-	};
+    queue.drain = function () {
+        logger.info('spider done');
+    };
 
-	logger.info('start ok, wait to spider url count ' + urlList.length);
+    logger.info('start ok, wait to spider url count ' + urlList.length);
 }
 
 function spiderOne(url, callback) {
-	var isRepeat = false;
+    var isRepeat = false;
 
-	var imageList = [];
-	var urlList = [];
+    var imageList = [];
+    var urlList = [];
 
-	async.series([_isRepeat, _spider, _url2Persistence, _image2Persistence, _markUrlSpider], function (err) {
-		if (err) {
-			logger.error(err);
-			callback(err);
-			return;
-		}
+    async.series([_isRepeat, _spider, _url2Persistence, _image2Persistence, _markUrlSpider], function (err) {
+        if (err) {
+            logger.error(err);
+            callback(err);
+            return;
+        }
 
-		if (!_.isEmpty(urlList) && queueLength < oneTimesSpiderLimit) {
-			queue.push(urlList);
-			queueLength += urlList;
-		}
+        if (!_.isEmpty(urlList) && queueLength < oneTimesSpiderLimit) {
+            queue.push(urlList);
+            queueLength += urlList;
+        }
 
-		if (!isRepeat) {
-			alreadySpider++;
-		}
+        if (!isRepeat) {
+            alreadySpider++;
+        }
 
-		if (alreadySpider % 100 === 0) {
-			logger.info('already spider url count ' + alreadySpider);
-		}
+        if (recordDetailInfo) {
+            logger.info(url);
+            logger.info('imageList: ', imageList);
+            logger.info('urlList: ', urlList);
+        }
 
-		callback(null);
-	});
+        if (alreadySpider % 100 === 0) {
+            logger.info('already spider url count ' + alreadySpider);
+        }
 
-	function _isRepeat(callback) {
-		spiderDao.isUrlHasBeenSpider(url, function (err, result) {
-			if (err) {
-				callback(err);
-				return;
-			}
+        callback(null);
+    });
 
-			isRepeat = result;
-			callback(null);
-		});
-	}
+    function _isRepeat(callback) {
+        spiderDao.isUrlHasBeenSpider(url, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
 
-	function _spider(callback) {
-		if (isRepeat) {
-			callback(null);
-			return;
-		}
+            isRepeat = result;
+            callback(null);
+        });
+    }
 
-		browserRequest.request(url, function (err, html) {
-			if (err) {
-				logger.error(err);
-				callback(err);
-				return;
-			}
+    function _spider(callback) {
+        if (isRepeat) {
+            callback(null);
+            return;
+        }
 
-			var parseResult = findLinkAndImg(url, html);
+        browserRequest.request(url, function (err, html) {
+            if (err) {
+                logger.error(err);
+                callback(err);
+                return;
+            }
 
-			imageList = _.uniq(parseResult.image);
-			urlList = _.uniq(parseResult.url);
+            var parseResult = findLinkAndImg(url, html);
 
-			callback(null);
-		});
-	}
+            imageList = _.uniq(parseResult.image);
+            urlList = _.uniq(parseResult.url);
 
-	function _url2Persistence(callback) {
-		if (_.isEmpty(urlList)) {
-			callback(null);
-			return;
-		}
+            callback(null);
+        });
+    }
 
-		var urlObjList = [];
+    function _url2Persistence(callback) {
+        if (_.isEmpty(urlList)) {
+            callback(null);
+            return;
+        }
 
-		_.each(urlList, function (item) {
-			urlObjList.push({
-				id: uuid.v1(),
-				url: item,
-				init_url: global.initUrl,
-				source_url: url,
-				spider_status: 0,
-				image_count: imageList.length
-			});
-		});
+        var urlObjList = [];
 
-		spiderDao.addUrlIgnoreRepeat(urlObjList, callback);
-	}
+        _.each(urlList, function (item) {
+            urlObjList.push({
+                id: uuid.v1(),
+                url: item,
+                init_url: global.initUrl,
+                source_url: url,
+                spider_status: 0,
+                image_count: imageList.length
+            });
+        });
 
-	function _image2Persistence(callback) {
-		if (_.isEmpty(imageList)) {
-			callback(null);
-			return;
-		}
+        spiderDao.addUrlIgnoreRepeat(urlObjList, callback);
+    }
 
-		var imageObjList = [];
+    function _image2Persistence(callback) {
+        if (_.isEmpty(imageList)) {
+            callback(null);
+            return;
+        }
 
-		_.each(imageList, function (item) {
-			imageObjList.push({
-				id: uuid.v1(),
-				image_url: item,
-				init_url: global.initUrl,
-				source_url: url,
-				download_status: 0,
-				image_status: 1
-			});
-		});
+        var imageObjList = [];
 
-		spiderDao.addImageIgnoreRepeat(imageObjList, callback);
-	}
+        _.each(imageList, function (item) {
+            imageObjList.push({
+                id: uuid.v1(),
+                image_url: item,
+                init_url: global.initUrl,
+                source_url: url,
+                download_status: 0,
+                image_status: 1
+            });
+        });
 
-	function _markUrlSpider(callback) {
-		if (isRepeat) {
-			callback(null);
-			return;
-		}
+        spiderDao.addImageIgnoreRepeat(imageObjList, callback);
+    }
 
-		spiderDao.markUrlSpider(url, callback);
-	}
+    function _markUrlSpider(callback) {
+        if (isRepeat) {
+            callback(null);
+            return;
+        }
+
+        spiderDao.markUrlSpider(url, callback);
+    }
 }
 
 function findLinkAndImg(url, html) {
-	var $ = cheerio.load(html);
+    var $ = cheerio.load(html);
 
-	var linkUrlList = [];
-	var imageSrcList = [];
+    var linkUrlList = [];
+    var imageSrcList = [];
 
-	_.each($('a'), function (item) {
-		var href = _fillFull(item.attribs.href);
+    _.each($('a'), function (item) {
+        var href = _fillFull(item.attribs.href);
 
-		if (href && _isUrlPass(href)) {
-			linkUrlList.push(href);
-		}
-	});
+        if (href && _isUrlPass(href)) {
+            linkUrlList.push(href);
+        }
+    });
 
-	_.each($('img'), function (item) {
-		var src = _fillFull(item.attribs.src);
+    _.each($('img'), function (item) {
+        var src = _fillFull(item.attribs.src);
 
-		if (src && _isImgSrcPass(src)) {
-			imageSrcList.push(src);
-		}
-	});
+        if (src && _isImgSrcPass(src)) {
+            imageSrcList.push(src);
+        }
+    });
 
-	return {
-		url: linkUrlList,
-		image: imageSrcList
-	};
+    return {
+        url: linkUrlList,
+        image: imageSrcList
+    };
 
-	// 补齐相对路径的url
-	function _fillFull(aUrl) {
-		if (!aUrl || _.indexOf(aUrl, '#') === 0) {
-			return;
-		}
+    // 补齐相对路径的url
+    function _fillFull(aUrl) {
+        if (!aUrl || _.indexOf(aUrl, '#') === 0) {
+            return;
+        }
 
-		if (aUrl.indexOf('//') === 0) {
-			aUrl = urlModule.parse(url).protocol + aUrl;
-		}
+        if (aUrl.indexOf('//') === 0) {
+            aUrl = urlModule.parse(url).protocol + aUrl;
+        }
 
-		if (!_.contains(aUrl, 'http')) {
-			aUrl = urlModule.resolve(url, aUrl);
-		}
+        if (!_.contains(aUrl, 'http')) {
+            aUrl = urlModule.resolve(url, aUrl);
+        }
 
-		return aUrl;
-	}
+        return aUrl;
+    }
 
-	// 根据配置的urlWhiteList判断是否通过该url
-	function _isUrlPass(aUrl) {
-		var flag = _.isEmpty(global.urlWhiteList);
+    // 根据配置的urlWhiteList判断是否通过该url
+    function _isUrlPass(aUrl) {
+        var flag = _.isEmpty(global.urlWhiteList);
 
-		_.each(global.urlWhiteList, function (item) {
-			if (_.contains(aUrl, item)) {
-				flag = true;
-			}
-		});
+        _.each(global.urlWhiteList, function (item) {
+            if (_.contains(aUrl, item)) {
+                flag = true;
+            }
+        });
 
-		return flag;
-	}
+        return flag;
+    }
 
-	function _isImgSrcPass(imgSrc) {
-		var flag = _.isEmpty(global.imgWhiteList);
+    function _isImgSrcPass(imgSrc) {
+        var flag = _.isEmpty(global.imgWhiteList);
 
-		_.each(global.imgWhiteList, function (item) {
-			if (_.contains(imgSrc, item)) {
-				flag = true;
-			}
-		});
+        _.each(global.imgWhiteList, function (item) {
+            if (_.contains(imgSrc, item)) {
+                flag = true;
+            }
+        });
 
-		return flag;
-	}
+        return flag;
+    }
 }
