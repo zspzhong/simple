@@ -1,7 +1,7 @@
 {
     "name": "spider",
     "mode": "dev",
-    "appDir": "/Users/shasharoman/private/spider",
+    "rootDir": "/Users/shasharoman/private/spider",
     "srcDir": "/Users/shasharoman/private/spider/src",
     "libDir": "/Users/shasharoman/private/spider/lib",
     "urlWhiteList": [

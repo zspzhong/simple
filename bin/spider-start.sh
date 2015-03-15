@@ -1,1 +1,0 @@
-nohup node ../lib/master.js -c ../conf/config.json -a spider 1>../logs/spider-access.log 2>../logs/spider-error.log &

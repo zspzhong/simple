@@ -1,20 +1,46 @@
+exports.run = run;
+
 var request = require('request');
+var async = require('async');
+var logger = global.logger;
 
-var options = {
-    url:'http://www.zimuzu.tv/User/Login/ajaxLogin',
-    form: {
-        account: 'shasharoman',
-        password: '888888',
-        from: 'loginpage'
+var users = [
+    {
+        username: 'shasharoman',
+        password: '888888'
+    },
+    {
+        username: 'shashaluoman',
+        password: '888888'
     }
-};
+];
 
-request.post(options, function(err, res, body) {
-    if (err) {
-        console.log(err);
-        return;
-    }
+function run() {
+    async.each(users, loginOne, function (err) {
+        if (err) {
+            logger.error(err);
+        }
+    });
+}
 
-    var result = JSON.parse(body);
-    console.log(result);
-});
+function loginOne(users, callback) {
+    var options = {
+        url: 'http://www.zimuzu.tv/User/Login/ajaxLogin',
+        form: {
+            account: users.username,
+            password: users.password,
+            from: 'loginpage'
+        }
+    };
+
+    request.post(options, function (err, res, body) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        var result = JSON.parse(body);
+        logger.info(result);
+    });
+}
+

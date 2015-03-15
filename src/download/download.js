@@ -1,4 +1,4 @@
-exports.startDownload = startDownload;
+exports.run = run;
 
 var request = require('request');
 var fs = require('fs');
@@ -6,7 +6,7 @@ var downloadDao = require('./downloadDao.js');
 var logger = global.logger;
 var alreadyDownload = 0;
 
-function startDownload() {
+function run() {
     downloadDao.queryDownloadImage(1000, function (err, imageList) {
         if (err) {
             logger.error(err);
@@ -26,7 +26,7 @@ function startDownload() {
             }
 
             // 第二轮下载
-            startDownload();
+            run();
         });
     });
 }
@@ -103,7 +103,7 @@ function downloadOne(image, callback) {
                 errorHappen = true;
             }
         });
-        downloadRequest.pipe(fs.createWriteStream(global.appDir + '/output/' + image.id));
+        downloadRequest.pipe(fs.createWriteStream(global.rootDir + '/output/' + image.id));
     }
 
     function _markDownload(callback) {

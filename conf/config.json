@@ -1,7 +1,7 @@
 {
     "name": "spider",
     "mode": "production",
-    "appDir": "/root/spider",
+    "rootDir": "/root/spider",
     "srcDir": "/root/spider/src",
     "libDir": "/root/spider/lib",
     "urlWhiteList": [

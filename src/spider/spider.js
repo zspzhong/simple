@@ -1,4 +1,4 @@
-exports.spiderStart = spiderStart;
+exports.run = run;
 
 var cheerio = require('cheerio');
 var uuid = require('uuid');
@@ -12,7 +12,7 @@ var oneTimesSpiderLimit = 100000;//每次url爬取队列上限
 
 var queue = null;
 
-function spiderStart() {
+function run() {
 	spiderDao.querySpiderUrl(function (err, result) {
 		if (err) {
 			logger.info(err);
