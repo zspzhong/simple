@@ -1,0 +1,22 @@
+#spider_url
+create table if not exists spider_url (
+    id varchar(64) not null,
+    url varchar(192) primary key,
+    source_url varchar(192) default null,
+    init_url varchar(192) default null,
+    spider_status int(11) default 0,
+    image_count int(11) default 0,
+    insert_time double not null
+);
+
+#image_url
+create table if not exists image_url (
+    id varchar(64) not null,
+    image_url varchar(192) primary key,
+    source_url varchar(192) default null,
+    init_url varchar(192) default null,
+    download_status int(11) default 0,
+    download_error int(11) default 0,
+    image_status int(11) default 1,
+    insert_time double not null
+);
