@@ -18,5 +18,6 @@ create table if not exists image_url (
     download_status int(11) default 0,
     download_error int(11) default 0,
     image_status int(11) default 1,
-    insert_time double not null
+    insert_time double not null,
+    image_byte int(11) default 0
 );

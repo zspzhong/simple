@@ -35,6 +35,8 @@ function downloadOne(image, callback) {
     var isImage = false;
     var errorHappen = false;
 
+    var imageByte = 0;
+
     async.series([_isImage, _download, _markDownload], function (err) {
         if (err) {
             callback(err);
@@ -67,6 +69,10 @@ function downloadOne(image, callback) {
 
             if (response.statusCode === 200) {
                 isImage = (_.contains(response.headers['content-type'], 'image'));
+
+                if (isImage) {
+                    imageByte = response.headers['content-length'];
+                }
             }
             callback(null);
         });
@@ -117,6 +123,6 @@ function downloadOne(image, callback) {
             return;
         }
 
-        downloadDao.markImageDownload(image.image_url, callback);
+        downloadDao.markImageDownload(image.image_url, imageByte, callback);
     }
 }

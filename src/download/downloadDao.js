@@ -28,10 +28,11 @@ function queryDownloadImage(count, callback) {
     });
 }
 
-function markImageDownload(imageUrl, callback) {
+function markImageDownload(imageUrl, imageByte, callback) {
     var updateModel = {
         image_url: imageUrl,
-        download_status: 1
+        download_status: 1,
+        image_byte: imageByte
     };
 
     dataUtils.updateObj2DB('image_url', updateModel, 'image_url', callback);
