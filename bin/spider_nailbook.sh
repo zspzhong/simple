@@ -1,0 +1,1 @@
+nohup node ../lib/master.js -c ../conf/config_nailbook.json -a spider -d /root/spider/src/spider/ 1>../logs/spider-access.log 2>../logs/spider-error.log &

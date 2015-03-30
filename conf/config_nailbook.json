@@ -1,0 +1,22 @@
+{
+  "name": "spider",
+  "mode": "production",
+  "rootDir": "/root/spider",
+  "srcDir": "/root/spider/src",
+  "libDir": "/root/spider/lib",
+  "urlWhiteList": [
+    "nailbook.jp"
+  ],
+  "imgWhiteList": [
+
+  ],
+  "initUrl": "http://nailbook.jp/",
+  "mysqlPool": {
+    "connectionLimit": 10,
+    "host" : "127.0.0.1",
+    "user" : "root",
+    "password" : " ",
+    "database": "spider",
+    "insecureAuth": true
+  }
+}
