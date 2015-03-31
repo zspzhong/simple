@@ -1,0 +1,1 @@
+nohup node ../lib/master.js -c ../conf/config_nailbook.json -a download -d /root/spider/src/download/ 1>../logs/download-access.log 2>../logs/download-error.log &
