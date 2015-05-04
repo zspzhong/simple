@@ -9,20 +9,26 @@ request = request.defaults({jar: jar});
 var async = require('async');
 var logger = global.logger;
 
-function run() {
-    var user = {
+var users = [
+    {
         username: 'shashaluoman',
         password: '888888'
-    };
+    },
+    {
+        username: 'shasharoman',
+        password: '888888'
+    }
+];
 
-    loginOne(user, function (err) {
+function run() {
+    async.each(users, signOne, function (err) {
         if (err) {
             logger.info(err);
         }
     });
 }
 
-function loginOne(user, callback) {
+function signOne(user, callback) {
     var loginCookies = {};
     var signCookies = {};
 
