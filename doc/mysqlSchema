@@ -16,7 +16,7 @@ create table if not exists image_url (
     source_url varchar(192) default null,
     init_url varchar(192) default null,
     download_status int(11) default 0,
-    download_error int(11) default 0,
+    download_error_status int(11) default 0,
     image_status int(11) default 1,
     insert_time double not null,
     image_byte int(11) default 0

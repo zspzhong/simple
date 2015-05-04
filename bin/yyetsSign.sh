@@ -1,0 +1,1 @@
+nohup node /root/spider/lib/master.js -a yyetsSign -d /root/spider/src/tools/ 1>>/root/spider/logs/yyetsSign_access.log 2>>/root/spider/logs/yyetsSign_error.log &
