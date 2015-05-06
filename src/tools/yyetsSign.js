@@ -21,7 +21,7 @@ var users = [
 ];
 
 function run() {
-    async.each(users, signOne, function (err) {
+    async.mapSeries(users, signOne, function (err) {
         if (err) {
             logger.info(err);
         }
