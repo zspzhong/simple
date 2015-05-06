@@ -1,9 +1,9 @@
 {
     "name": "spider",
     "mode": "production",
-    "rootDir": "/root/spider",
-    "srcDir": "/root/spider/src",
-    "libDir": "/root/spider/lib",
+    "rootDir": "/root/simple",
+    "srcDir": "/root/simple/src",
+    "libDir": "/root/simple/lib",
     "urlWhiteList": [
         "500px.com"
     ],

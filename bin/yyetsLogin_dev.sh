@@ -1,1 +1,1 @@
-node ../lib/master.js -a yyetsLogin -d /Users/shasharoman/private/spider/src/tools/
+node ../lib/master.js -a yyetsLogin -d /Users/shasharoman/private/simple/src/tools/

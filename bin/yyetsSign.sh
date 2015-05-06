@@ -1,1 +1,1 @@
-nohup node /root/spider/lib/master.js -a yyetsSign -d /root/spider/src/tools/ 1>>/root/spider/logs/yyetsSign_access.log 2>>/root/spider/logs/yyetsSign_error.log &
+nohup node /root/simple/lib/master.js -a yyetsSign -d /root/simple/src/tools/ 1>>/root/simple/logs/yyetsSign_access.log 2>>/root/simple/logs/yyetsSign_error.log &

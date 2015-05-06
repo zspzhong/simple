@@ -1,9 +1,9 @@
 {
     "name": "spider",
     "mode": "dev",
-    "rootDir": "/Users/shasharoman/private/spider",
-    "srcDir": "/Users/shasharoman/private/spider/src",
-    "libDir": "/Users/shasharoman/private/spider/lib",
+    "rootDir": "/Users/shasharoman/private/simple",
+    "srcDir": "/Users/shasharoman/private/simple/src",
+    "libDir": "/Users/shasharoman/private/simple/lib",
     "urlWhiteList": [
         "huaban.com"
     ],
