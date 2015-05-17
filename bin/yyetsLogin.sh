@@ -1,1 +1,1 @@
-nohup node /root/simple/lib/master.js -a yyetsLogin -d /root/simple/src/tools/ 1>>/root/simple/logs/yyetsLogin_access.log 2>>/root/simple/logs/yyetsLogin_error.log &
+nohup node /root/simple/lib/runScript.js -a yyetsLogin -d /root/simple/src/tools/ 1>>/root/simple/logs/yyetsLogin_access.log 2>>/root/simple/logs/yyetsLogin_error.log &

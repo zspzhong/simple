@@ -1,1 +1,0 @@
-nohup node ../lib/master.js -c ../conf/config_nailbook.json -a download -d /root/simple/src/download/ 1>../logs/download-access.log 2>../logs/download-error.log &

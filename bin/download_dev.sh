@@ -1,1 +1,1 @@
-node ../lib/master.js -c ../conf/config_dev.json -a download -d /Users/shasharoman/private/simple/src/download/
+node ../lib/runScript.js -c ../conf/config_dev.json -a download -d /Users/shasharoman/private/simple/src/download/

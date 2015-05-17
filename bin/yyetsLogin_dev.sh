@@ -1,1 +1,1 @@
-node ../lib/master.js -a yyetsLogin -d /Users/shasharoman/private/simple/src/tools/
+node ../lib/runScript.js -a yyetsLogin -d /Users/shasharoman/private/simple/src/tools/
