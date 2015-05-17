@@ -3,8 +3,8 @@ exports.run = run;
 var cheerio = require('cheerio');
 var uuid = require('uuid');
 var urlModule = require('url');
-var browserRequest = require(global.srcDir + "/spider/browserRequest.js");
-var spiderDao = require(global.srcDir + "/spider/spiderDao.js");
+var browserRequest = require(global['srcDir'] + "/spider/browserRequest.js");
+var spiderDao = require(global['srcDir'] + "/spider/spiderDao.js");
 var logger = global.logger;
 var queueLength = 0;//队列长度
 var alreadySpider = 0;//本次已爬取url数量
@@ -124,7 +124,7 @@ function spiderOne(url, callback) {
             urlObjList.push({
                 id: uuid.v1(),
                 url: item,
-                init_url: global.initUrl,
+                init_url: global['initUrl'],
                 source_url: url,
                 spider_status: 0,
                 image_count: imageList.length
@@ -146,7 +146,7 @@ function spiderOne(url, callback) {
             imageObjList.push({
                 id: uuid.v1(),
                 image_url: item,
-                init_url: global.initUrl,
+                init_url: global['initUrl'],
                 source_url: url,
                 download_status: 0,
                 image_status: 1
@@ -183,7 +183,7 @@ function findLinkAndImg(url, html) {
     _.each($('img'), function (item) {
         var src = _fillFull(item.attribs.src);
 
-        if (src && _isImgSrcPass(src)) {
+        if (src) {
             imageSrcList.push(src);
         }
     });
@@ -212,22 +212,10 @@ function findLinkAndImg(url, html) {
 
     // 根据配置的urlWhiteList判断是否通过该url
     function _isUrlPass(aUrl) {
-        var flag = _.isEmpty(global.urlWhiteList);
+        var flag = _.isEmpty(global['urlWhiteList']);
 
-        _.each(global.urlWhiteList, function (item) {
+        _.each(global['urlWhiteList'], function (item) {
             if (_.contains(aUrl, item)) {
-                flag = true;
-            }
-        });
-
-        return flag;
-    }
-
-    function _isImgSrcPass(imgSrc) {
-        var flag = _.isEmpty(global.imgWhiteList);
-
-        _.each(global.imgWhiteList, function (item) {
-            if (_.contains(imgSrc, item)) {
                 flag = true;
             }
         });

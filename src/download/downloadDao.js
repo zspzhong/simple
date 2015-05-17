@@ -3,7 +3,7 @@ exports.markImageDownload = markImageDownload;
 exports.markIsNotImage = markIsNotImage;
 exports.markDownloadError = markDownloadError;
 
-var dataUtils = require(global.libDir + '/dao/dataUtils.js');
+var dataUtils = require(global['libDir'] + '/dao/dataUtils.js');
 
 function queryDownloadImage(count, callback) {
     var condition = {

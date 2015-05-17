@@ -4,7 +4,7 @@ exports.addUrlIgnoreRepeat = addUrlIgnoreRepeat;
 exports.addImageIgnoreRepeat = addImageIgnoreRepeat;
 exports.markUrlSpider = markUrlSpider;
 
-var dataUtils = require(global.libDir + '/dao/dataUtils.js');
+var dataUtils = require(global['libDir'] + '/dao/dataUtils.js');
 
 function querySpiderUrl(callback) {
     var condition = {
@@ -19,7 +19,7 @@ function querySpiderUrl(callback) {
         }
 
         if (_.isEmpty(result)) {
-            callback(null, [global.initUrl]);
+            callback(null, [global['initUrl']]);
             return;
         }
 

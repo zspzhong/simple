@@ -7,9 +7,6 @@
     "urlWhiteList": [
         "500px.com"
     ],
-    "imgWhiteList": [
-
-    ],
     "initUrl": "https://500px.com/popular",
     "mysqlPool": {
         "connectionLimit": 10,

@@ -4,7 +4,7 @@ var logger = global.logger;
 exports.request = request;
 
 function request(url, callback) {
-	var args = ['--load-images=false', global.srcDir + '/spider/browserParse.js', url];
+	var args = ['--load-images=false', global['srcDir'] + '/spider/browserParse.js', url];
 	var child = childProcess.spawn('phantomjs', args);
 
 	var html = "";

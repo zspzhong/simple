@@ -109,7 +109,7 @@ function downloadOne(image, callback) {
                 errorHappen = true;
             }
         });
-        downloadRequest.pipe(fs.createWriteStream(global.rootDir + '/output/' + image.id));
+        downloadRequest.pipe(fs.createWriteStream(global['rootDir'] + '/output/' + image.id));
     }
 
     function _markDownload(callback) {
