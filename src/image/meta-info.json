@@ -1,0 +1,11 @@
+{
+  "serviceList": [
+    {
+      "name": "randomUrl",
+      "path": "/image/randomUrl",
+      "realizeJs": "image",
+      "functionName": "randomUrl",
+      "method": "GET"
+    }
+  ]
+}
