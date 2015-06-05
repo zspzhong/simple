@@ -8,7 +8,6 @@ angular.module('image', []).controller('ImageController', function ($scope) {
             }
             $scope.currentImageUrl = url;
             digestScope();
-            console.log(1);
         });
     };
 
