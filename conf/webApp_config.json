@@ -1,6 +1,7 @@
 {
   "name": "web",
   "mode": "production",
+  "port": "8001",
   "rootDir": "/root/simple",
   "srcDir": "/root/simple/src",
   "libDir": "/root/simple/lib",
