@@ -44,7 +44,7 @@ module.exports = function (grunt) {
             global: {
                 options: {
                     mangle: {
-                        except: ['require', 'exports', 'module', 'window']
+                        except: ['require', 'exports', 'module', 'window', '$scope']
                     }
                 },
                 files: {
@@ -54,7 +54,7 @@ module.exports = function (grunt) {
             module: {
                 options: {
                     mangle: {
-                        except: ['require', 'exports', 'module', 'window']
+                        except: ['require', 'exports', 'module', 'window', '$scope']
                     }
                 },
                 files:  [{
