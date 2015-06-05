@@ -57,7 +57,7 @@ module.exports = function (grunt) {
                         except: ['require', 'exports', 'module', 'window', '$scope']
                     }
                 },
-                files:  [{
+                files: [{
                     expand: true,
                     cwd: 'src',
                     src: ["**/static/js/*.js"],
@@ -65,6 +65,55 @@ module.exports = function (grunt) {
                     ext: '.min.js',
                     rename: clipStaticPath
                 }]
+            }
+        },
+        copy: {
+            html: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'src',
+                        src: ['**/static/*.html'],
+                        dest: 'dev',
+                        rename: clipStaticPath
+                    }
+                ]
+            },
+            js: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'src',
+                        src: ['**/static/js/*.js'],
+                        dest: 'dev',
+                        ext: '.min.js',
+                        rename: clipStaticPath
+                    },
+                    {
+                        expand: true,
+                        cwd: 'release',
+                        src: ['global/js/*.js'],
+                        dest: 'dev'
+                    }
+                ]
+            },
+            css: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'src',
+                        src: ['**/static/css/*.css'],
+                        dest: 'dev',
+                        ext: '.min.css',
+                        rename: clipStaticPath
+                    },
+                    {
+                        expand: true,
+                        cwd: 'release',
+                        src: ['global/css/*.css'],
+                        dest: 'dev'
+                    }
+                ]
             }
         }
     };
@@ -74,14 +123,24 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     grunt.registerTask('default', ['cssmin', 'htmlmin', 'uglify']);
+    grunt.registerTask('dev', ['copy']);
 };
 
 // 从src拷贝到部署目录时，去掉中间的static路径
-function clipStaticPath(dest, src) {
-    var arr = src.split("/");
-    arr.splice(1, 1);
-    var splicePath = arr.join("/");
-    return dest + "/" + splicePath;
+function clipStaticPath(target, src) {
+    var arr = src.split('/');
+
+    for (var i = 0, j = 0; i < arr.length; i++) {
+        var item = arr[i - j];
+        if (item === 'static') {
+            arr.splice(i - j, 1);
+            j++;
+        }
+    }
+
+    var splicePath = arr.join('/');
+    return target + '/' + splicePath;
 }
