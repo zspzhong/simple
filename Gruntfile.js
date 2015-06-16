@@ -2,9 +2,15 @@ module.exports = function (grunt) {
     var gruntConfig = {
         less: {
             module: {
-                files: {
-                    "src/*/static/css/*.css": "src/*/static/css/*.less"
-                }
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'src',
+                        src: ['**/static/css/*.less'],
+                        dest: 'src',
+                        ext: '.css'
+                    }
+                ]
             }
         },
         cssmin: {
@@ -14,14 +20,16 @@ module.exports = function (grunt) {
                 }
             },
             module: {
-                files: [{
-                    expand: true,
-                    cwd: 'src',
-                    src: ["**/static/css/*.css"],
-                    dest: 'release',
-                    ext: '.min.css',
-                    rename: clipStaticPath
-                }]
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'src',
+                        src: ["**/static/css/*.css"],
+                        dest: 'release',
+                        ext: '.min.css',
+                        rename: clipStaticPath
+                    }
+                ]
             }
         },
         htmlmin: {
@@ -37,14 +45,16 @@ module.exports = function (grunt) {
                 removeOptionalTags: true
             },
             module: {
-                files: [{
-                    expand: true,
-                    cwd: 'src',
-                    src: ["**/static/*.html"],
-                    dest: 'release',
-                    ext: '.html',
-                    rename: clipStaticPath
-                }]
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'src',
+                        src: ["**/static/*.html"],
+                        dest: 'release',
+                        ext: '.html',
+                        rename: clipStaticPath
+                    }
+                ]
             }
         },
         uglify: {
@@ -64,14 +74,16 @@ module.exports = function (grunt) {
                         except: ['require', 'exports', 'module', 'window', '$scope']
                     }
                 },
-                files: [{
-                    expand: true,
-                    cwd: 'src',
-                    src: ["**/static/js/*.js"],
-                    dest: 'release',
-                    ext: '.min.js',
-                    rename: clipStaticPath
-                }]
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'src',
+                        src: ["**/static/js/*.js"],
+                        dest: 'release',
+                        ext: '.min.js',
+                        rename: clipStaticPath
+                    }
+                ]
             }
         },
         copy: {
