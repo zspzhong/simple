@@ -1,6 +1,7 @@
 {
   "name": "web",
   "mode": "dev",
+  "port": "8001",
   "rootDir": "/Users/shasharoman/private/simple",
   "srcDir": "/Users/shasharoman/private/simple/src",
   "libDir": "/Users/shasharoman/private/simple/lib",
