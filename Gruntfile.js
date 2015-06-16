@@ -127,6 +127,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig(gruntConfig);
 
+    grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
