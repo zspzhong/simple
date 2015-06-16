@@ -1,5 +1,12 @@
 module.exports = function (grunt) {
     var gruntConfig = {
+        less: {
+            module: {
+                files: {
+                    "src/*/static/css/*.css": "src/*/static/css/*.less"
+                }
+            }
+        },
         cssmin: {
             global: {
                 files: {
@@ -125,7 +132,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask('default', ['cssmin', 'htmlmin', 'uglify']);
+    grunt.registerTask('default', ['less', 'cssmin', 'htmlmin', 'uglify']);
     grunt.registerTask('dev', ['copy']);
 };
 

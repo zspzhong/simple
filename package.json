@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "grunt": "*",
+    "grunt-contrib-less": "*",
     "grunt-contrib-cssmin": "*",
     "grunt-contrib-htmlmin": "*",
     "grunt-contrib-jshint": "*",
