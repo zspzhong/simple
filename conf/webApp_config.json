@@ -6,7 +6,8 @@
   "srcDir": "/root/simple/src",
   "libDir": "/root/simple/lib",
   "applicationList": [
-    "image"
+    "image",
+    "stock"
   ],
   "mysqlPool": {
     "connectionLimit": 10,

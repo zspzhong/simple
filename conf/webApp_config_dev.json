@@ -6,7 +6,8 @@
   "srcDir": "/Users/shasharoman/private/simple/src",
   "libDir": "/Users/shasharoman/private/simple/lib",
   "applicationList": [
-    "image"
+    "image",
+    "stock"
   ],
   "mysqlPool": {
     "connectionLimit": 10,

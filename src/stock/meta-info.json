@@ -1,0 +1,11 @@
+{
+  "serviceList": [
+    {
+      "name": "calculateProfit",
+      "path": "/stock/calculateProfit/:abc",
+      "realizeJs": "stock",
+      "functionName": "calculateProfit",
+      "method": "POST"
+    }
+  ]
+}
