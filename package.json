@@ -2,6 +2,7 @@
   "name": "catch",
   "version": "1.0.0",
   "dependencies": {
+    "express": "4.x",
     "async": "0.9.0",
     "lodash": "2.4.1",
     "request": "2.51.0",

@@ -5,7 +5,7 @@
       "path": "/stock/calculateProfit/:abc",
       "realizeJs": "stock",
       "functionName": "calculateProfit",
-      "method": "POST"
+      "method": "post"
     }
   ]
 }

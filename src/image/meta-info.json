@@ -5,7 +5,7 @@
       "path": "/image/randomUrl",
       "realizeJs": "image",
       "functionName": "randomUrl",
-      "method": "GET"
+      "method": "get"
     }
   ]
 }
