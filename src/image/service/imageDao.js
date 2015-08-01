@@ -6,7 +6,7 @@ exports.queryImageCount = queryImageCount;
 
 function queryImageUrl(start, count, callback) {
     var condition = {
-        limitCondition: [start, count]
+        limit: [start, count]
     };
 
     dataUtils.query('image_url', condition, ['image_url'], function (err, result) {

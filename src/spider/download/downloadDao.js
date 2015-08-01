@@ -10,7 +10,7 @@ function queryDownloadImage(count, callback) {
         download_status: 0,
         image_status: 1,
         download_error_status: 0,
-        limitCondition: [0, count]
+        limit: [0, count]
     };
 
     dataUtils.query('image_url', condition, ['id', 'image_url'], function (err, result) {

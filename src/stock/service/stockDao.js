@@ -5,9 +5,13 @@ exports.queryStock = queryStock;
 
 function queryStock(code, callback) {
     var condition = {
-        code_short: code
+        code_short: code,
+        orderBy: {
+            filed: 'date',
+            type: 'asc'
+        }
     };
-    var filedList = ['date', 'open', 'close', 'high', 'low', 'up_down', 'adjust_price'];
+    var filedList = ['date', 'open', 'adjust_price'];
 
     dataUtils.query('stock_day', condition, filedList, callback);
 }
