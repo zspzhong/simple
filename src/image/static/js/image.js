@@ -20,7 +20,12 @@ angular.module('image', []).controller('ImageController', function ($scope) {
                 return;
             }
 
-            callback(null, result);
+            if (result.code !== 0) {
+                callback(null, '');
+                return;
+            }
+
+            callback(null, result.result);
         });
     }
 

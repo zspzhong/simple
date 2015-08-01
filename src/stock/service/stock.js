@@ -1,5 +1,6 @@
 var logger = global.logger;
 var stockDao = require('./stockDao.js');
+var requestUtils = require(global['libDir'] + '/utils/requestUtils.js');
 
 exports.calculateProfit = calculateProfit;
 exports.followTrend = followTrend;
@@ -29,7 +30,7 @@ function calculateProfit(req, res, callback) {
             return;
         }
 
-        callback(null, profitInfo);
+        callback(null, _.extend(profitInfo, {code: code}));
     });
 
     function _queryStockInfo(callback) {
@@ -122,18 +123,20 @@ function followTrend(req, res, callback) {
     var code = req.params['stockCode'];
     var operateList = [];
     var stockDayList = [];
+
     var highInterval = 20;
     var lowInterval = 10;
 
-    async.series([_queryStock], function (err) {
+    var profitResult = {};
+
+    async.series([_queryStock, _calculateProfit], function (err) {
         if (err) {
             logger.error(err);
             callback(err);
             return;
         }
 
-        _findOperateTime();
-        callback(null, operateList);
+        callback(null, profitResult);
     });
 
     function _queryStock(callback) {
@@ -160,6 +163,22 @@ function followTrend(req, res, callback) {
                 });
             }
 
+            callback(null);
+        });
+    }
+
+    function _calculateProfit(callback) {
+        _findOperateTime();
+
+        var url = global.baseUrl + '/svc/stock/calculateProfit/' + code;
+
+        requestUtils.postResource(url, {operateList: operateList}, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            profitResult = result;
             callback(null);
         });
     }
