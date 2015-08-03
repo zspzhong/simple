@@ -9,12 +9,20 @@
       "comment": "根据买卖时间以及量计算收益"
     },
     {
+      "name": "followTrendOperateInfo",
+      "path": "/stock/followTrendOperateInfo/:stockCode",
+      "realizeJs": "stock",
+      "functionName": "followTrendOperateInfo",
+      "method": "get",
+      "comment": "使用趋势追踪获取股票买卖点"
+    },
+    {
       "name": "followTrend",
       "path": "/stock/followTrend/:stockCode",
       "realizeJs": "stock",
       "functionName": "followTrend",
       "method": "get",
-      "comment": "使用趋势追踪获取股票买卖点"
+      "comment": "使用趋势追踪获取股票买卖点并计算收益"
     }
   ]
 }

@@ -2,6 +2,7 @@ var stockDao = require('./stockDao.js');
 
 exports.calculateProfit = calculateProfit;
 exports.followTrend = followTrend;
+exports.followTrendOperateInfo = followTrendOperateInfo;
 
 exports.calculateProfitWithArgs = calculateProfitWithArgs;
 exports.followTrendWithArgs = followTrendWithArgs;
@@ -35,6 +36,18 @@ function followTrend(req, res, callback) {
     };
 
     followTrendWithArgs(args, callback);
+}
+
+function followTrendOperateInfo(req, res, callback) {
+    var args = {
+        stockCode: req.params.stockCode,
+        beginDate: req.params['beginDate'],
+        endDate: req.params['endDate'],
+        highInterval: 20,
+        lowInterval: 10
+    };
+
+    followTrendOperateInfoWithArgs(args, callback);
 }
 
 // 内部接收参数方法，可暴露给其他模块调用
@@ -75,7 +88,9 @@ function calculateProfitWithArgs(args, callback) {
 
         var firstCost = null;
 
-        _.each(operateList, function (item, index) {
+        _discardLatestBuy();
+
+        _.each(operateList, function (item) {
             var dayData = _.find(stockDayList, function (one) {
                 return +new Date(one.date) === +new Date(item.date);
             });
@@ -160,6 +175,51 @@ function calculateProfitWithArgs(args, callback) {
 
 function followTrendWithArgs(args, callback) {
     var stockCode = args.stockCode;
+    var operateList = [];
+
+    var profitResult = {};
+
+    async.series([_queryStockAndOperateTime, _calculateProfit], function (err) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        callback(null, profitResult);
+    });
+
+    function _queryStockAndOperateTime(callback) {
+        followTrendOperateInfoWithArgs(args, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            operateList = result;
+            callback(null);
+        });
+    }
+
+    function _calculateProfit(callback) {
+        var args = {
+            stockCode: stockCode,
+            operateList: operateList
+        };
+
+        calculateProfitWithArgs(args, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            profitResult = result;
+            callback(null);
+        });
+    }
+}
+
+function followTrendOperateInfoWithArgs(args, callback) {
+    var stockCode = args.stockCode;
     var startDate = args['startDate'];
     var endDate = args['endDate'];
     var highInterval = args['highInterval'] || 20;
@@ -167,15 +227,15 @@ function followTrendWithArgs(args, callback) {
 
     var operateList = [];
     var stockDayList = [];
-    var profitResult = {};
 
-    async.series([_queryStock, _calculateProfit], function (err) {
+    _queryStock(function (err) {
         if (err) {
             callback(err);
             return;
         }
 
-        callback(null, profitResult);
+        _findOperateTime();
+        callback(null, operateList);
     });
 
     function _queryStock(callback) {
@@ -199,25 +259,6 @@ function followTrendWithArgs(args, callback) {
                 });
             }
 
-            callback(null);
-        });
-    }
-
-    function _calculateProfit(callback) {
-        _findOperateTime();
-
-        var args = {
-            stockCode: stockCode,
-            operateList: operateList
-        };
-
-        calculateProfitWithArgs(args, function (err, result) {
-            if (err) {
-                callback(err);
-                return;
-            }
-
-            profitResult = result;
             callback(null);
         });
     }
