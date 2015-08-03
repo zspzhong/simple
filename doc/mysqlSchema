@@ -21,3 +21,42 @@ create table if not exists image_url (
     insert_time double not null,
     image_byte int(11) default 0
 );
+
+#stock_day
+CREATE TABLE if not exists `stock_day` (
+  `code` varchar(16) NOT NULL COMMENT '股票的代码，上证股票以sh开头，深证股票以sz开头',
+  `date` datetime DEFAULT NULL COMMENT '交易日期',
+  `open` double DEFAULT NULL COMMENT '开盘价',
+  `high` double DEFAULT NULL COMMENT '最高价',
+  `low` double DEFAULT NULL COMMENT '最低价',
+  `close` double DEFAULT NULL COMMENT '收盘价',
+  `up_down` double DEFAULT NULL COMMENT '涨跌幅，复权之后的真实涨跌幅',
+  `volume` double DEFAULT NULL COMMENT '成交量',
+  `money` double DEFAULT NULL COMMENT '成交额',
+  `traded_market_value` double DEFAULT NULL COMMENT '流通市值',
+  `market_value` double DEFAULT NULL COMMENT '总市值',
+  `turnover` double DEFAULT NULL COMMENT '换手率',
+  `adjust_price` double DEFAULT NULL COMMENT '后复权价',
+  `report_type` datetime DEFAULT NULL COMMENT '最近一期财务报告的类型，3-31对应一季报，6-30对应半年报，9-30对应三季报，12-31对应年报',
+  `report_date` datetime DEFAULT NULL COMMENT '最近一期财务报告实际发布的日期',
+  `PE_TIM` double DEFAULT NULL COMMENT '最近12个月市盈率，股价 / 最近12个月归属母公司的每股收益TTM',
+  `PS_TIM` double DEFAULT NULL COMMENT '最近12个月市销率， 股价 / 最近12个月每股营业收入',
+  `PC_TTM` double DEFAULT NULL COMMENT '最近12个月市现率， 股价 / 最近12个月每股经营现金流',
+  `PB` double DEFAULT NULL COMMENT '市净率，股价 / 最近期财报每股净资产',
+  `prefix` varchar(16) DEFAULT NULL,
+  KEY `index_code` (`code`),
+  KEY `index_code_short` (`prefix`)
+);
+
+#stock_follow_trend_profit
+create table if not exists stock_follow_trend_profit (
+    code varchar(16) primary key,
+    first_cost float,
+    years float,
+    profit float,
+    max_lose float,
+    annual_return float,
+    high_buy_interval int,
+    low_sale_interval int,
+    insert_time double
+);

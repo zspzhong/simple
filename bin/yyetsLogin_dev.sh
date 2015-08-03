@@ -1,1 +1,0 @@
-node ../lib/runScript.js -a yyetsLogin -d /Users/shasharoman/private/simple/src/tools/

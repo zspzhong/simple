@@ -5,7 +5,7 @@ exports.queryStock = queryStock;
 
 function queryStock(code, callback) {
     var condition = {
-        code_short: code,
+        code: code,
         orderBy: {
             filed: 'date',
             type: 'asc'

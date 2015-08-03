@@ -1,4 +1,3 @@
-var logger = global.logger;
 var stockDao = require('./stockDao.js');
 
 exports.calculateProfit = calculateProfit;
@@ -35,15 +34,7 @@ function followTrend(req, res, callback) {
         lowInterval: 10
     };
 
-    followTrendWithArgs(args, function (err, result) {
-        if (err) {
-            logger.error(err);
-            callback(err);
-            return;
-        }
-
-        callback(null, result);
-    });
+    followTrendWithArgs(args, callback);
 }
 
 // 内部接收参数方法，可暴露给其他模块调用
@@ -84,7 +75,7 @@ function calculateProfitWithArgs(args, callback) {
 
         var firstCost = null;
 
-        _.each(operateList, function (item) {
+        _.each(operateList, function (item, index) {
             var dayData = _.find(stockDayList, function (one) {
                 return +new Date(one.date) === +new Date(item.date);
             });
@@ -95,7 +86,7 @@ function calculateProfitWithArgs(args, callback) {
                 return false;
             }
 
-            if (item.type === 'buy' || item.type === 'b') {
+            if (isBuyOperate(item)) {
                 totalVolume += item.volume;
                 cost += dayData.open * item.volume * 100;
 
@@ -103,7 +94,7 @@ function calculateProfitWithArgs(args, callback) {
                     firstCost = cost;
                 }
             }
-            else if (item.type === 'sale' || item.type === 's') {
+            else if (isSaleOperate(item)) {
                 // 卖时的价格因为无法模拟派股，根据后复权价来推断是否有派股
                 var ratio = 1;
                 var salePrice = dayData.open;
@@ -144,6 +135,26 @@ function calculateProfitWithArgs(args, callback) {
         };
 
         callback(null);
+
+        // 丢弃最后一笔买操作
+        function _discardLatestBuy() {
+            if (_.isEmpty(operateList)) {
+                return;
+            }
+
+            var latestOperate = operateList.pop();
+            if (isSaleOperate(latestOperate)) {
+                operateList.push(latestOperate);
+            }
+        }
+    }
+
+    function isSaleOperate(operate) {
+        return _.isEmpty(operate) || operate.type === 'sale' || operate.type === 's';
+    }
+
+    function isBuyOperate(operate) {
+        return _.isEmpty(operate) || operate.type === 'buy' || operate.type === 's';
     }
 }
 

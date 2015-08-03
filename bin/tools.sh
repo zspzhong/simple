@@ -1,0 +1,1 @@
+nohup node /root/simple/lib/runScript.js -c /root/simple/conf/tools_config.json -a $1 -d /root/simple/src/tools/ 1>>/root/simple/logs/tools_access.log 2>>/root/simple/logs/tools_error.log &

@@ -1,0 +1,1 @@
+node /Users/shasharoman/private/simple/lib/runScript.js -c /Users/shasharoman/private/simple/conf/tools_config.json -a $1 -d /Users/shasharoman/private/simple/src/tools/

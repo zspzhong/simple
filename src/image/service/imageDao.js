@@ -22,7 +22,7 @@ function queryImageUrl(start, count, callback) {
 function queryImageCount(callback) {
     var sql = 'select count(image_url) as count from image_url;';
 
-    mysql.execSql(sql, {}, function (err, result) {
+    dataUtils.execSql(sql, {}, function (err, result) {
         if (err) {
             callback(err);
             return;

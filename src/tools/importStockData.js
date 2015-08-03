@@ -1,5 +1,5 @@
 var fs = require('fs');
-var mysql = require(global['libDir'] + '/dao/mysql.js');
+var dataUtils = require(global['libDir'] + '/dao/dataUtils.js');
 
 exports.run = run;
 
@@ -42,7 +42,7 @@ function run() {
                 filePath: '/Users/shasharoman/Downloads/stock/data/' + code + '.csv'
             };
 
-            mysql.execSql(sql, value, function (err) {
+            dataUtils.execSql(sql, value, function (err) {
                 if (err) {
                     callback(err);
                     return;
