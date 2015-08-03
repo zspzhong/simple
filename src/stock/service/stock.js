@@ -88,6 +88,9 @@ function calculateProfitWithArgs(args, callback) {
 
         var firstCost = null;
 
+        if (_.isEmpty(operateList)) {
+            return;
+        }
         _discardLatestBuy();
 
         _.each(operateList, function (item) {
@@ -153,10 +156,6 @@ function calculateProfitWithArgs(args, callback) {
 
         // 丢弃最后一笔买操作
         function _discardLatestBuy() {
-            if (_.isEmpty(operateList)) {
-                return;
-            }
-
             var latestOperate = operateList.pop();
             if (isSaleOperate(latestOperate)) {
                 operateList.push(latestOperate);
