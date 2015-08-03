@@ -1,13 +1,15 @@
 var logger = global.logger;
 var stockDao = require('./stockDao.js');
-var requestUtils = require(global['libDir'] + '/utils/requestUtils.js');
 
 exports.calculateProfit = calculateProfit;
 exports.followTrend = followTrend;
 
+exports.calculateProfitWithArgs = calculateProfitWithArgs;
+exports.followTrendWithArgs = followTrendWithArgs;
+
 // 根据买卖点以及量计算收益 [{date: x, type: 'sale' | 'buy', volume: y}]
 function calculateProfit(req, res, callback) {
-    var code = req.params['stockCode'];
+    var stockCode = req.params.stockCode;
     var operateList = req.body['operateList'] || [];
 
     if (_.isEmpty(operateList)) {
@@ -15,26 +17,53 @@ function calculateProfit(req, res, callback) {
         return;
     }
 
-    var stockDayList = [];
-    var profitInfo = {};
+    var args = {
+        stockCode: stockCode,
+        operateList: operateList
+    };
 
-    async.series([_queryStockInfo, _calculate], function (err) {
+    calculateProfitWithArgs(args, callback);
+}
+
+// 根据突破法进行买卖、20日最高时买进，10日最低时卖出
+function followTrend(req, res, callback) {
+    var args = {
+        stockCode: req.params.stockCode,
+        beginDate: req.params['beginDate'],
+        endDate: req.params['endDate'],
+        highInterval: 20,
+        lowInterval: 10
+    };
+
+    followTrendWithArgs(args, function (err, result) {
         if (err) {
-            if (err.isNormalError) {
-                callback(null, err.msg);
-                return;
-            }
-
             logger.error(err);
             callback(err);
             return;
         }
 
-        callback(null, _.extend(profitInfo, {stockCode: code}));
+        callback(null, result);
+    });
+}
+
+// 内部接收参数方法，可暴露给其他模块调用
+function calculateProfitWithArgs(args, callback) {
+    var stockCode = args.stockCode;
+    var operateList = args.operateList || [];
+    var stockDayList = [];
+    var profitInfo = {};
+
+    async.series([_queryStockInfo, _calculate], function (err) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        callback(null, _.extend(profitInfo, {stockCode: stockCode}));
     });
 
     function _queryStockInfo(callback) {
-        stockDao.queryStock(code, function (err, result) {
+        stockDao.queryStock(stockCode, function (err, result) {
             if (err) {
                 callback(err);
                 return;
@@ -62,7 +91,7 @@ function calculateProfit(req, res, callback) {
 
             // 无当日交易数据
             if (_.isEmpty(dayData)) {
-                callback({isNormalError: true, msg: code + '无当日交易数据，日期：' + item.date});
+                callback({msg: stockCode + '无当日交易数据，日期：' + item.date});
                 return false;
             }
 
@@ -118,20 +147,19 @@ function calculateProfit(req, res, callback) {
     }
 }
 
-// 根据突破法进行买卖、20日最高时买进，10日最低时卖出
-function followTrend(req, res, callback) {
-    var code = req.params['stockCode'];
+function followTrendWithArgs(args, callback) {
+    var stockCode = args.stockCode;
+    var startDate = args['startDate'];
+    var endDate = args['endDate'];
+    var highInterval = args['highInterval'] || 20;
+    var lowInterval = args['lowInterval'] || 10;
+
     var operateList = [];
     var stockDayList = [];
-
-    var highInterval = 20;
-    var lowInterval = 10;
-
     var profitResult = {};
 
     async.series([_queryStock, _calculateProfit], function (err) {
         if (err) {
-            logger.error(err);
             callback(err);
             return;
         }
@@ -140,10 +168,7 @@ function followTrend(req, res, callback) {
     });
 
     function _queryStock(callback) {
-        var startDate = req.param['startDate'];
-        var endDate = req.param['endDate'];
-
-        stockDao.queryStock(code, function (err, result) {
+        stockDao.queryStock(stockCode, function (err, result) {
             if (err) {
                 callback(err);
                 return;
@@ -170,9 +195,12 @@ function followTrend(req, res, callback) {
     function _calculateProfit(callback) {
         _findOperateTime();
 
-        var url = global.baseUrl + '/svc/stock/calculateProfit/' + code;
+        var args = {
+            stockCode: stockCode,
+            operateList: operateList
+        };
 
-        requestUtils.postResource(url, {operateList: operateList}, function (err, result) {
+        calculateProfitWithArgs(args, function (err, result) {
             if (err) {
                 callback(err);
                 return;
