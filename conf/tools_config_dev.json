@@ -1,9 +1,9 @@
 {
   "name": "tools",
-  "mode": "production",
-  "rootDir": "/root//simple",
-  "srcDir": "/root/simple/src",
-  "libDir": "/root/simple/lib",
+  "mode": "dev",
+  "rootDir": "/Users/shasharoman/private/simple",
+  "srcDir": "/Users/shasharoman/private/simple/src",
+  "libDir": "/Users/shasharoman/private/simple/lib",
   "mysqlPool": {
     "connectionLimit": 10,
     "host": "127.0.0.1",
