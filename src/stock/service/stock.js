@@ -30,7 +30,7 @@ function calculateProfit(req, res, callback) {
             return;
         }
 
-        callback(null, _.extend(profitInfo, {code: code}));
+        callback(null, _.extend(profitInfo, {stockCode: code}));
     });
 
     function _queryStockInfo(callback) {
