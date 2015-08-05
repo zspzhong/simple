@@ -50,13 +50,33 @@ CREATE TABLE if not exists `stock_day` (
 
 #stock_follow_trend_profit
 create table if not exists stock_follow_trend_profit (
-    code varchar(16) primary key,
+    code varchar(16),
+    min_begin_date datetime,
+    max_end_date datetime,
+    high_buy_interval int,
+    low_sale_interval int,
     first_cost float,
     years float,
     profit float,
     max_lose float,
     annual_return float,
+    insert_time double,
+    primary key (code, min_begin_date, max_end_date, high_buy_interval, low_sale_interval)
+);
+
+#stock_follow_trend_statistic
+create table if not exists stock_follow_trend_statistic (
+    year_scope varchar(32),
+    min_begin_date datetime,
+    max_end_date datetime,
     high_buy_interval int,
     low_sale_interval int,
-    insert_time double
+    code_counts int,
+    avg_years float,
+    avg_max_lose float,
+    avg_first_cost float,
+    avg_profit float,
+    avg_annual_return float,
+    insert_time double,
+    primary key (year_scope, min_begin_date, max_end_date, high_buy_interval, low_sale_interval)
 );

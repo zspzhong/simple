@@ -88,10 +88,11 @@ function calculateProfitWithArgs(args, callback) {
 
         var firstCost = null;
 
+        _discardLatestBuy();
         if (_.isEmpty(operateList)) {
+            callback(null);
             return;
         }
-        _discardLatestBuy();
 
         _.each(operateList, function (item) {
             var dayData = _.find(stockDayList, function (one) {
@@ -164,11 +165,11 @@ function calculateProfitWithArgs(args, callback) {
     }
 
     function isSaleOperate(operate) {
-        return _.isEmpty(operate) || operate.type === 'sale' || operate.type === 's';
+        return !_.isEmpty(operate) && (operate.type === 'sale' || operate.type === 's');
     }
 
     function isBuyOperate(operate) {
-        return _.isEmpty(operate) || operate.type === 'buy' || operate.type === 's';
+        return !_.isEmpty(operate) && (operate.type === 'buy' || operate.type === 's');
     }
 }
 
@@ -219,10 +220,10 @@ function followTrendWithArgs(args, callback) {
 
 function followTrendOperateInfoWithArgs(args, callback) {
     var stockCode = args.stockCode;
-    var beginDate = args['beginDate'];
-    var endDate = args['endDate'];
-    var highInterval = args['highInterval'] || 20;
-    var lowInterval = args['lowInterval'] || 10;
+    var beginDate = args.beginDate;
+    var endDate = args.endDate;
+    var highInterval = args.highInterval || 20;
+    var lowInterval = args.lowInterval || 10;
 
     var operateList = [];
     var stockDayList = [];
