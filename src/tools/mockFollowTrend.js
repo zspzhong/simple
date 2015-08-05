@@ -8,22 +8,39 @@ exports.run = run;
 function run() {
     logger.info('start');
 
-    var minBeginDate = new Date('2000-1-1').getTime();
-    var maxEndDate = new Date('2014-1-1').getTime();
-    var highInterval = 20;
-    var lowInterval = 10;
+    var list = [];
+    var firstBegin = 1992;
+    var lastBegin = 2004;
 
-    var codeList = [];
+    _.times(lastBegin - firstBegin, function (item) {
+        list.push({
+            minBeginDate: new Date(firstBegin + item, 0, 1).getTime(),
+            maxEndDate: new Date(firstBegin + item + 10, 0, 1).getTime(),
+            highInterval: 20,
+            lowInterval: 10
+        });
+    });
 
-    async.series([_codeCollection, _calculate, _statistic], function (err) {
+    async.eachSeries(list, calculateWithArgs, function (err) {
         if (err) {
             logger.error(err);
             process.exit(1);
             return;
         }
-
+        logger.info('done');
         process.exit(0);
     });
+}
+
+function calculateWithArgs(args, callback) {
+    var minBeginDate = args.minBeginDate;
+    var maxEndDate = args.maxEndDate;
+    var highInterval = args.highInterval;
+    var lowInterval = args.lowInterval;
+
+    var codeList = [];
+
+    async.series([_codeCollection, _calculate, _statistic], callback);
 
     function _codeCollection(callback) {
         var sql = 'select a.code, a.date as firstDate' +
@@ -51,10 +68,7 @@ function run() {
     }
 
     function _calculate(callback) {
-        async.eachLimit(codeList, 10, _calculateOne, function (err) {
-            console.log('calculate done.');
-            callback(err);
-        });
+        async.eachLimit(codeList, 10, _calculateOne, callback);
 
         function _calculateOne(item, callback) {
             var profit = {};
@@ -102,8 +116,6 @@ function run() {
     }
 
     function _statistic(callback) {
-        console.log('start statistic.');
-
         var statisticResult = [];
 
         async.series([_doStatistic, _save], callback);
