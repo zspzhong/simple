@@ -29,8 +29,8 @@ function calculateProfit(req, res, callback) {
 function followTrend(req, res, callback) {
     var args = {
         stockCode: req.params.stockCode,
-        beginDate: req.params['beginDate'],
-        endDate: req.params['endDate'],
+        beginDate: req.query.beginDate,
+        endDate: req.query.endDate,
         highInterval: 20,
         lowInterval: 10
     };
@@ -41,8 +41,8 @@ function followTrend(req, res, callback) {
 function followTrendOperateInfo(req, res, callback) {
     var args = {
         stockCode: req.params.stockCode,
-        beginDate: req.params['beginDate'],
-        endDate: req.params['endDate'],
+        beginDate: req.query.beginDate,
+        endDate: req.query.endDate,
         highInterval: 20,
         lowInterval: 10
     };
@@ -142,7 +142,7 @@ function calculateProfitWithArgs(args, callback) {
         var years = (end - begin) / (86400000 * 365);
 
         var ratio = allProfit / maxCost;
-        var annualReturn = Math.pow(Math.E, Math.log(Math.abs(ratio)) / years) - 1;
+        var annualReturn = Math.pow(Math.E, Math.log(Math.abs(ratio + 1)) / years) - 1;
 
         profitInfo = {
             years: years,
@@ -219,7 +219,7 @@ function followTrendWithArgs(args, callback) {
 
 function followTrendOperateInfoWithArgs(args, callback) {
     var stockCode = args.stockCode;
-    var startDate = args['startDate'];
+    var beginDate = args['beginDate'];
     var endDate = args['endDate'];
     var highInterval = args['highInterval'] || 20;
     var lowInterval = args['lowInterval'] || 10;
@@ -246,9 +246,9 @@ function followTrendOperateInfoWithArgs(args, callback) {
 
             stockDayList = result;
 
-            if (!_.isUndefined(startDate)) {
+            if (!_.isUndefined(beginDate)) {
                 stockDayList = _.filter(stockDayList, function (item) {
-                    return new Date(item.date).getTime() >= startDate;
+                    return new Date(item.date).getTime() >= beginDate;
                 });
             }
 
