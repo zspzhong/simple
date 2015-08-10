@@ -1,7 +1,6 @@
 exports.run = run;
 
 var request = require('request');
-var async = require('async');
 var logger = global.logger;
 
 var users = [

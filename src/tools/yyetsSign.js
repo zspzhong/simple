@@ -1,12 +1,9 @@
 exports.run = run;
 
+var logger = global.logger;
 var request = require('request');
 var jar = request.jar();
-
 request = request.defaults({jar: jar});
-
-var async = require('async');
-var logger = global.logger;
 
 var users = [
     {
