@@ -4,6 +4,7 @@ exports.run = run;
 
 function run() {
     mailUtils.sendMail({
+        to: '574370696@qq.com',
         text: 'hello world!'
     }, function (err) {
         if (err) {
