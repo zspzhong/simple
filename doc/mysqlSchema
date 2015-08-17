@@ -60,7 +60,6 @@ create table if not exists stock_follow_trend_profit (
     profit float,
     max_lose float,
     annual_return float,
-    insert_time double,
     primary key (code, min_begin_date, max_end_date, high_buy_interval, low_sale_interval)
 );
 
@@ -77,6 +76,24 @@ create table if not exists stock_follow_trend_statistic (
     avg_first_cost float,
     avg_profit float,
     avg_annual_return float,
-    insert_time double,
     primary key (year_scope, min_begin_date, max_end_date, high_buy_interval, low_sale_interval)
+);
+
+#stock_code_pool
+create table if not exists stock_code_pool (
+    code varchar(16) primary key,
+    prefix varchar(8) COMMENT 'sh | sz',
+    hold_state int default 0
+);
+
+#stock_following
+create table if not exists stock_following (
+    code varchar(16),
+    date datetime,
+    open float,
+    close float,
+    high float,
+    low float,
+    up_down float,
+    volume float
 );

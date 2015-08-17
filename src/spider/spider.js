@@ -127,7 +127,8 @@ function spiderOne(url, callback) {
                 init_url: global['initUrl'],
                 source_url: url,
                 spider_status: 0,
-                image_count: imageList.length
+                image_count: imageList.length,
+                insert_time: new Date().getTime()
             });
         });
 
@@ -149,7 +150,8 @@ function spiderOne(url, callback) {
                 init_url: global['initUrl'],
                 source_url: url,
                 download_status: 0,
-                image_status: 1
+                image_status: 1,
+                insert_time: new Date().getTime()
             });
         });
 
