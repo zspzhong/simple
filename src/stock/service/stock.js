@@ -55,7 +55,14 @@ function addStock2Pool(req, res, callback) {
     var stockCode = req.params.stockCode;
     var prefix = '';
 
-    async.series([_queryPrefix, _save2Pool], callback);
+    async.series([_queryPrefix, _save2Pool], function (err) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        callback(null);
+    });
 
     function _queryPrefix(callback) {
         stockDao.queryCodePrefix(stockCode, function (err, result) {
