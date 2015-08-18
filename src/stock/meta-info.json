@@ -23,6 +23,14 @@
       "functionName": "followTrend",
       "method": "get",
       "comment": "使用趋势追踪获取股票买卖点并计算收益"
+    },
+    {
+      "name": "addStock2Pool",
+      "path": "/stock/addStock2Pool/:stockCode",
+      "realizeJs": "stock",
+      "functionName": "addStock2Pool",
+      "method": "get",
+      "comment": "添加股票到自选之中"
     }
   ]
 }

@@ -6,6 +6,7 @@ exports.followTrendOperateInfo = followTrendOperateInfo;
 
 exports.calculateProfitWithArgs = calculateProfitWithArgs;
 exports.followTrendWithArgs = followTrendWithArgs;
+exports.addStock2Pool = addStock2Pool;
 
 // 根据买卖点以及量计算收益 [{date: x, type: 'sale' | 'buy', volume: y}]
 function calculateProfit(req, res, callback) {
@@ -48,6 +49,35 @@ function followTrendOperateInfo(req, res, callback) {
     };
 
     followTrendOperateInfoWithArgs(args, callback);
+}
+
+function addStock2Pool(req, res, callback) {
+    var stockCode = req.params.stockCode;
+    var prefix = '';
+
+    async.series([_queryPrefix, _save2Pool], callback);
+
+    function _queryPrefix(callback) {
+        stockDao.queryCodePrefix(stockCode, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            prefix = result;
+            callback(null);
+        });
+    }
+
+    function _save2Pool(callback) {
+        var model = {
+            code: stockCode,
+            prefix: prefix,
+            hold_state: 0
+        };
+
+        stockDao.addStock2Pool(model, callback);
+    }
 }
 
 // 内部接收参数方法，可暴露给其他模块调用

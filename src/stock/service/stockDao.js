@@ -7,6 +7,8 @@ exports.queryCodePool = queryCodePool;
 exports.queryStockHistoryPrice = queryStockHistoryPrice;
 exports.queryStockPriceFromSina = queryStockPriceFromSina;
 exports.addDayFollowingInfo = addDayFollowingInfo;
+exports.queryCodePrefix = queryCodePrefix;
+exports.addStock2Pool = addStock2Pool;
 
 function queryStock(code, callback) {
     var condition = {
@@ -96,4 +98,29 @@ function queryStockPriceFromSina(codeList, callback) {
 
 function addDayFollowingInfo(list, callback) {
     dataUtils.list2DB('stock_following', list, callback);
+}
+
+function queryCodePrefix(code, callback) {
+    var condition = {
+        code: code,
+        limit: [0, 1]
+    };
+
+    dataUtils.query('stock_day', condition, ['prefix'], function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        if (_.isEmpty(result)) {
+            callback(null, '');
+            return;
+        }
+
+        callback(null, result[0].prefix);
+    });
+}
+
+function addStock2Pool(model, callback) {
+    dataUtils.obj2DB('stock_code_pool', model, callback);
 }
