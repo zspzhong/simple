@@ -1,4 +1,4 @@
-var stockDao = require('../stock/service/stockDao.js');
+var stockDao = require('service/stockDao.js');
 var logger = global.logger;
 
 exports.run = run;
@@ -98,6 +98,8 @@ function run() {
         var currentHoldReachLimit = _currentHoldReachLimit();
         var operateList = _operateList();
 
+        console.log(beyondLimit);
+        console.log(currentHoldReachLimit);
         console.log(operateList);
 
         callback(null);
