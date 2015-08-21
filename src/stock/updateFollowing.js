@@ -27,6 +27,13 @@ function run() {
     function _isAllowTrade(callback) {
         // todo 判断是否开盘，不开盘则终止后续操作
         var isAllowTrade = true;
+
+        var week = new Date().getDay();
+
+        if (week === 6 || week === 7) {
+            isAllowTrade = false;
+        }
+
         if (!isAllowTrade) {
             process.exit(0);
             return;
