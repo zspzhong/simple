@@ -28,7 +28,7 @@ function run() {
         var isAllowTrade = true;
 
         var week = new Date().getDay();
-        if (week === 6 || week === 7) {
+        if (week === 6 || week === 0) {
             isAllowTrade = false;
         }
 
