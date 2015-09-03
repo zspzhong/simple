@@ -39,7 +39,7 @@ function queryStockHistoryHighAndLowPrice(codeList, args, callback) {
 
     var sql = 'select a.code, a.lowIntervalMinPrice, b.highIntervalMaxPrice' +
         ' from (select a.code, min(a.close) as lowIntervalMinPrice from (select code, close from stock_following where code in ' + inCondition.inSql + ' order by date desc limit :lowLimit) as a group by a.code) as a' +
-        ' (select a.code, max(a.close) as highIntervalMaxPrice from (select code, close from stock_following where code in ' + inCondition.inSql + ' order by date desc limit :highLimit) as a group by a.code) as b' +
+        ' ,(select a.code, max(a.close) as highIntervalMaxPrice from (select code, close from stock_following where code in ' + inCondition.inSql + ' order by date desc limit :highLimit) as a group by a.code) as b' +
         ' where a.code = b.code;';
 
     var limitCondition = {
@@ -86,7 +86,7 @@ function queryStockPriceFromSina(codeList, callback) {
         _.each(codeList, function (code) {
             var currentInfo = eval('hq_str_' + code).split(',');
 
-            code2CurrentPrice[code] = {
+            code2CurrentPrice[code.substring(2)] = {
                 code: code.substring(2),
                 name: currentInfo[0],
                 date: new Date(),
@@ -143,7 +143,6 @@ function queryCodeWithoutEnoughData(dayLeast, callback) {
             return;
         }
 
-        callback(null, result);
+        callback(null, _.pluck(result, 'code'));
     });
-
 }

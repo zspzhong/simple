@@ -1,1 +1,0 @@
-nohup node ../lib/runScript.js -c ../conf/spider_config.json -a spider -d /root/simple/src/spider/ 1>../logs/spider-access.log 2>../logs/spider-error.log &

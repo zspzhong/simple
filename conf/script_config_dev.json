@@ -11,5 +11,9 @@
     "password": " ",
     "database": "simple",
     "insecureAuth": true
-  }
+  },
+  "urlWhiteList": [
+    "huaban.com"
+  ],
+  "initUrl": "http://huaban.com"
 }

@@ -1,7 +1,7 @@
 {
   "name": "tools",
   "mode": "production",
-  "rootDir": "/root//simple",
+  "rootDir": "/root/simple",
   "srcDir": "/root/simple/src",
   "libDir": "/root/simple/lib",
   "mysqlPool": {
@@ -11,5 +11,9 @@
     "password": " ",
     "database": "simple",
     "insecureAuth": true
-  }
+  },
+  "urlWhiteList": [
+    "500px.com"
+  ],
+  "initUrl": "https://500px.com/popular"
 }

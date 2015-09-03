@@ -1,5 +1,6 @@
-var stockDao = require('service/stockDao.js');
+var stockDao = require('./service/stockDao.js');
 var logger = global.logger;
+var mailUtils = require(global['libDir'] + '/utils/mailUtils.js');
 
 exports.run = run;
 
@@ -61,13 +62,18 @@ function run() {
             }
 
             stockPoolList = _.filter(stockPoolList, function (item) {
-                return !_.includes(result, item.code);
+                return !_.contains(result, item.code);
             });
             callback(null);
         });
     }
 
     function _queryHistoryHighAndLowPrice(callback) {
+        if (_.isEmpty(stockPoolList)) {
+            callback(null);
+            return;
+        }
+
         var codeList = _.pluck(stockPoolList, 'code');
 
         var args = {
@@ -87,6 +93,11 @@ function run() {
     }
 
     function _queryCurrentPrice(callback) {
+        if (_.isEmpty(stockPoolList)) {
+            callback(null);
+            return;
+        }
+
         var codeList = _.map(stockPoolList, function (item) {
             return item.prefix + item.code;
         });
@@ -119,11 +130,52 @@ function run() {
         var currentHoldReachLimit = _currentHoldReachLimit();
         var operateList = _operateList();
 
-        console.log(beyondLimit);
-        console.log(currentHoldReachLimit);
-        console.log(operateList);
+        var mailText = _buildMailText();
+        if (_.isEmpty(mailText)) {
+            callback(null);
+            return;
+        }
 
-        callback(null);
+        logger.info('邮件信息：' + mailText);
+        mailUtils.sendMail({text: mailText}, callback);
+
+        function _buildMailText() {
+            var mailText = '';
+            _.each(errorMsgList, function (item, index) {
+                if (index === 0) {
+                    mailText += '错误信息：\n\n';
+                }
+
+                mailText += item + '\n';
+            });
+
+
+            _.each(beyondLimit, function (item, index) {
+                if (index === 0) {
+                    mailText += '除权除息信息：\n\n';
+                }
+
+                mailText += item.name + '(' + item.code + ')------' + item.price + '(' + item.ratio + ')\n';
+            });
+
+            _.each(currentHoldReachLimit, function (item, index) {
+                if (index === 0) {
+                    mailText += '涨停跌停信息：\n\n';
+                }
+
+                mailText += item.name + '(' + item.code + ')------' + item.price + '(' + item.ratio + ')\n';
+            });
+
+            _.each(operateList, function (item, index) {
+                if (index === 0) {
+                    mailText += '操作指导：\n\n';
+                }
+
+                mailText += item.name + '(' + item.code + ')------' + item.price + '(' + item.operate + ')\n';
+            });
+
+            return mailText;
+        }
     }
 
     // 由于除权除息，开盘价跌幅超过10%
@@ -140,6 +192,7 @@ function run() {
             beyondLimitList.push({
                 code: code,
                 name: priceInfo.name,
+                price: priceInfo.close,
                 ratio: ratio
             });
         });
@@ -172,6 +225,7 @@ function run() {
             currentHoldReachLimit.push({
                 code: code,
                 name: priceInfo.name,
+                price: priceInfo.close,
                 ratio: ratio
             });
         });
@@ -198,7 +252,7 @@ function run() {
         return operateList;
 
         function _pickBuy(priceInfo, code) {
-            if (priceInfo.currentPrice - priceInfo['highIntervalMaxPrice'] > 0.01) {
+            if (priceInfo.currentPrice - priceInfo['highIntervalMaxPrice'] < 0) {
                 return;
             }
 
@@ -211,7 +265,7 @@ function run() {
         }
 
         function _pickSale(priceInfo, code) {
-            if (priceInfo.currentPrice - priceInfo['lowIntervalMinPrice'] < -0.01) {
+            if (priceInfo.currentPrice - priceInfo['lowIntervalMinPrice'] > 0) {
                 return;
             }
 
