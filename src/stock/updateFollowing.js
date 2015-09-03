@@ -13,8 +13,9 @@ function run() {
 
     var stockPoolList = [];
     var followingStockPriceList = [];
+    var beforeRehabilitationList = [];
 
-    async.series([_isAllowTrade, _queryCodePool, _queryCurrentDayInfo, _saveDayInfo], function (err) {
+    async.series([_isAllowTrade, _queryCodePool, _queryCurrentDayInfo, _saveDayInfo, _sendMail], function (err) {
         if (err) {
             logger.error(err);
             mailUtils.errorNotification(err);
@@ -67,6 +68,21 @@ function run() {
                 return item.isCurrentDate;
             });
 
+
+            _.each(result, function (item) {
+                if ((item.open - item.yesterdayClosePrice) / item.yesterdayClosePrice > -0.1) {
+                    return;
+                }
+
+                // 当天开盘价格低于前天收盘价10个点
+                beforeRehabilitationList.push({
+                    name: item.name,
+                    code: item.code,
+                    price: item.price,
+                    ratio: item.up_down
+                });
+            });
+
             _.each(result, function (item) {
                 delete item.name;
                 delete item.yesterdayClosePrice;
@@ -80,5 +96,20 @@ function run() {
 
     function _saveDayInfo(callback) {
         stockDao.addDayFollowingInfo(followingStockPriceList, callback);
+    }
+
+    function _sendMail(callback) {
+        if (_.isEmpty(beforeRehabilitationList)) {
+            callback(null);
+            return;
+        }
+
+        var mailText = '除权除息：\n';
+
+        _.each(beforeRehabilitationList, function (item) {
+            mailText += item.name + '(' + item.code + ')------' + item.price + '(' + item.ratio + ')\n';
+        });
+
+        mailUtils.sendMail({text: mailText}, callback);
     }
 }

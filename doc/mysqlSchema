@@ -95,5 +95,6 @@ create table if not exists stock_following (
     high float,
     low float,
     up_down float,
-    volume float
+    volume float,
+    before_rehabilitation float
 );

@@ -38,8 +38,8 @@ function queryStockHistoryHighAndLowPrice(codeList, args, callback) {
     var inCondition = dataUtils.buildInCondition(codeList);
 
     var sql = 'select a.code, a.lowIntervalMinPrice, b.highIntervalMaxPrice' +
-        ' from (select a.code, min(a.close) as lowIntervalMinPrice from (select code, close from stock_following where code in ' + inCondition.inSql + ' order by date desc limit :lowLimit) as a group by a.code) as a' +
-        ' ,(select a.code, max(a.close) as highIntervalMaxPrice from (select code, close from stock_following where code in ' + inCondition.inSql + ' order by date desc limit :highLimit) as a group by a.code) as b' +
+        ' from (select a.code, min(a.before_rehabilitation) as lowIntervalMinPrice from (select code, before_rehabilitation from stock_following where code in ' + inCondition.inSql + ' order by date desc limit :lowLimit) as a group by a.code) as a' +
+        ' ,(select a.code, max(a.before_rehabilitation) as highIntervalMaxPrice from (select code, before_rehabilitation from stock_following where code in ' + inCondition.inSql + ' order by date desc limit :highLimit) as a group by a.code) as b' +
         ' where a.code = b.code;';
 
     var limitCondition = {
@@ -97,6 +97,7 @@ function queryStockPriceFromSina(codeList, callback) {
                 low: currentInfo[5],
                 volume: currentInfo[8],
                 up_down: (currentInfo[3] - currentInfo[2]) / currentInfo[2],
+                before_rehabilitation: currentInfo[1],
                 isCurrentDate: new Date(currentInfo[30]).getDate() === new Date().getDate()
             };
         });
