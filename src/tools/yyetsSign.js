@@ -19,7 +19,7 @@ var users = [
 function run() {
     async.mapSeries(users, signOne, function (err) {
         if (err) {
-            logger.info(err);
+            logger.error(err);
         }
     });
 }
@@ -88,7 +88,7 @@ function signOne(user, callback) {
                     return;
                 }
 
-                logger.info(body);
+                //logger.info(body);
                 callback(null);
             });
         }
