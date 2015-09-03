@@ -10,10 +10,10 @@ function run() {
     var errorMsgList = [];
 
     var stockPoolList = [];
-    var code2PriceList = {};
+    var code2LowAndHighPrice = {};
     var code2CurrentPrice = {};
 
-    async.series([_isAllowTrade, _queryCodePool, _queryHistoryPrice, _queryCurrentPrice, _sendEmail], function (err) {
+    async.series([_isAllowTrade, _queryCodePool, _filterCodeWithoutEnoughData, _queryHistoryHighAndLowPrice, _queryCurrentPrice, _sendEmail], function (err) {
         if (err) {
             logger.error(err);
             process.exit(1);
@@ -24,7 +24,7 @@ function run() {
     });
 
     function _isAllowTrade(callback) {
-        // todo 判断是否开盘，不开盘则终止后续操作
+        // 判断是否开盘，不开盘则终止后续操作
         var isAllowTrade = true;
 
         var week = new Date().getDay();
@@ -52,16 +52,36 @@ function run() {
         });
     }
 
-    function _queryHistoryPrice(callback) {
-        var codeList = _.pluck(stockPoolList, 'code');
-
-        stockDao.queryStockHistoryPrice(codeList, highBuyInterval, function (err, result) {
+    // 过滤数据不够判断的股票
+    function _filterCodeWithoutEnoughData(callback) {
+        stockDao.queryCodeWithoutEnoughData(highBuyInterval, function (err, result) {
             if (err) {
                 callback(err);
                 return;
             }
 
-            code2PriceList = result;
+            stockPoolList = _.filter(stockPoolList, function (item) {
+                return !_.includes(result, item.code);
+            });
+            callback(null);
+        });
+    }
+
+    function _queryHistoryHighAndLowPrice(callback) {
+        var codeList = _.pluck(stockPoolList, 'code');
+
+        var args = {
+            highBuyInterval: highBuyInterval,
+            lowSaleInterval: lowSaleInterval
+        };
+
+        stockDao.queryStockHistoryHighAndLowPrice(codeList, args, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            code2LowAndHighPrice = result;
             callback(null);
         });
     }
@@ -79,20 +99,15 @@ function run() {
 
             code2CurrentPrice = result;
 
-            _.each(code2PriceList, function (priceList, code) {
+            _.each(code2LowAndHighPrice, function (priceInfo, code) {
                 var currentPriceInfo = code2CurrentPrice[code];
 
                 if (_.isEmpty(currentPriceInfo)) {
                     return;
                 }
 
-                priceList.push({
-                    price: currentPriceInfo.close,
-                    date: new Date()
-                });
-
-                priceList.name = currentPriceInfo.name;
-                priceList.currentPrice = currentPriceInfo.close;
+                priceInfo.name = currentPriceInfo.name;
+                priceInfo.currentPrice = currentPriceInfo.close;
             });
 
             callback(null);
@@ -171,51 +186,41 @@ function run() {
             return item['hold_state'] === 1;
         }), 'code');
 
-        _.each(code2PriceList, function (priceList, code) {
+        _.each(code2LowAndHighPrice, function (priceInfo, code) {
             if (_.contains(currentHoldCodeList, code)) {
-                _pickSale(priceList, code);
+                _pickSale(priceInfo, code);
                 return;
             }
 
-            _pickBuy(priceList, code);
+            _pickBuy(priceInfo, code);
         });
 
         return operateList;
 
-        function _pickBuy(priceList, code) {
-            var maxPrice = _.max(priceList, function (item) {
-                return item.price;
-            });
-
-            if (Math.abs(priceList.currentPrice - maxPrice) < 0.01) {
-                operateList.push({
-                    code: code,
-                    name: priceList.name,
-                    price: priceList.currentPrice,
-                    operate: 'buy'
-                });
+        function _pickBuy(priceInfo, code) {
+            if (priceInfo.currentPrice - priceInfo['highIntervalMaxPrice'] > 0.01) {
+                return;
             }
+
+            operateList.push({
+                code: code,
+                name: priceInfo.name,
+                price: priceInfo.currentPrice,
+                operate: 'buy'
+            });
         }
 
-        function _pickSale(priceList, code) {
-            var sortByDate = _.sortBy(priceList, function (item) {
-                return -new Date(item.date).getTime();
-            });
-
-            var lowIntervalList = sortByDate.splice(0, lowSaleInterval);
-
-            var minPrice = _.min(lowIntervalList, function (item) {
-                return item.price;
-            });
-
-            if (Math.abs(priceList.currentPrice - minPrice) < 0.01) {
-                operateList.push({
-                    code: code,
-                    name: priceList.name,
-                    price: priceList.currentPrice,
-                    operate: 'sale'
-                });
+        function _pickSale(priceInfo, code) {
+            if (priceInfo.currentPrice - priceInfo['lowIntervalMinPrice'] < -0.01) {
+                return;
             }
+
+            operateList.push({
+                code: code,
+                name: priceInfo.name,
+                price: priceInfo.currentPrice,
+                operate: 'sale'
+            });
         }
     }
 }
