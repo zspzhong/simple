@@ -10,6 +10,7 @@ exports.addDayFollowingInfo = addDayFollowingInfo;
 exports.queryCodePrefix = queryCodePrefix;
 exports.addStock2Pool = addStock2Pool;
 exports.queryCodeWithoutEnoughData = queryCodeWithoutEnoughData;
+exports.addTrendHistory = addTrendHistory;
 
 function queryStock(code, callback) {
     var condition = {
@@ -146,4 +147,8 @@ function queryCodeWithoutEnoughData(dayLeast, callback) {
 
         callback(null, _.pluck(result, 'code'));
     });
+}
+
+function addTrendHistory(history, callback) {
+    dataUtils.obj2DB('stock_trend_history', history, callback);
 }

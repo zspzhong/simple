@@ -98,3 +98,12 @@ create table if not exists stock_following (
     volume float,
     before_rehabilitation float
 );
+
+#stock_trend_history
+create table if not exists stock_trend_history (
+    code varchar(16),
+    date datetime,
+    price float,
+    volume float,
+    type varchar(16) comment 'buy|sale'
+);

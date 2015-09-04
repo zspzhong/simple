@@ -31,6 +31,14 @@
       "functionName": "addStock2Pool",
       "method": "get",
       "comment": "添加股票到自选之中"
+    },
+    {
+      "name": "addTrendHistory",
+      "path": "/stock/addTrendHistory/:stockCode",
+      "realizeJs": "stock",
+      "functionName": "addTrendHistory",
+      "method": "get",
+      "comment": "记录股票交易记录"
     }
   ]
 }

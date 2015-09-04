@@ -10,6 +10,8 @@
  
  * 添加股票到自选之中(get): **/stock/addStock2Pool/:stockCode**
 
+ * 记录股票成交记录(get): **/stock/addTrendHistory/:stockCode**
+
 
 ##image
  * 获取随机图片的url(get): **/image/randomUrl**
