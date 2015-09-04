@@ -107,7 +107,7 @@ function addTrendHistory(req, res, callback) {
         type: type
     };
 
-    stockDao.addTrendHistory(model, function (err) {
+    async.series([_updateCurrentHold, _addTrendHistory], function (err) {
         if (err) {
             logger.error(err);
             callback(null, '保存失败');
@@ -116,6 +116,14 @@ function addTrendHistory(req, res, callback) {
 
         callback(null);
     });
+
+    function _updateCurrentHold(callback) {
+        stockDao.addOrUpdateStockHold(model, callback);
+    }
+
+    function _addTrendHistory(callback) {
+        stockDao.addTrendHistory(model, callback);
+    }
 }
 
 // 内部接收参数方法，可暴露给其他模块调用

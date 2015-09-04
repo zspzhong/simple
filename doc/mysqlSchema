@@ -107,3 +107,10 @@ create table if not exists stock_trend_history (
     volume float,
     type varchar(16) comment 'buy|sale'
 );
+
+#stock_current_hold
+create table if not exists stock_current_hold (
+    code varchar(16),
+    cost_price float,
+    volume float
+);

@@ -11,6 +11,7 @@ exports.queryCodePrefix = queryCodePrefix;
 exports.addStock2Pool = addStock2Pool;
 exports.queryCodeWithoutEnoughData = queryCodeWithoutEnoughData;
 exports.addTrendHistory = addTrendHistory;
+exports.addOrUpdateStockHold = addOrUpdateStockHold;
 
 function queryStock(code, callback) {
     var condition = {
@@ -151,4 +152,71 @@ function queryCodeWithoutEnoughData(dayLeast, callback) {
 
 function addTrendHistory(history, callback) {
     dataUtils.obj2DB('stock_trend_history', history, callback);
+}
+
+function addOrUpdateStockHold(model, callback) {
+    var code = model.code;
+
+    var isHolding = true;
+    var holdInfo = {};
+
+    async.series([_queryIsHolding, _addOrUpdate], callback);
+
+    function _queryIsHolding(callback) {
+        var sql = 'select * from stock_current_hold where code = :code;';
+
+        dataUtils.execSql(sql, {code: code}, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            if (!_.isEmpty(result)) {
+                holdInfo = result[0];
+            }
+
+            isHolding = !_.isEmpty(result);
+            callback(null);
+        });
+    }
+
+    function _addOrUpdate(callback) {
+        if (!isHolding) {
+            var holdModel = {
+                code: model.code,
+                cost_price: model.price,
+                volume: model.volume
+            };
+
+            dataUtils.obj2DB('stock_current_hold', holdModel, callback);
+            return;
+        }
+
+        async.series([_update, _deleteNoVolumeHold], callback);
+
+        function _update(callback) {
+            var volumeDelta = (model.type === 'sale' ? -1 : 1) * model.volume;
+            var costDelta = model.price * volumeDelta;
+            var remainingVolume = model.volume + volumeDelta;
+            var newCostPrice = 0;
+
+            if (remainingVolume > 0) {
+                newCostPrice = (holdInfo.cost_price * holdInfo.volume + costDelta) / remainingVolume;
+            }
+
+            var holdModel = {
+                code: code,
+                cost_price: newCostPrice,
+                volume: remainingVolume
+            };
+
+            dataUtils.updateObj2DB('stock_current_hold', holdModel, 'code', callback);
+        }
+
+        function _deleteNoVolumeHold(callback) {
+            var sql = 'delete from stock_current_hold where volume <= 0;';
+
+            dataUtils.execSql(sql, {}, callback);
+        }
+    }
 }
