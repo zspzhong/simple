@@ -10,7 +10,7 @@
  
  * 添加股票到自选之中(get): **/stock/addStock2Pool/:stockCode**
 
- * 记录股票成交记录(get): **/stock/addTrendHistory/:stockCode**
+ * 增加股票成交记录(get): **/stock/addTrendHistory/:stockCode**
 
 
 ##image

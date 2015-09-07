@@ -86,6 +86,7 @@ function run() {
             _.each(result, function (item) {
                 delete item.name;
                 delete item.yesterdayClosePrice;
+                delete item.isCurrentDate;
 
                 item.date = new Date(item.date.format());
                 followingStockPriceList.push(item);
