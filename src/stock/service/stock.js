@@ -8,6 +8,7 @@ exports.calculateProfitWithArgs = calculateProfitWithArgs;
 exports.followTrendWithArgs = followTrendWithArgs;
 exports.addStock2Pool = addStock2Pool;
 exports.addTrendHistory = addTrendHistory;
+exports.marketCompanyCode2Name = marketCompanyCode2Name;
 
 // 根据买卖点以及量计算收益 [{date: x, type: 'sale' | 'buy', volume: y}]
 function calculateProfit(req, res, callback) {
@@ -124,6 +125,18 @@ function addTrendHistory(req, res, callback) {
     function _addTrendHistory(callback) {
         stockDao.addTrendHistory(model, callback);
     }
+}
+
+function marketCompanyCode2Name(req, res, callback) {
+    stockDao.queryCompanyCode2Name(function (err, result) {
+        if (err) {
+            logger.error(err);
+            callback(err);
+            return;
+        }
+
+        callback(null, result);
+    });
 }
 
 // 内部接收参数方法，可暴露给其他模块调用

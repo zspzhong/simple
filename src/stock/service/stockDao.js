@@ -12,6 +12,7 @@ exports.addStock2Pool = addStock2Pool;
 exports.queryCodeWithoutEnoughData = queryCodeWithoutEnoughData;
 exports.addTrendHistory = addTrendHistory;
 exports.addOrUpdateStockHold = addOrUpdateStockHold;
+exports.queryCompanyCode2Name = queryCompanyCode2Name;
 
 function queryStock(code, callback) {
     var condition = {
@@ -219,4 +220,23 @@ function addOrUpdateStockHold(model, callback) {
             dataUtils.execSql(sql, {}, callback);
         }
     }
+}
+
+function queryCompanyCode2Name(callback) {
+    var sql = 'select code, name from stock_code_name;';
+
+    dataUtils.execSql(sql, {}, function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        var code2Name = {};
+
+        _.each(result, function (item) {
+            code2Name[item.code] = item.name;
+        });
+
+        callback(null, code2Name);
+    });
 }

@@ -39,6 +39,14 @@
       "functionName": "addTrendHistory",
       "method": "get",
       "comment": "记录股票交易记录"
+    },
+    {
+      "name": "marketCompanyCode2Name",
+      "path": "/stock/marketCompanyCode2Name",
+      "realizeJs": "stock",
+      "functionName": "marketCompanyCode2Name",
+      "method": "get",
+      "comment": "获取所有股票的公司代码对应的公司名称"
     }
   ]
 }

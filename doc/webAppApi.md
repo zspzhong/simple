@@ -12,6 +12,8 @@
 
  * 增加股票成交记录(get): **/stock/addTrendHistory/:stockCode**
 
+ * 获取所有股票的公司代码对应的公司名称(get): **/stock/marketCompanyCode2Name**
+
 
 ##image
  * 获取随机图片的url(get): **/image/randomUrl**
