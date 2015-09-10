@@ -114,3 +114,10 @@ create table if not exists stock_current_hold (
     cost_price float,
     volume float
 );
+
+#stock_code_name
+create table if not exists stock_code_name (
+    code varchar(16) primary key,
+    prefix varchar(8),
+    name varchar(64)
+);
