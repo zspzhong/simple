@@ -220,7 +220,7 @@ function addUsernameFavorite(req, res, callback) {
         var model = {
             code: stockCode,
             user_id: username,
-            sort_no: sortNo
+            sort_no: sortNo + 1
         };
 
         stockDao.saveFavorite(model, callback);
