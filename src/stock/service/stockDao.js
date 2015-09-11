@@ -327,24 +327,24 @@ function deleteAndResortOther(username, code, sortNo, callback) {
 function moveUserFavorite(username, code, from, to, callback) {
     var sqlList = [];
 
-    var isLessToBig = from < to;
+    var isSmallToBig = from < to;
 
-    if (isLessToBig) {
+    if (isSmallToBig) {
         sqlList.push({
-            sql: 'update stock_user_favorite set sort_no = sort_no + 1 where user_id = :username and sort_no > :from and sort_no <= :to;',
-            values: {username: username, from: from, to: to}
+            sql: 'update stock_user_favorite set sort_no = sort_no - 1 where user_id = :username and sort_no > :from and sort_no <= :to;',
+            value: {username: username, from: from, to: to}
         });
     }
     else {
         sqlList.push({
-            sql: 'update stock_user_favorite set sort_no = sort_no - 1 where user_id = :username and sort_no < :from and sort_no => :to;',
-            values: {username: username, from: from, to: to}
+            sql: 'update stock_user_favorite set sort_no = sort_no + 1 where user_id = :username and sort_no < :from and sort_no >= :to;',
+            value: {username: username, from: from, to: to}
         });
     }
 
     sqlList.push({
-        sql: 'update stock_user_favorite set sort_no = :to where username = :username and code = :code;',
-        values: {username: username, code: code, to: to}
+        sql: 'update stock_user_favorite set sort_no = :to where user_id = :username and code = :code;',
+        value: {username: username, code: code, to: to}
     });
 
     dataUtils.batchExecSql(sqlList, callback);
