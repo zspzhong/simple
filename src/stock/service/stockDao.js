@@ -297,7 +297,7 @@ function querySortNoByUsernameAndCode(username, code, callback) {
             return;
         }
 
-        callback(null, result[0]['sort_no'] || 10000);
+        callback(null, result[0]['sort_no']);
     });
 }
 
