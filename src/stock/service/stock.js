@@ -192,8 +192,8 @@ function userFavoriteData(req, res, callback) {
                     code: code.substr(2),
                     name: currentInfo.name,
                     price: Number(currentInfo.close).toFixed(2),
-                    priceDelta: (delta <= 0 ? ' ' : '') + delta.toFixed(2),
-                    upDown: (delta <= 0 ? ' ' : '') + upDown.toFixed(2) + '%'
+                    priceDelta: (delta >= 0 ? ' ' : '') + delta.toFixed(2),
+                    upDown: (delta >= 0 ? ' ' : '') + upDown.toFixed(2) + '%'
                 });
             });
 
