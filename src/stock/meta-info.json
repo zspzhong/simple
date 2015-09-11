@@ -47,6 +47,14 @@
       "functionName": "marketCompanyCode2Name",
       "method": "get",
       "comment": "获取所有股票的公司代码对应的公司名称"
+    },
+    {
+      "name": "userFavoriteData",
+      "path": "/stock/userFavoriteData/:username",
+      "realizeJs": "stock",
+      "functionName": "userFavoriteData",
+      "method": "get",
+      "comment": "用户的关注股票"
     }
   ]
 }

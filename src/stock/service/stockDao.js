@@ -13,6 +13,7 @@ exports.queryCodeWithoutEnoughData = queryCodeWithoutEnoughData;
 exports.addTrendHistory = addTrendHistory;
 exports.addOrUpdateStockHold = addOrUpdateStockHold;
 exports.queryCompanyCode2Name = queryCompanyCode2Name;
+exports.queryUserFavorite = queryUserFavorite;
 
 function queryStock(code, callback) {
     var condition = {
@@ -238,5 +239,20 @@ function queryCompanyCode2Name(callback) {
         });
 
         callback(null, code2Name);
+    });
+}
+
+function queryUserFavorite(username, callback) {
+    var sql = 'select concat(b.prefix, a.code) as code' +
+        ' from stock_user_favorite a, stock_code_name b' +
+        ' where user_id = :userId and a.code = b.code order by a.sort_no;';
+
+    dataUtils.execSql(sql, {userId: username}, function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        callback(null, _.pluck(result, 'code'));
     });
 }

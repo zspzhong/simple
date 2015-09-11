@@ -14,6 +14,8 @@
 
  * 获取所有股票的公司代码对应的公司名称(get): **/stock/marketCompanyCode2Name**
 
+ * 用户的关注股票(get): **/stock/userFavoriteData/:username**
+
 
 ##image
  * 获取随机图片的url(get): **/image/randomUrl**

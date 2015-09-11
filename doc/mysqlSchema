@@ -121,3 +121,10 @@ create table if not exists stock_code_name (
     prefix varchar(8),
     name varchar(64)
 );
+
+#stock_user_favorite
+create table if not exists stock_user_favorite (
+    code varchar(16) primary key,
+    user_id varchar(64),
+    sort_no int
+);

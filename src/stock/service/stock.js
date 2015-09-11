@@ -9,6 +9,7 @@ exports.followTrendWithArgs = followTrendWithArgs;
 exports.addStock2Pool = addStock2Pool;
 exports.addTrendHistory = addTrendHistory;
 exports.marketCompanyCode2Name = marketCompanyCode2Name;
+exports.userFavoriteData = userFavoriteData;
 
 // 根据买卖点以及量计算收益 [{date: x, type: 'sale' | 'buy', volume: y}]
 function calculateProfit(req, res, callback) {
@@ -137,6 +138,62 @@ function marketCompanyCode2Name(req, res, callback) {
 
         callback(null, result);
     });
+}
+
+function userFavoriteData(req, res, callback) {
+    var username = req.params.username;
+
+    var codeList = [];
+    var favoriteData = [];
+
+    async.series([_queryFavoriteCode, _querySomeInfoFromSina], function (err) {
+        if (err) {
+            logger.error(err);
+            callback(err);
+            return;
+        }
+
+        callback(null, favoriteData);
+    });
+
+    function _queryFavoriteCode(callback) {
+        stockDao.queryUserFavorite(username, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            codeList = result;
+            callback(null);
+        });
+    }
+
+    function _querySomeInfoFromSina(callback) {
+        stockDao.queryStockPriceFromSina(codeList, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            _.each(codeList, function (code) {
+                var currentInfo = result[code.substr(2)];
+
+                if (_.isEmpty(currentInfo)) {
+                    return;
+                }
+
+                favoriteData.push({
+                    code: code.substr(2),
+                    name: currentInfo.name,
+                    price: Number(currentInfo.close).toFixed(2),
+                    priceDelta: Number(currentInfo.close - currentInfo.yesterdayClosePrice).toFixed(2),
+                    upDown: Number(currentInfo.up_down * 100).toFixed(2) + '%'
+                });
+            });
+
+            callback(null);
+        });
+    }
 }
 
 // 内部接收参数方法，可暴露给其他模块调用
