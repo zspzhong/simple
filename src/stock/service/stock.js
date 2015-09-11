@@ -10,6 +10,7 @@ exports.addStock2Pool = addStock2Pool;
 exports.addTrendHistory = addTrendHistory;
 exports.marketCompanyCode2Name = marketCompanyCode2Name;
 exports.userFavoriteData = userFavoriteData;
+exports.addUsernameFavorite = addUsernameFavorite;
 
 // 根据买卖点以及量计算收益 [{date: x, type: 'sale' | 'buy', volume: y}]
 function calculateProfit(req, res, callback) {
@@ -193,6 +194,36 @@ function userFavoriteData(req, res, callback) {
 
             callback(null);
         });
+    }
+}
+
+function addUsernameFavorite(req, res, callback) {
+    var username = req.body.username;
+    var stockCode = req.body.stockCode;
+    var sortNo = 0;
+
+    async.series([_queryUserFavoriteMaxSortNo, _saveFavorite], callback);
+
+    function _queryUserFavoriteMaxSortNo(callback) {
+        stockDao.queryUserFavoriteMaxSortNo(username, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            sortNo = result;
+            callback(null);
+        });
+    }
+
+    function _saveFavorite(callback) {
+        var model = {
+            code: stockCode,
+            user_id: username,
+            sort_no: sortNo
+        };
+
+        stockDao.saveFavorite(model, callback);
     }
 }
 

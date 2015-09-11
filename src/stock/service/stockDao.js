@@ -14,6 +14,8 @@ exports.addTrendHistory = addTrendHistory;
 exports.addOrUpdateStockHold = addOrUpdateStockHold;
 exports.queryCompanyCode2Name = queryCompanyCode2Name;
 exports.queryUserFavorite = queryUserFavorite;
+exports.queryUserFavoriteMaxSortNo = queryUserFavoriteMaxSortNo;
+exports.saveFavorite = saveFavorite;
 
 function queryStock(code, callback) {
     var condition = {
@@ -255,4 +257,26 @@ function queryUserFavorite(username, callback) {
 
         callback(null, _.pluck(result, 'code'));
     });
+}
+
+function queryUserFavoriteMaxSortNo(username, callback) {
+    var sql = 'select max(sort_no) as max_sort_no from stock_user_favorite where user_id = :username;';
+
+    dataUtils.execSql(sql, {username: username}, function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        if (_.isEmpty(result)) {
+            callback(null, 0);
+            return;
+        }
+
+        callback(null, result[0]['max_sort_no'] || 0);
+    });
+}
+
+function saveFavorite(favorite, callback) {
+    dataUtils.obj2DB('stock_user_favorite', favorite, callback);
 }

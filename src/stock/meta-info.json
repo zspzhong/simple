@@ -55,6 +55,14 @@
       "functionName": "userFavoriteData",
       "method": "get",
       "comment": "用户的关注股票"
+    },
+    {
+      "name": "addUsernameFavorite",
+      "path": "/stock/addUsernameFavorite",
+      "realizeJs": "stock",
+      "functionName": "addUsernameFavorite",
+      "method": "post",
+      "comment": "添加用户关注股票"
     }
   ]
 }

@@ -16,6 +16,8 @@
 
  * 用户的关注股票(get): **/stock/userFavoriteData/:username**
 
+ * 添加用户关注股票(post): **/stock/addUserFavorite**
+
 
 ##image
  * 获取随机图片的url(get): **/image/randomUrl**
