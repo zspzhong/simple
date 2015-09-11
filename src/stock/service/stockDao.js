@@ -325,24 +325,16 @@ function deleteAndResortOther(username, code, sortNo, callback) {
 }
 
 function moveUserFavorite(username, code, from, to, callback) {
-    var sqlList = [];
-
-    var isSmallToBig = from < to;
-
-    if (isSmallToBig) {
-        sqlList.push({
-            sql: 'update stock_user_favorite set sort_no = sort_no - 1 where user_id = :username and sort_no > :from and sort_no <= :to;',
-            value: {username: username, from: from, to: to}
-        });
-    }
-    else {
-        sqlList.push({
-            sql: 'update stock_user_favorite set sort_no = sort_no + 1 where user_id = :username and sort_no < :from and sort_no >= :to;',
-            value: {username: username, from: from, to: to}
-        });
+    var sql = 'update stock_user_favorite set sort_no = sort_no + 1 where user_id = :username and sort_no < :from and sort_no >= :to;';
+    var value = {username: username, from: from, to: to};
+    
+    if (from < to) {
+        sql = 'update stock_user_favorite set sort_no = sort_no - 1 where user_id = :username and sort_no > :from and sort_no <= :to;';
+        value = {username: username, from: from, to: to};
     }
 
-    dataUtils.batchExecSql(sqlList, function (err) {
+
+    dataUtils.execSql(sql, value, function (err) {
         if (err) {
             callback(err);
             return;
@@ -350,6 +342,7 @@ function moveUserFavorite(username, code, from, to, callback) {
 
         var sql = 'update stock_user_favorite set sort_no = :to where user_id = :username and code = :code;';
         var value = {username: username, code: code, to: to};
+        console.log(value);
         dataUtils.execSql(sql, value, callback);
     });
 }
