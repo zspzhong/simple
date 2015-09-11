@@ -316,7 +316,7 @@ function deleteAndResortOther(username, code, sortNo, callback) {
     });
 
     sqlList.push({
-        sql: 'update stock_user_favorite set sort_no = sort_no - 1 where sort_no > :sortNo and username = :username and code = :code;',
+        sql: 'update stock_user_favorite set sort_no = sort_no - 1 where sort_no > :sortNo and user_id = :username and code = :code;',
         value: condition
     });
 
