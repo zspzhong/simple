@@ -12,6 +12,7 @@ exports.marketCompanyCode2Name = marketCompanyCode2Name;
 exports.userFavoriteData = userFavoriteData;
 exports.addUserFavorite = addUserFavorite;
 exports.deleteUserFavorite = deleteUserFavorite;
+exports.moveUserFavorite = moveUserFavorite;
 
 // 根据买卖点以及量计算收益 [{date: x, type: 'sale' | 'buy', volume: y}]
 function calculateProfit(req, res, callback) {
@@ -250,6 +251,15 @@ function deleteUserFavorite(req, res, callback) {
     function _deleteAndResortOther(callback) {
         stockDao.deleteAndResortOther(username, stockCode, sortNo, callback);
     }
+}
+
+function moveUserFavorite(req, res, callback) {
+    var username = req.body.username;
+    var stockCode = req.body.stockCode;
+    var fromIndex = req.body['fromIndex'];
+    var destinationIndex = req.body['destinationIndex'];
+
+    stockDao.moveUserFavorite(username, stockCode, fromIndex, destinationIndex, callback);
 }
 
 // 内部接收参数方法，可暴露给其他模块调用

@@ -20,6 +20,7 @@
 
  * 删除用户关注股票(post): **/stock/deleteUserFavorite**
 
+ * 移动用户关注股票顺序(post): **/stock/moveUserFavorite**
 
 ##image
  * 获取随机图片的url(get): **/image/randomUrl**

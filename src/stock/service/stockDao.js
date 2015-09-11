@@ -18,6 +18,7 @@ exports.queryUserFavoriteMaxSortNo = queryUserFavoriteMaxSortNo;
 exports.saveFavorite = saveFavorite;
 exports.querySortNoByUsernameAndCode = querySortNoByUsernameAndCode;
 exports.deleteAndResortOther = deleteAndResortOther;
+exports.moveUserFavorite = moveUserFavorite;
 
 function queryStock(code, callback) {
     var condition = {
@@ -316,8 +317,34 @@ function deleteAndResortOther(username, code, sortNo, callback) {
     });
 
     sqlList.push({
-        sql: 'update stock_user_favorite set sort_no = sort_no - 1 where sort_no > :sortNo and user_id = :username;',
+        sql: 'update stock_user_favorite set sort_no = sort_no - 1 where user_id = :username and sort_no > :sortNo;',
         value: condition
+    });
+
+    dataUtils.batchExecSql(sqlList, callback);
+}
+
+function moveUserFavorite(username, code, from, to, callback) {
+    var sqlList = [];
+
+    var isLessToBig = from < to;
+
+    if (isLessToBig) {
+        sqlList.push({
+            sql: 'update stock_user_favorite set sort_no = sort_no + 1 where user_id = :username and sort_no > :from and sort_no <= :to;',
+            values: {username: username, from: from, to: to}
+        });
+    }
+    else {
+        sqlList.push({
+            sql: 'update stock_user_favorite set sort_no = sort_no - 1 where user_id = :username and sort_no < :from and sort_no => :to;',
+            values: {username: username, from: from, to: to}
+        });
+    }
+
+    sqlList.push({
+        sql: 'update stock_user_favorite set sort_no = :to where username = :username and code = :code;',
+        values: {username: username, code: code, to: to}
     });
 
     dataUtils.batchExecSql(sqlList, callback);

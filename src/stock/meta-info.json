@@ -71,6 +71,14 @@
       "functionName": "deleteUserFavorite",
       "method": "post",
       "comment": "删除用户关注股票"
+    },
+    {
+      "name": "moveUserFavorite",
+      "path": "/stock/moveUserFavorite",
+      "realizeJs": "stock",
+      "functionName": "moveUserFavorite",
+      "method": "post",
+      "comment": "移动用户关注股票顺序"
     }
   ]
 }
