@@ -342,10 +342,14 @@ function moveUserFavorite(username, code, from, to, callback) {
         });
     }
 
-    sqlList.push({
-        sql: 'update stock_user_favorite set sort_no = :to where user_id = :username and code = :code;',
-        value: {username: username, code: code, to: to}
-    });
+    dataUtils.batchExecSql(sqlList, function (err) {
+        if (err) {
+            callback(err);
+            return;
+        }
 
-    dataUtils.batchExecSql(sqlList, callback);
+        var sql = 'update stock_user_favorite set sort_no = :to where user_id = :username and code = :code;';
+        var value = {username: username, code: code, to: to};
+        dataUtils.execSql(sql, value, callback);
+    });
 }
