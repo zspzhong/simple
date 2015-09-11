@@ -185,12 +185,15 @@ function userFavoriteData(req, res, callback) {
                     return;
                 }
 
+                var delta = Number(currentInfo.close - currentInfo.yesterdayClosePrice);
+                var upDown = Number(currentInfo.up_down * 100);
+
                 favoriteData.push({
                     code: code.substr(2),
                     name: currentInfo.name,
                     price: Number(currentInfo.close).toFixed(2),
-                    priceDelta: Number(currentInfo.close - currentInfo.yesterdayClosePrice).toFixed(2),
-                    upDown: Number(currentInfo.up_down * 100).toFixed(2) + '%'
+                    priceDelta: (delta <= 0 ? ' ' : '') + delta.toFixed(2),
+                    upDown: (delta <= 0 ? ' ' : '') + upDown.toFixed(2) + '%'
                 });
             });
 
