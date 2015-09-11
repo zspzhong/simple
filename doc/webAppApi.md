@@ -18,6 +18,8 @@
 
  * 添加用户关注股票(post): **/stock/addUserFavorite**
 
+ * 删除用户关注股票(post): **/stock/deleteUserFavorite**
+
 
 ##image
  * 获取随机图片的url(get): **/image/randomUrl**

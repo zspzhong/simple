@@ -10,7 +10,8 @@ exports.addStock2Pool = addStock2Pool;
 exports.addTrendHistory = addTrendHistory;
 exports.marketCompanyCode2Name = marketCompanyCode2Name;
 exports.userFavoriteData = userFavoriteData;
-exports.addUsernameFavorite = addUsernameFavorite;
+exports.addUserFavorite = addUserFavorite;
+exports.deleteUserFavorite = deleteUserFavorite;
 
 // 根据买卖点以及量计算收益 [{date: x, type: 'sale' | 'buy', volume: y}]
 function calculateProfit(req, res, callback) {
@@ -197,7 +198,7 @@ function userFavoriteData(req, res, callback) {
     }
 }
 
-function addUsernameFavorite(req, res, callback) {
+function addUserFavorite(req, res, callback) {
     var username = req.body.username;
     var stockCode = req.body.stockCode;
     var sortNo = 0;
@@ -224,6 +225,30 @@ function addUsernameFavorite(req, res, callback) {
         };
 
         stockDao.saveFavorite(model, callback);
+    }
+}
+
+function deleteUserFavorite(req, res, callback) {
+    var username = req.body.username;
+    var stockCode = req.body.stockCode;
+    var sortNo = 0;
+
+    async.series([_queryTargetSortNo, _deleteAndResortOther], callback);
+
+    function _queryTargetSortNo(callback) {
+        stockDao.querySortNoByUsernameAndCode(username, stockCode, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            sortNo = result;
+            callback(null);
+        });
+    }
+
+    function _deleteAndResortOther(callback) {
+        stockDao.deleteAndResortOther(username, stockCode, sortNo, callback);
     }
 }
 

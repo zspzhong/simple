@@ -57,12 +57,20 @@
       "comment": "用户的关注股票"
     },
     {
-      "name": "addUsernameFavorite",
-      "path": "/stock/addUsernameFavorite",
+      "name": "addUserFavorite",
+      "path": "/stock/addUserFavorite",
       "realizeJs": "stock",
-      "functionName": "addUsernameFavorite",
+      "functionName": "addUserFavorite",
       "method": "post",
       "comment": "添加用户关注股票"
+    },
+    {
+      "name": "deleteUserFavorite",
+      "path": "/stock/deleteUserFavorite",
+      "realizeJs": "stock",
+      "functionName": "deleteUserFavorite",
+      "method": "post",
+      "comment": "删除用户关注股票"
     }
   ]
 }
