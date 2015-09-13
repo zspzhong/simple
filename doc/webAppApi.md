@@ -10,8 +10,6 @@
  
  * 添加股票到自选之中(get): **/stock/addStock2Pool/:stockCode**
 
- * 增加股票成交记录(get): **/stock/addTrendHistory/:stockCode**
-
  * 获取所有股票的公司代码对应的公司名称(get): **/stock/marketCompanyCode2Name**
 
  * 用户的关注股票(get): **/stock/userFavoriteData/:username**
@@ -21,6 +19,12 @@
  * 删除用户关注股票(post): **/stock/deleteFavorite**
 
  * 移动用户关注股票顺序(post): **/stock/moveFavorite**
+
+ * 用户持仓股票(get): **/stock/userPositionData/:username**
+
+ * 增减用户持仓(post): **/stock/changePosition**
+
+ * 移动用户持仓股票顺序(post): **/stock/movePosition**
 
 ##image
  * 获取随机图片的url(get): **/image/randomUrl**

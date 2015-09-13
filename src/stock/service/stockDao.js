@@ -10,8 +10,6 @@ exports.addDayFollowingInfo = addDayFollowingInfo;
 exports.queryCodePrefix = queryCodePrefix;
 exports.addStock2Pool = addStock2Pool;
 exports.queryCodeWithoutEnoughData = queryCodeWithoutEnoughData;
-exports.addTrendHistory = addTrendHistory;
-exports.addOrUpdateStockHold = addOrUpdateStockHold;
 exports.queryCompanyCode2Name = queryCompanyCode2Name;
 exports.queryUserFavorite = queryUserFavorite;
 exports.queryUserFavoriteMaxSortNo = queryUserFavoriteMaxSortNo;
@@ -19,6 +17,11 @@ exports.saveFavorite = saveFavorite;
 exports.queryFavoriteSortNoByUsernameAndCode = queryFavoriteSortNoByUsernameAndCode;
 exports.deleteFavoriteAndResortOther = deleteFavoriteAndResortOther;
 exports.moveFavorite = moveFavorite;
+exports.queryUserPosition = queryUserPosition;
+exports.queryCodeIsExists = queryCodeIsExists;
+exports.queryUserPositionOfCode = queryUserPositionOfCode;
+exports.queryUserPositionMaxSortNo = queryUserPositionMaxSortNo;
+exports.addTrendHistoryChangePosition = addTrendHistoryChangePosition;
 
 function queryStock(code, callback) {
     var condition = {
@@ -157,77 +160,6 @@ function queryCodeWithoutEnoughData(dayLeast, callback) {
     });
 }
 
-function addTrendHistory(history, callback) {
-    dataUtils.obj2DB('stock_trend_history', history, callback);
-}
-
-function addOrUpdateStockHold(model, callback) {
-    var code = model.code;
-
-    var isHolding = true;
-    var holdInfo = {};
-
-    async.series([_queryIsHolding, _addOrUpdate], callback);
-
-    function _queryIsHolding(callback) {
-        var sql = 'select * from stock_current_hold where code = :code;';
-
-        dataUtils.execSql(sql, {code: code}, function (err, result) {
-            if (err) {
-                callback(err);
-                return;
-            }
-
-            if (!_.isEmpty(result)) {
-                holdInfo = result[0];
-            }
-
-            isHolding = !_.isEmpty(result);
-            callback(null);
-        });
-    }
-
-    function _addOrUpdate(callback) {
-        if (!isHolding) {
-            var holdModel = {
-                code: model.code,
-                cost_price: model.price,
-                volume: model.volume
-            };
-
-            dataUtils.obj2DB('stock_current_hold', holdModel, callback);
-            return;
-        }
-
-        async.series([_update, _deleteNoVolumeHold], callback);
-
-        function _update(callback) {
-            var volumeDelta = (model.type === 'sale' ? -1 : 1) * model.volume;
-            var costDelta = model.price * volumeDelta;
-            var remainingVolume = model.volume + volumeDelta;
-            var newCostPrice = 0;
-
-            if (remainingVolume > 0) {
-                newCostPrice = (holdInfo.cost_price * holdInfo.volume + costDelta) / remainingVolume;
-            }
-
-            var holdModel = {
-                code: code,
-                cost_price: newCostPrice,
-                volume: remainingVolume
-            };
-
-            dataUtils.updateObj2DB('stock_current_hold', holdModel, 'code', callback);
-        }
-
-        function _deleteNoVolumeHold(callback) {
-            var sql = 'delete from stock_current_hold where volume <= 0;';
-
-            dataUtils.execSql(sql, {}, callback);
-        }
-    }
-}
-
 function queryCompanyCode2Name(callback) {
     var sql = 'select code, name from stock_code_name;';
 
@@ -272,7 +204,7 @@ function queryUserFavoriteMaxSortNo(username, callback) {
         }
 
         if (_.isEmpty(result)) {
-            callback(null, 0);
+            callback(null, -1);
             return;
         }
 
@@ -281,7 +213,7 @@ function queryUserFavoriteMaxSortNo(username, callback) {
 }
 
 function saveFavorite(favorite, callback) {
-    dataUtils.obj2DB('stock_user_favorite', favorite, callback);
+    dataUtils.objIgnore2DB('stock_user_favorite', favorite, callback);
 }
 
 function queryFavoriteSortNoByUsernameAndCode(username, code, callback) {
@@ -327,7 +259,7 @@ function deleteFavoriteAndResortOther(username, code, sortNo, callback) {
 function moveFavorite(username, code, from, to, callback) {
     var sql = 'update stock_user_favorite set sort_no = sort_no + 1 where user_id = :username and sort_no < :from and sort_no >= :to;';
     var value = {username: username, from: from, to: to};
-    
+
     if (from < to) {
         sql = 'update stock_user_favorite set sort_no = sort_no - 1 where user_id = :username and sort_no > :from and sort_no <= :to;';
         value = {username: username, from: from, to: to};
@@ -342,7 +274,119 @@ function moveFavorite(username, code, from, to, callback) {
 
         var sql = 'update stock_user_favorite set sort_no = :to where user_id = :username and code = :code;';
         var value = {username: username, code: code, to: to};
-        console.log(value);
         dataUtils.execSql(sql, value, callback);
     });
+}
+
+function queryUserPosition(username, callback) {
+    var sql = 'select concat(b.prefix, a.code) as codeWithPrefix, a.cost_price, a.volume' +
+        ' from stock_user_position a, stock_code_name b' +
+        ' where a.user_id = :username and a.code = b.code order by a.sort_no;';
+
+    dataUtils.execSql(sql, {username: username}, callback);
+}
+
+function queryCodeIsExists(code, callback) {
+    dataUtils.query('stock_code_name', {code: code}, function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        callback(null, !_.isEmpty(result));
+    });
+}
+
+function queryUserPositionOfCode(username, code, callback) {
+    var condition = {
+        user_id: username,
+        code: code
+    };
+
+    dataUtils.query('stock_user_position', condition, callback);
+}
+
+function queryUserPositionMaxSortNo(username, callback) {
+    var sql = 'select max(sort_no) as maxSortNo from stock_user_position where user_id = :username;';
+
+    dataUtils.execSql(sql, {username: username}, function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        if (_.isEmpty(result)) {
+            callback(null, -1);
+            return;
+        }
+
+        callback(null, result[0]['maxSortNo'] || 0);
+    });
+}
+
+function addTrendHistoryChangePosition(username, model, callback) {
+    async.series([_saveHistoryAndPosition, _adjustZeroVolumePosition], callback);
+
+    function _saveHistoryAndPosition(callback) {
+        var sqlList = [];
+
+        sqlList.push(dataUtils.insertSqlOfObj('stock_user_trend_history', model.history));
+
+        if (!_.isEmpty(model.addPosition)) {
+            sqlList.push(dataUtils.insertSqlOfObj('stock_user_position', model.addPosition));
+        }
+
+        if (!_.isEmpty(model.updatePosition)) {
+            sqlList.push(dataUtils.updateSqlOfObj('stock_user_position', model.updatePosition, ['cost_price', 'volume'], ['user_id', 'code']));
+        }
+
+        dataUtils.batchExecSql(sqlList, callback);
+    }
+
+    // 将数量为0的持仓删除掉
+    function _adjustZeroVolumePosition(callback) {
+        var zeroVolumeCode = '';
+        var zeroVolumeSortNo = 0;
+
+        async.series([_queryZeroVolumeCode, _doAdjust], callback);
+
+        function _queryZeroVolumeCode(callback) {
+            var sql = 'select code, sort_no from stock_user_position where user_id = :username and volume <= 0;';
+            dataUtils.execSql(sql, {username: username}, function (err, result) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+
+                if (!_.isEmpty(result)) {
+                    zeroVolumeCode = result[0].code;
+                    zeroVolumeSortNo = result[0].sort_no;
+                }
+
+                callback(null);
+            });
+        }
+
+        function _doAdjust(callback) {
+            if (_.isEmpty(zeroVolumeCode)) {
+                callback(null);
+                return;
+            }
+
+            var sqlList = [
+                {
+                    sql: 'delete from stock_user_position where user_id = :username and code = :code',
+                    value: {username: username, code: zeroVolumeCode}
+                },
+                {
+                    sql: 'update stock_user_position set sort_no = sort_no - 1 where user_id = :username and sort_no > :sortNo',
+                    value: {username: username, sortNo: zeroVolumeSortNo}
+                }
+            ];
+
+            dataUtils.batchExecSql(sqlList, callback);
+        }
+    }
+
+
 }

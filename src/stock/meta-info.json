@@ -33,14 +33,6 @@
       "comment": "添加股票到自选之中"
     },
     {
-      "name": "addTrendHistory",
-      "path": "/stock/addTrendHistory/:stockCode",
-      "realizeJs": "stock",
-      "functionName": "addTrendHistory",
-      "method": "get",
-      "comment": "记录股票交易记录"
-    },
-    {
       "name": "marketCompanyCode2Name",
       "path": "/stock/marketCompanyCode2Name",
       "realizeJs": "stock",
@@ -79,6 +71,30 @@
       "functionName": "moveFavorite",
       "method": "post",
       "comment": "移动用户关注股票顺序"
+    },
+    {
+      "name": "userPositionData",
+      "path": "/stock/userPositionData/:username",
+      "realizeJs": "stock",
+      "functionName": "userPositionData",
+      "method": "get",
+      "comment": "用户持仓股票"
+    },
+    {
+      "name": "changePosition",
+      "path": "/stock/changePosition",
+      "realizeJs": "stock",
+      "functionName": "changePosition",
+      "method": "post",
+      "comment": "增减用户持仓"
+    },
+    {
+      "name": "movePosition",
+      "path": "/stock/movePosition",
+      "realizeJs": "stock",
+      "functionName": "movePosition",
+      "method": "post",
+      "comment": "移动用户持仓股票顺序"
     }
   ]
 }

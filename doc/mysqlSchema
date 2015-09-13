@@ -99,22 +99,6 @@ create table if not exists stock_following (
     before_rehabilitation float
 );
 
-#stock_trend_history
-create table if not exists stock_trend_history (
-    code varchar(16),
-    date datetime,
-    price float,
-    volume float,
-    type varchar(16) comment 'buy|sale'
-);
-
-#stock_current_hold
-create table if not exists stock_current_hold (
-    code varchar(16),
-    cost_price float,
-    volume float
-);
-
 #stock_code_name
 create table if not exists stock_code_name (
     code varchar(16) primary key,
@@ -124,7 +108,29 @@ create table if not exists stock_code_name (
 
 #stock_user_favorite
 create table if not exists stock_user_favorite (
-    code varchar(16) primary key,
+    code varchar(16),
     user_id varchar(64),
-    sort_no int
+    sort_no int,
+    primary key(code, user_id);
+);
+
+#stock_user_position
+create table if not exists stock_user_position (
+    code varchar(16),
+    user_id varchar(64),
+    cost_price float,
+    volume float,
+    sort_no int,
+    primary key(code, user_id)
+)
+
+#stock_user_trend_history
+create table if not exists stock_user_trend_history (
+    code varchar(16),
+    user_id varchar(64),
+    date datetime,
+    price float,
+    volume float,
+    type varchar(16) comment 'buy|sale',
+    profit float
 );

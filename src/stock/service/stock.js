@@ -7,12 +7,16 @@ exports.followTrendOperateInfo = followTrendOperateInfo;
 exports.calculateProfitWithArgs = calculateProfitWithArgs;
 exports.followTrendWithArgs = followTrendWithArgs;
 exports.addStock2Pool = addStock2Pool;
-exports.addTrendHistory = addTrendHistory;
 exports.marketCompanyCode2Name = marketCompanyCode2Name;
+
 exports.userFavoriteData = userFavoriteData;
 exports.addFavorite = addFavorite;
 exports.deleteFavorite = deleteFavorite;
 exports.moveFavorite = moveFavorite;
+
+exports.userPositionData = userPositionData;
+exports.changePosition = changePosition;
+exports.movePosition = movePosition;
 
 // 根据买卖点以及量计算收益 [{date: x, type: 'sale' | 'buy', volume: y}]
 function calculateProfit(req, res, callback) {
@@ -93,48 +97,9 @@ function addStock2Pool(req, res, callback) {
     }
 }
 
-function addTrendHistory(req, res, callback) {
-    var stockCode = req.params.stockCode;
-    var type = req.query.type;
-    var price = req.query.price;
-    var volume = req.query.volume || 100;
-
-    if (!stockCode || !type || !price) {
-        callback(null, '参数不正确');
-        return;
-    }
-
-    var model = {
-        code: stockCode,
-        date: new Date(),
-        price: price,
-        volume: volume,
-        type: type
-    };
-
-    async.series([_updateCurrentHold, _addTrendHistory], function (err) {
-        if (err) {
-            logger.error(err);
-            callback(null, '保存失败');
-            return;
-        }
-
-        callback(null);
-    });
-
-    function _updateCurrentHold(callback) {
-        stockDao.addOrUpdateStockHold(model, callback);
-    }
-
-    function _addTrendHistory(callback) {
-        stockDao.addTrendHistory(model, callback);
-    }
-}
-
 function marketCompanyCode2Name(req, res, callback) {
     stockDao.queryCompanyCode2Name(function (err, result) {
         if (err) {
-            logger.error(err);
             callback(err);
             return;
         }
@@ -151,7 +116,6 @@ function userFavoriteData(req, res, callback) {
 
     async.series([_queryFavoriteCode, _querySomeInfoFromSina], function (err) {
         if (err) {
-            logger.error(err);
             callback(err);
             return;
         }
@@ -207,7 +171,23 @@ function addFavorite(req, res, callback) {
     var stockCode = req.body.stockCode;
     var sortNo = 0;
 
-    async.series([_queryUserFavoriteMaxSortNo, _saveFavorite], callback);
+    async.series([_queryCodeIsExists, _queryUserFavoriteMaxSortNo, _saveFavorite], callback);
+
+    function _queryCodeIsExists(callback) {
+        stockDao.queryCodeIsExists(stockCode, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            if (!result) {
+                callback({msg: 'code对应的股票信息不存在' + code});
+                return;
+            }
+
+            callback(null);
+        });
+    }
 
     function _queryUserFavoriteMaxSortNo(callback) {
         stockDao.queryUserFavoriteMaxSortNo(username, function (err, result) {
@@ -263,6 +243,184 @@ function moveFavorite(req, res, callback) {
     var destinationIndex = req.body['destinationIndex'];
 
     stockDao.moveFavorite(username, stockCode, fromIndex, destinationIndex, callback);
+}
+
+function userPositionData(req, res, callback) {
+    var username = req.params.username;
+
+    var positionList = [];
+    var codeList = [];
+
+    async.series([_queryUserPosition, _calculateProfit], function (err) {
+        if (err) {
+            callback(err);
+            return;
+        }
+        _.each(positionList, function (item) {
+            item.costPrice = item.costPrice.toFixed(2);
+            item.profit = item.profit.toFixed(2);
+            item.profitRatio = (item.profitRatio * 100).toFixed(2) + '%';
+        });
+        callback(null, positionList);
+    });
+
+    function _queryUserPosition(callback) {
+        stockDao.queryUserPosition(username, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            codeList = _.pluck(result, 'codeWithPrefix');
+            _.each(result, function (item) {
+                positionList.push({
+                    code: item['codeWithPrefix'].substr(2),
+                    costPrice: item.cost_price,
+                    volume: item.volume,
+                    cost: item.cost_price * item.volume
+                });
+            });
+            callback(null);
+        });
+    }
+
+    function _calculateProfit(callback) {
+        stockDao.queryStockPriceFromSina(codeList, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            _.each(positionList, function (item) {
+                var currentInfo = result[item.code];
+
+                item.profit = currentInfo.close * item.volume - item.cost;
+                item.profitRatio = item.profit / item.cost;
+            });
+
+            callback(null);
+        });
+    }
+}
+
+function changePosition(req, res, callback) {
+    var username = req.body.username;
+    var stockCode = req.body.stockCode;
+    var price = req.body.price || 0;
+    var volume = (req.body.volume || 0) * 100;
+    var operate = req.body.operate;
+
+    var positionInfo = {};
+    var maxSortNo = 0;
+
+    async.series([_queryCodeExists, _queryPositionInfo, _queryUserPositionMaxSortNo, _addTrendHistoryChangePosition], callback);
+
+    function _queryCodeExists(callback) {
+        stockDao.queryCodeIsExists(stockCode, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            if (!result) {
+                callback({msg: 'code对应的股票信息不存在' + stockCode});
+                return;
+            }
+
+            callback(null);
+        });
+    }
+
+    function _queryPositionInfo(callback) {
+        stockDao.queryUserPositionOfCode(username, stockCode, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            if (!_.isEmpty(result)) {
+                positionInfo = result[0];
+            }
+
+            callback(null);
+        });
+    }
+
+    function _queryUserPositionMaxSortNo(callback) {
+        stockDao.queryUserPositionMaxSortNo(username, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            maxSortNo = result + 1;
+            callback(null);
+        });
+    }
+
+    function _addTrendHistoryChangePosition(callback) {
+        if (operate === 'reduce' && _.isEmpty(positionInfo)) {
+            callback(null);
+            return;
+        }
+
+        var model = _buildPositionAndHistoryModel();
+
+        stockDao.addTrendHistoryChangePosition(username, model, callback);
+
+        function _buildPositionAndHistoryModel() {
+            var addPositionModel = {};
+            var updatePositionModel = {};
+            var trendHistoryModel = {};
+
+            var inPosition = !_.isEmpty(positionInfo);
+
+            var volumeDelta = (operate === 'add' ? 1 : -1) * volume;
+            var costDelta = price * volumeDelta;
+            var remainingVolume = (positionInfo.volume || 0) + volumeDelta;
+
+            var newCostPrice = 0;
+            if (remainingVolume > 0) {
+                newCostPrice = ((positionInfo.cost_price || price) * (positionInfo.volume || 0) + costDelta) / remainingVolume;
+            }
+
+            trendHistoryModel.user_id = username;
+            trendHistoryModel.code = stockCode;
+            trendHistoryModel.date = new Date();
+            trendHistoryModel.price = price;
+            trendHistoryModel.volume = volume;
+            trendHistoryModel.type = (operate === 'add' ? 'buy' : 'sale');
+            trendHistoryModel.profit = 0;
+            if (remainingVolume <= 0) {
+                trendHistoryModel.profit = (positionInfo.volume || 0) * (price - (positionInfo.cost_price || price));
+                trendHistoryModel.volume = positionInfo.volume;
+            }
+
+            if (inPosition) {
+                updatePositionModel.user_id = username;
+                updatePositionModel.code = stockCode;
+                updatePositionModel.cost_price = newCostPrice;
+                updatePositionModel.volume = remainingVolume;
+            }
+            else {
+                addPositionModel.user_id = username;
+                addPositionModel.code = stockCode;
+                addPositionModel.cost_price = price;
+                addPositionModel.volume = volume;
+                addPositionModel.sort_no = maxSortNo;
+            }
+
+            return {
+                history: trendHistoryModel,
+                addPosition: addPositionModel,
+                updatePosition: updatePositionModel
+            };
+        }
+    }
+}
+
+function movePosition(req, res, callback) {
+
 }
 
 // 内部接收参数方法，可暴露给其他模块调用
