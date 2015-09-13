@@ -258,9 +258,9 @@ function userPositionData(req, res, callback) {
         }
         _.each(positionList, function (item) {
             item.costPrice = item.costPrice.toFixed(2);
-            item.profit = item.profit.toFixed(2);
+            item.profit = item.profit.toFixed(1);
             item.profitRatio = (item.profitRatio * 100).toFixed(2) + '%';
-            item.cost = item.cost.toFixed(2);
+            item.cost = item.cost.toFixed(1);
         });
         callback(null, positionList);
     });
