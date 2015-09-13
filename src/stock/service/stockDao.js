@@ -196,7 +196,7 @@ function queryUserFavorite(username, callback) {
 }
 
 function queryUserFavoriteMaxSortNo(username, callback) {
-    var sql = 'select max(sort_no) as max_sort_no from stock_user_favorite where user_id = :username;';
+    var sql = 'select max(sort_no) as maxSortNo from stock_user_favorite where user_id = :username;';
 
     dataUtils.execSql(sql, {username: username}, function (err, result) {
         if (err) {
@@ -204,12 +204,12 @@ function queryUserFavoriteMaxSortNo(username, callback) {
             return;
         }
 
-        if (_.isEmpty(result)) {
+        if (_.isNull(result[0]['maxSortNo'])) {
             callback(null, -1);
             return;
         }
 
-        callback(null, result[0]['max_sort_no'] || 0);
+        callback(null, result[0]['maxSortNo'] || 0);
     });
 }
 
@@ -315,7 +315,7 @@ function queryUserPositionMaxSortNo(username, callback) {
             return;
         }
 
-        if (_.isEmpty(result)) {
+        if (_.isNull(result[0]['maxSortNo'])) {
             callback(null, -1);
             return;
         }
