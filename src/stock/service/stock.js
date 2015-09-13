@@ -420,7 +420,12 @@ function changePosition(req, res, callback) {
 }
 
 function movePosition(req, res, callback) {
+    var username = req.body.username;
+    var stockCode = req.body.stockCode;
+    var fromIndex = req.body['fromIndex'];
+    var destinationIndex = req.body['destinationIndex'];
 
+    stockDao.movePosition(username, stockCode, fromIndex, destinationIndex, callback);
 }
 
 // 内部接收参数方法，可暴露给其他模块调用

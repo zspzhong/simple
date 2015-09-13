@@ -22,6 +22,7 @@ exports.queryCodeIsExists = queryCodeIsExists;
 exports.queryUserPositionOfCode = queryUserPositionOfCode;
 exports.queryUserPositionMaxSortNo = queryUserPositionMaxSortNo;
 exports.addTrendHistoryChangePosition = addTrendHistoryChangePosition;
+exports.movePosition = movePosition;
 
 function queryStock(code, callback) {
     var condition = {
@@ -265,7 +266,6 @@ function moveFavorite(username, code, from, to, callback) {
         value = {username: username, from: from, to: to};
     }
 
-
     dataUtils.execSql(sql, value, function (err) {
         if (err) {
             callback(err);
@@ -387,6 +387,25 @@ function addTrendHistoryChangePosition(username, model, callback) {
             dataUtils.batchExecSql(sqlList, callback);
         }
     }
+}
 
+function movePosition(username, code, from, to, callback) {
+    var sql = 'update stock_user_position set sort_no = sort_no + 1 where user_id = :username and sort_no < :from and sort_no >= :to;';
+    var value = {username: username, from: from, to: to};
 
+    if (from < to) {
+        sql = 'update stock_user_position set sort_no = sort_no - 1 where user_id = :username and sort_no > :from and sort_no <= :to;';
+        value = {username: username, from: from, to: to};
+    }
+
+    dataUtils.execSql(sql, value, function (err) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        var sql = 'update stock_user_position set sort_no = :to where user_id = :username and code = :code;';
+        var value = {username: username, code: code, to: to};
+        dataUtils.execSql(sql, value, callback);
+    });
 }
