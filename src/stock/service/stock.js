@@ -293,7 +293,7 @@ function userPositionData(req, res, callback) {
 
             _.each(positionList, function (item) {
                 var currentInfo = result[item.code];
-
+                item.name = currentInfo.name;
                 item.profit = currentInfo.close * item.volume - item.cost;
                 item.profitRatio = item.profit / item.cost;
             });
