@@ -260,6 +260,7 @@ function userPositionData(req, res, callback) {
             item.costPrice = item.costPrice.toFixed(2);
             item.profit = item.profit.toFixed(2);
             item.profitRatio = (item.profitRatio * 100).toFixed(2) + '%';
+            item.cost = item.cost.toFixed(2);
         });
         callback(null, positionList);
     });
