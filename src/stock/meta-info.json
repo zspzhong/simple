@@ -57,26 +57,26 @@
       "comment": "用户的关注股票"
     },
     {
-      "name": "addUserFavorite",
-      "path": "/stock/addUserFavorite",
+      "name": "addFavorite",
+      "path": "/stock/addFavorite",
       "realizeJs": "stock",
-      "functionName": "addUserFavorite",
+      "functionName": "addFavorite",
       "method": "post",
       "comment": "添加用户关注股票"
     },
     {
-      "name": "deleteUserFavorite",
-      "path": "/stock/deleteUserFavorite",
+      "name": "deleteFavorite",
+      "path": "/stock/deleteFavorite",
       "realizeJs": "stock",
-      "functionName": "deleteUserFavorite",
+      "functionName": "deleteFavorite",
       "method": "post",
       "comment": "删除用户关注股票"
     },
     {
-      "name": "moveUserFavorite",
-      "path": "/stock/moveUserFavorite",
+      "name": "moveFavorite",
+      "path": "/stock/moveFavorite",
       "realizeJs": "stock",
-      "functionName": "moveUserFavorite",
+      "functionName": "moveFavorite",
       "method": "post",
       "comment": "移动用户关注股票顺序"
     }

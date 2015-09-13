@@ -16,9 +16,9 @@ exports.queryCompanyCode2Name = queryCompanyCode2Name;
 exports.queryUserFavorite = queryUserFavorite;
 exports.queryUserFavoriteMaxSortNo = queryUserFavoriteMaxSortNo;
 exports.saveFavorite = saveFavorite;
-exports.querySortNoByUsernameAndCode = querySortNoByUsernameAndCode;
-exports.deleteAndResortOther = deleteAndResortOther;
-exports.moveUserFavorite = moveUserFavorite;
+exports.queryFavoriteSortNoByUsernameAndCode = queryFavoriteSortNoByUsernameAndCode;
+exports.deleteFavoriteAndResortOther = deleteFavoriteAndResortOther;
+exports.moveFavorite = moveFavorite;
 
 function queryStock(code, callback) {
     var condition = {
@@ -284,7 +284,7 @@ function saveFavorite(favorite, callback) {
     dataUtils.obj2DB('stock_user_favorite', favorite, callback);
 }
 
-function querySortNoByUsernameAndCode(username, code, callback) {
+function queryFavoriteSortNoByUsernameAndCode(username, code, callback) {
     var sql = 'select sort_no from stock_user_favorite where user_id = :username and code = :code;';
 
     dataUtils.execSql(sql, {username: username, code: code}, function (err, result) {
@@ -302,7 +302,7 @@ function querySortNoByUsernameAndCode(username, code, callback) {
     });
 }
 
-function deleteAndResortOther(username, code, sortNo, callback) {
+function deleteFavoriteAndResortOther(username, code, sortNo, callback) {
     var sqlList = [];
 
     var condition = {
@@ -324,7 +324,7 @@ function deleteAndResortOther(username, code, sortNo, callback) {
     dataUtils.batchExecSql(sqlList, callback);
 }
 
-function moveUserFavorite(username, code, from, to, callback) {
+function moveFavorite(username, code, from, to, callback) {
     var sql = 'update stock_user_favorite set sort_no = sort_no + 1 where user_id = :username and sort_no < :from and sort_no >= :to;';
     var value = {username: username, from: from, to: to};
     

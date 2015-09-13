@@ -16,11 +16,11 @@
 
  * 用户的关注股票(get): **/stock/userFavoriteData/:username**
 
- * 添加用户关注股票(post): **/stock/addUserFavorite**
+ * 添加用户关注股票(post): **/stock/addFavorite**
 
- * 删除用户关注股票(post): **/stock/deleteUserFavorite**
+ * 删除用户关注股票(post): **/stock/deleteFavorite**
 
- * 移动用户关注股票顺序(post): **/stock/moveUserFavorite**
+ * 移动用户关注股票顺序(post): **/stock/moveFavorite**
 
 ##image
  * 获取随机图片的url(get): **/image/randomUrl**

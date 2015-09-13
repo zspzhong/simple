@@ -10,9 +10,9 @@ exports.addStock2Pool = addStock2Pool;
 exports.addTrendHistory = addTrendHistory;
 exports.marketCompanyCode2Name = marketCompanyCode2Name;
 exports.userFavoriteData = userFavoriteData;
-exports.addUserFavorite = addUserFavorite;
-exports.deleteUserFavorite = deleteUserFavorite;
-exports.moveUserFavorite = moveUserFavorite;
+exports.addFavorite = addFavorite;
+exports.deleteFavorite = deleteFavorite;
+exports.moveFavorite = moveFavorite;
 
 // 根据买卖点以及量计算收益 [{date: x, type: 'sale' | 'buy', volume: y}]
 function calculateProfit(req, res, callback) {
@@ -202,7 +202,7 @@ function userFavoriteData(req, res, callback) {
     }
 }
 
-function addUserFavorite(req, res, callback) {
+function addFavorite(req, res, callback) {
     var username = req.body.username;
     var stockCode = req.body.stockCode;
     var sortNo = 0;
@@ -232,7 +232,7 @@ function addUserFavorite(req, res, callback) {
     }
 }
 
-function deleteUserFavorite(req, res, callback) {
+function deleteFavorite(req, res, callback) {
     var username = req.body.username;
     var stockCode = req.body.stockCode;
     var sortNo = 0;
@@ -240,7 +240,7 @@ function deleteUserFavorite(req, res, callback) {
     async.series([_queryTargetSortNo, _deleteAndResortOther], callback);
 
     function _queryTargetSortNo(callback) {
-        stockDao.querySortNoByUsernameAndCode(username, stockCode, function (err, result) {
+        stockDao.queryFavoriteSortNoByUsernameAndCode(username, stockCode, function (err, result) {
             if (err) {
                 callback(err);
                 return;
@@ -252,17 +252,17 @@ function deleteUserFavorite(req, res, callback) {
     }
 
     function _deleteAndResortOther(callback) {
-        stockDao.deleteAndResortOther(username, stockCode, sortNo, callback);
+        stockDao.deleteFavoriteAndResortOther(username, stockCode, sortNo, callback);
     }
 }
 
-function moveUserFavorite(req, res, callback) {
+function moveFavorite(req, res, callback) {
     var username = req.body.username;
     var stockCode = req.body.stockCode;
     var fromIndex = req.body['fromIndex'];
     var destinationIndex = req.body['destinationIndex'];
 
-    stockDao.moveUserFavorite(username, stockCode, fromIndex, destinationIndex, callback);
+    stockDao.moveFavorite(username, stockCode, fromIndex, destinationIndex, callback);
 }
 
 // 内部接收参数方法，可暴露给其他模块调用
