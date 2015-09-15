@@ -144,7 +144,7 @@ function queryCodePrefix(code, callback) {
 }
 
 function addStock2Pool(model, callback) {
-    dataUtils.obj2DB('stock_code_pool', model, callback);
+    dataUtils.objIgnore2DB('stock_code_pool', model, callback);
 }
 
 function queryCodeWithoutEnoughData(dayLeast, callback) {

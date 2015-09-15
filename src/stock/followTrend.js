@@ -137,6 +137,12 @@ function run() {
         }
 
         logger.info('邮件信息：' + mailText);
+
+        if (global.mode === 'dev') {
+            callback(null);
+            return;
+        }
+
         mailUtils.sendMail({text: mailText}, callback);
 
         function _buildMailText() {
@@ -252,7 +258,7 @@ function run() {
         return operateList;
 
         function _pickBuy(priceInfo, code) {
-            if (priceInfo.currentPrice - priceInfo['highIntervalMaxPrice'] < 0) {
+            if (priceInfo.currentPrice - priceInfo['highIntervalMaxPrice'] <= 0) {
                 return;
             }
 
@@ -265,7 +271,7 @@ function run() {
         }
 
         function _pickSale(priceInfo, code) {
-            if (priceInfo.currentPrice - priceInfo['lowIntervalMinPrice'] > 0) {
+            if (priceInfo.currentPrice - priceInfo['lowIntervalMinPrice'] >= 0) {
                 return;
             }
 
