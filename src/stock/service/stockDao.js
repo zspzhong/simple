@@ -414,7 +414,7 @@ function movePosition(username, code, from, to, callback) {
 function queryUserHistory(username, callback) {
     var sql = 'select a.code, a.date, a.price, a.volume, a.type, a.profit, b.name' +
         ' from stock_user_trend_history a, stock_code_name b' +
-        ' where a.user_id = :username and a.code = b.code;';
+        ' where a.user_id = :username and a.code = b.code order by a.date desc;';
 
     dataUtils.execSql(sql, {username: username}, callback);
 }
