@@ -95,6 +95,14 @@
       "functionName": "movePosition",
       "method": "post",
       "comment": "移动用户持仓股票顺序"
+    },
+    {
+      "name": "userHistoryData",
+      "path": "/stock/userHistoryData/:username",
+      "realizeJs": "stock",
+      "functionName": "userHistoryData",
+      "method": "get",
+      "comment": "用户历史交易"
     }
   ]
 }

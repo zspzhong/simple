@@ -26,5 +26,7 @@
 
  * 移动用户持仓股票顺序(post): **/stock/movePosition**
 
+ * 用户历史交易(get): **/stock/userHistoryData/:username**
+
 ##image
  * 获取随机图片的url(get): **/image/randomUrl**

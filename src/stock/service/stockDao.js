@@ -23,6 +23,7 @@ exports.queryUserPositionOfCode = queryUserPositionOfCode;
 exports.queryUserPositionMaxSortNo = queryUserPositionMaxSortNo;
 exports.addTrendHistoryChangePosition = addTrendHistoryChangePosition;
 exports.movePosition = movePosition;
+exports.queryUserHistory = queryUserHistory;
 
 function queryStock(code, callback) {
     var condition = {
@@ -408,4 +409,12 @@ function movePosition(username, code, from, to, callback) {
         var value = {username: username, code: code, to: to};
         dataUtils.execSql(sql, value, callback);
     });
+}
+
+function queryUserHistory(username, callback) {
+    var sql = 'select a.code, a.date, a.price, a.volume, a.type, a.profit, b.name' +
+        ' from stock_user_trend_history a, stock_code_name b' +
+        ' where a.user_id = :username and a.code = b.code;';
+
+    dataUtils.execSql(sql, {username: username}, callback);
 }

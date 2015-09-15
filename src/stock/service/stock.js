@@ -18,6 +18,8 @@ exports.userPositionData = userPositionData;
 exports.changePosition = changePosition;
 exports.movePosition = movePosition;
 
+exports.userHistoryData = userHistoryData;
+
 // 根据买卖点以及量计算收益 [{date: x, type: 'sale' | 'buy', volume: y}]
 function calculateProfit(req, res, callback) {
     var stockCode = req.params.stockCode;
@@ -427,6 +429,39 @@ function movePosition(req, res, callback) {
     var destinationIndex = req.body['destinationIndex'];
 
     stockDao.movePosition(username, stockCode, fromIndex, destinationIndex, callback);
+}
+
+function userHistoryData(req, res, callback) {
+    var username = req.params.username;
+
+    stockDao.queryUserHistory(username, function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        callback(null, _buildResult(result));
+    });
+
+    function _buildResult(result) {
+        var list = [];
+
+        _.each(result, function (item) {
+            var one = {};
+
+            one.name = item.name;
+            one.code = item.code;
+            one.operate = (item.type === 'buy' ? '买入(' : '卖出(') + item.volume + ')';
+            one.price = item.price.toFixed(2);
+            one.total = (item.price * item.volume).toFixed(1);
+            one.date = item.date.format();
+            one.profit = item.profit.toFixed(1);
+
+            list.push(one);
+        });
+
+        return list;
+    }
 }
 
 // 内部接收参数方法，可暴露给其他模块调用
