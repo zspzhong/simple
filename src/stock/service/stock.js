@@ -453,7 +453,7 @@ function userHistoryData(req, res, callback) {
             one.code = item.code;
             one.operate = (item.type === 'buy' ? '买入(' : '卖出(') + item.volume + ')';
             one.price = item.price.toFixed(2);
-            one.total = (item.price * item.volume).toFixed(1);
+            one.total = (item.type === 'buy' ? -1 : 1) * (item.price * item.volume).toFixed(1);
             one.date = item.date.format();
             one.profit = item.profit.toFixed(1);
 
