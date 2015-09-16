@@ -151,6 +151,12 @@ function userFavoriteData(req, res, callback) {
                     return;
                 }
 
+                // 停牌中的股票
+                var isTrendSuspend = currentInfo.close === 0 && currentInfo.yesterdayClosePrice != 0;
+                if (isTrendSuspend) {
+                    currentInfo.close = currentInfo.yesterdayClosePrice;
+                }
+
                 var delta = Number(currentInfo.close - currentInfo.yesterdayClosePrice);
                 var upDown = Number(currentInfo.up_down * 100);
 
@@ -159,7 +165,7 @@ function userFavoriteData(req, res, callback) {
                     name: currentInfo.name,
                     price: Number(currentInfo.close).toFixed(2),
                     priceDelta: delta.toFixed(2),
-                    upDown: upDown.toFixed(2) + '%'
+                    upDown: isTrendSuspend ? '停牌' : upDown.toFixed(2) + '%'
                 });
             });
 
