@@ -316,6 +316,11 @@ function changePosition(req, res, callback) {
     var positionInfo = {};
     var maxSortNo = 0;
 
+    if (price == 0 || volume == 0) {
+        callback(null);
+        return;
+    }
+
     async.series([_queryCodeExists, _queryPositionInfo, _queryUserPositionMaxSortNo, _addTrendHistoryChangePosition], callback);
 
     function _queryCodeExists(callback) {
