@@ -269,6 +269,10 @@ function userPositionData(req, res, callback) {
             item.profit = item.profit.toFixed(1);
             item.profitRatio = (item.profitRatio * 100).toFixed(2) + '%';
             item.cost = item.cost.toFixed(1);
+
+            if (item.isTrendSuspend) {
+                item.profitRatio = '停牌';
+            }
         });
         callback(null, positionList);
     });
@@ -302,9 +306,15 @@ function userPositionData(req, res, callback) {
 
             _.each(positionList, function (item) {
                 var currentInfo = result[item.code];
+                var isTrendSuspend = (currentInfo.close == 0 && currentInfo.yesterdayClosePrice != 0);
+                if (isTrendSuspend) {
+                    currentInfo.close = currentInfo.yesterdayClosePrice;
+                }
+
                 item.name = currentInfo.name;
                 item.profit = currentInfo.close * item.volume - item.cost;
                 item.profitRatio = item.profit / item.cost;
+                item.isTrendSuspend = isTrendSuspend;
             });
 
             callback(null);
