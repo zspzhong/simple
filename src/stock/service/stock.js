@@ -152,7 +152,7 @@ function userFavoriteData(req, res, callback) {
                 }
 
                 // 停牌中的股票
-                var isTrendSuspend = currentInfo.close === 0 && currentInfo.yesterdayClosePrice != 0;
+                var isTrendSuspend = (currentInfo.close == 0 && currentInfo.yesterdayClosePrice != 0);
                 if (isTrendSuspend) {
                     currentInfo.close = currentInfo.yesterdayClosePrice;
                 }
