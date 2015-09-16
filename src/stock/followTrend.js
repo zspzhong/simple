@@ -14,7 +14,7 @@ function run() {
     var code2LowAndHighPrice = {};
     var code2CurrentPrice = {};
 
-    async.series([_isAllowTrade, _queryCodePool, _filterCodeWithoutEnoughData, _queryHistoryHighAndLowPrice, _queryCurrentPrice, _sendEmail], function (err) {
+    async.series([_isAllowTrade, _queryCodePool, _queryUserPosition, _filterCodeWithoutEnoughData, _queryHistoryHighAndLowPrice, _queryCurrentPrice, _sendEmail], function (err) {
         if (err) {
             logger.error(err);
             process.exit(1);
@@ -51,6 +51,32 @@ function run() {
             stockPoolList = result;
             callback(null);
         });
+    }
+
+    function _queryUserPosition(callback) {
+        stockDao.queryUserPosition('shasharoman', function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            stockPoolList = stockPoolList.concat(_translateResult(result));
+            callback(null);
+        });
+
+        function _translateResult(result) {
+            var list = [];
+
+            _.each(result, function (item) {
+                list.push({
+                    code: item['codeWithPrefix'].substr(2),
+                    prefix: item['codeWithPrefix'].substr(0, 2),
+                    hold_state: 1
+                });
+            });
+
+            return list;
+        }
     }
 
     // 过滤数据不够判断的股票

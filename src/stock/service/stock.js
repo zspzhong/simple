@@ -1,4 +1,5 @@
 var stockDao = require('./stockDao.js');
+var requestUtils = require(global['libDir'] + '/utils/requestUtils.js');
 
 exports.calculateProfit = calculateProfit;
 exports.followTrend = followTrend;
@@ -179,7 +180,7 @@ function addFavorite(req, res, callback) {
     var stockCode = req.body.stockCode;
     var sortNo = 0;
 
-    async.series([_queryCodeIsExists, _queryUserFavoriteMaxSortNo, _saveFavorite], callback);
+    async.series([_queryCodeIsExists, _queryUserFavoriteMaxSortNo, _saveFavorite, _add2Pool], callback);
 
     function _queryCodeIsExists(callback) {
         stockDao.queryCodeIsExists(stockCode, function (err, result) {
@@ -217,6 +218,11 @@ function addFavorite(req, res, callback) {
         };
 
         stockDao.saveFavorite(model, callback);
+    }
+
+    function _add2Pool(callback) {
+        requestUtils.getResource('/svc/stock/addStock2Pool/' + stockCode, function () {});
+        callback(null);
     }
 }
 
