@@ -68,6 +68,14 @@ function run() {
             var list = [];
 
             _.each(result, function (item) {
+                var exists = _.find(stockPoolList, function (one) {
+                    return item['codeWithPrefix'].substr(2) === one.code;
+                });
+
+                if (!_.isEmpty(exists)) {
+                    return;
+                }
+
                 list.push({
                     code: item['codeWithPrefix'].substr(2),
                     prefix: item['codeWithPrefix'].substr(0, 2),
@@ -145,6 +153,10 @@ function run() {
 
                 priceInfo.name = currentPriceInfo.name;
                 priceInfo.currentPrice = currentPriceInfo.close;
+
+                if (currentPriceInfo.close == 0 && currentPriceInfo.yesterdayClosePrice != 0) {
+                    priceInfo.currentPrice = currentPriceInfo.yesterdayClosePrice;
+                }
             });
 
             callback(null);
@@ -215,6 +227,10 @@ function run() {
         var beyondLimitList = [];
 
         _.each(code2CurrentPrice, function (priceInfo, code) {
+            if (priceInfo.close == 0 && priceInfo.yesterdayClosePrice != 0) {
+                priceInfo.close = priceInfo.yesterdayClosePrice;
+            }
+
             var ratio = (priceInfo.close - priceInfo.yesterdayClosePrice) / priceInfo.yesterdayClosePrice;
 
             if (ratio > -0.1) {
