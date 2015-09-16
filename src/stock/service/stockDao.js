@@ -119,7 +119,7 @@ function queryStockPriceFromSina(codeList, callback) {
 }
 
 function addDayFollowingInfo(list, callback) {
-    dataUtils.list2DB('stock_following', list, callback);
+    dataUtils.listIgnore2DB('stock_following', list, callback);
 }
 
 function queryCodePrefix(code, callback) {
