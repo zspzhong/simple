@@ -184,31 +184,49 @@ function userFavoriteData(req, res, callback) {
             return item.substr(2);
         });
 
-        var args = {
-            highBuyInterval: 20,
-            lowSaleInterval: 10
-        };
+        async.series([_filterCodeWithoutEnoughData, _findOperate], callback);
 
-        stockDao.queryStockHistoryHighAndLowPrice(codeList, args, function (err, result) {
-            if (err) {
-                callback(err);
-                return;
-            }
-
-            _.each(favoriteData, function (item) {
-                item.operate = '';
-
-                if (_.isEmpty(result[item.code])) {
+        function _filterCodeWithoutEnoughData(callback) {
+            stockDao.queryCodeWithoutEnoughData(20, function (err, result) {
+                if (err) {
+                    callback(err);
                     return;
                 }
 
-                if (item.price >= result[item.code]['highIntervalMaxPrice']) {
-                    item.operate = 'buy';
-                }
+                codeList = _.filter(codeList, function (item) {
+                    return !_.contains(result, item);
+                });
+                callback(null);
             });
+        }
 
-            callback(null);
-        });
+        function _findOperate(callback) {
+            var args = {
+                highBuyInterval: 20,
+                lowSaleInterval: 10
+            };
+
+            stockDao.queryStockHistoryHighAndLowPrice(codeList, args, function (err, result) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+
+                _.each(favoriteData, function (item) {
+                    item.operate = '';
+
+                    if (_.isEmpty(result[item.code])) {
+                        return;
+                    }
+
+                    if (item.price >= result[item.code]['highIntervalMaxPrice']) {
+                        item.operate = 'buy';
+                    }
+                });
+
+                callback(null);
+            });
+        }
     }
 }
 
@@ -375,31 +393,49 @@ function userPositionData(req, res, callback) {
             return item.substr(2);
         });
 
-        var args = {
-            highBuyInterval: 20,
-            lowSaleInterval: 10
-        };
+        async.series([_filterCodeWithoutEnoughData, _findOperate], callback);
 
-        stockDao.queryStockHistoryHighAndLowPrice(codeList, args, function (err, result) {
-            if (err) {
-                callback(err);
-                return;
-            }
-
-            _.each(positionList, function (item) {
-                item.operate = '';
-
-                if (_.isEmpty(result[item.code])) {
+        function _filterCodeWithoutEnoughData(callback) {
+            stockDao.queryCodeWithoutEnoughData(20, function (err, result) {
+                if (err) {
+                    callback(err);
                     return;
                 }
 
-                if (item.price <= result[item.code]['lowIntervalMinPrice']) {
-                    item.operate = 'sale';
-                }
+                codeList = _.filter(codeList, function (item) {
+                    return !_.contains(result, item);
+                });
+                callback(null);
             });
+        }
 
-            callback(null);
-        });
+        function _findOperate(callback) {
+            var args = {
+                highBuyInterval: 20,
+                lowSaleInterval: 10
+            };
+
+            stockDao.queryStockHistoryHighAndLowPrice(codeList, args, function (err, result) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+
+                _.each(positionList, function (item) {
+                    item.operate = '';
+
+                    if (_.isEmpty(result[item.code])) {
+                        return;
+                    }
+
+                    if (item.price <= result[item.code]['lowIntervalMinPrice']) {
+                        item.operate = 'sale';
+                    }
+                });
+
+                callback(null);
+            });
+        }
     }
 }
 
