@@ -114,10 +114,10 @@ function marketCompanyCode2Name(req, res, callback) {
 function userFavoriteData(req, res, callback) {
     var username = req.params.username;
 
-    var codeList = [];
+    var codeWithPrefixList = [];
     var favoriteData = [];
 
-    async.series([_queryFavoriteCode, _querySomeInfoFromSina], function (err) {
+    async.series([_queryFavoriteCode, _querySomeInfoFromSina, _findOperateType], function (err) {
         if (err) {
             callback(err);
             return;
@@ -133,19 +133,19 @@ function userFavoriteData(req, res, callback) {
                 return;
             }
 
-            codeList = result;
+            codeWithPrefixList = result;
             callback(null);
         });
     }
 
     function _querySomeInfoFromSina(callback) {
-        stockDao.queryStockPriceFromSina(codeList, function (err, result) {
+        stockDao.queryStockPriceFromSina(codeWithPrefixList, function (err, result) {
             if (err) {
                 callback(err);
                 return;
             }
 
-            _.each(codeList, function (code) {
+            _.each(codeWithPrefixList, function (code) {
                 var currentInfo = result[code.substr(2)];
 
                 if (_.isEmpty(currentInfo)) {
@@ -168,6 +168,43 @@ function userFavoriteData(req, res, callback) {
                     priceDelta: delta.toFixed(2),
                     upDown: isTrendSuspend ? '停牌' : upDown.toFixed(2) + '%'
                 });
+            });
+
+            callback(null);
+        });
+    }
+
+    function _findOperateType(callback) {
+        if (_.isEmpty(codeWithPrefixList)) {
+            callback(null);
+            return;
+        }
+
+        var codeList = _.map(codeWithPrefixList, function (item) {
+            return item.substr(2);
+        });
+
+        var args = {
+            highBuyInterval: 20,
+            lowSaleInterval: 10
+        };
+
+        stockDao.queryStockHistoryHighAndLowPrice(codeList, args, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            _.each(favoriteData, function (item) {
+                item.operate = '';
+
+                if (_.isEmpty(result[item.code])) {
+                    return;
+                }
+
+                if (item.price >= result[item.code]['highIntervalMaxPrice']) {
+                    item.operate = 'buy';
+                }
             });
 
             callback(null);
@@ -263,9 +300,9 @@ function userPositionData(req, res, callback) {
     var username = req.params.username;
 
     var positionList = [];
-    var codeList = [];
+    var codeWithPrefixList = [];
 
-    async.series([_queryUserPosition, _calculateProfit], function (err) {
+    async.series([_queryUserPosition, _calculateProfit, _findOperateType], function (err) {
         if (err) {
             callback(err);
             return;
@@ -290,7 +327,7 @@ function userPositionData(req, res, callback) {
                 return;
             }
 
-            codeList = _.pluck(result, 'codeWithPrefix');
+            codeWithPrefixList = _.pluck(result, 'codeWithPrefix');
             _.each(result, function (item) {
                 positionList.push({
                     code: item['codeWithPrefix'].substr(2),
@@ -304,7 +341,7 @@ function userPositionData(req, res, callback) {
     }
 
     function _calculateProfit(callback) {
-        stockDao.queryStockPriceFromSina(codeList, function (err, result) {
+        stockDao.queryStockPriceFromSina(codeWithPrefixList, function (err, result) {
             if (err) {
                 callback(err);
                 return;
@@ -317,10 +354,48 @@ function userPositionData(req, res, callback) {
                     currentInfo.close = currentInfo.yesterdayClosePrice;
                 }
 
+                item.price = currentInfo.close;
                 item.name = currentInfo.name;
                 item.profit = currentInfo.close * item.volume - item.cost;
                 item.profitRatio = item.profit / item.cost;
                 item.isTrendSuspend = isTrendSuspend;
+            });
+
+            callback(null);
+        });
+    }
+
+    function _findOperateType(callback) {
+        if (_.isEmpty(codeWithPrefixList)) {
+            callback(null);
+            return;
+        }
+
+        var codeList = _.map(codeWithPrefixList, function (item) {
+            return item.substr(2);
+        });
+
+        var args = {
+            highBuyInterval: 20,
+            lowSaleInterval: 10
+        };
+
+        stockDao.queryStockHistoryHighAndLowPrice(codeList, args, function (err, result) {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            _.each(positionList, function (item) {
+                item.operate = '';
+
+                if (_.isEmpty(result[item.code])) {
+                    return;
+                }
+
+                if (item.price <= result[item.code]['lowIntervalMinPrice']) {
+                    item.operate = 'sale';
+                }
             });
 
             callback(null);
