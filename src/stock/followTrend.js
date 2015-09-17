@@ -300,7 +300,7 @@ function run() {
         return operateList;
 
         function _pickBuy(priceInfo, code) {
-            if (priceInfo.currentPrice - priceInfo['highIntervalMaxPrice'] <= 0) {
+            if (priceInfo.currentPrice - priceInfo['highIntervalMaxPrice'] < 0) {
                 return;
             }
 
@@ -313,7 +313,7 @@ function run() {
         }
 
         function _pickSale(priceInfo, code) {
-            if (priceInfo.currentPrice - priceInfo['lowIntervalMinPrice'] >= 0) {
+            if (priceInfo.currentPrice - priceInfo['lowIntervalMinPrice'] > 0) {
                 return;
             }
 
