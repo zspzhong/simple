@@ -276,7 +276,10 @@ function addFavorite(req, res, callback) {
     }
 
     function _add2Pool(callback) {
-        requestUtils.getResource('/svc/stock/addStock2Pool/' + stockCode, function () {});
+        if (username === 'shasharoman') {
+            requestUtils.getResource('/svc/stock/addStock2Pool/' + stockCode, function () {});
+        }
+
         callback(null);
     }
 }
