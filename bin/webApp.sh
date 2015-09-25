@@ -1,1 +1,1 @@
-node ../lib/webApp.js -c ../conf/webApp_config.json 1>../logs/webApp-access.log 2>../logs/webApp-error.log
+node /root/simple/lib/webApp.js -c /root/simple/conf/webApp_config.json 1>../logs/webApp-access.log 2>../logs/webApp-error.log

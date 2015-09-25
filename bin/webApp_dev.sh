@@ -1,1 +1,1 @@
-node --debug=5858 ../lib/webApp.js -c ../conf/webApp_config_dev.json
+node --debug=5858 /Users/shasharoman/private/simple/lib/webApp.js -c /Users/shasharoman/private/simple/conf/webApp_config_dev.json
