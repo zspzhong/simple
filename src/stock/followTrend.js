@@ -73,6 +73,7 @@ function run() {
                 });
 
                 if (!_.isEmpty(exists)) {
+                    exists.hold_state = 1;
                     return;
                 }
 
