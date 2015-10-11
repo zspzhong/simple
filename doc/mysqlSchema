@@ -136,3 +136,9 @@ create table if not exists stock_user_trend_history (
     type varchar(16) comment 'buy|sale',
     profit float
 );
+
+#user
+create table if not exists user (
+    username varchar(64) primary key,
+    password varchar(64)
+);
