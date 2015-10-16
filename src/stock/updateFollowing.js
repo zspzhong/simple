@@ -70,7 +70,7 @@ function run() {
 
 
             _.each(result, function (item) {
-                if ((item.open - item.yesterdayClosePrice) / item.yesterdayClosePrice > -0.1) {
+                if (item.open == 0 || (item.open - item.yesterdayClosePrice) / item.yesterdayClosePrice > -0.1) {
                     return;
                 }
 
