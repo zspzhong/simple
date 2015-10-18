@@ -18,8 +18,9 @@
 * src：应用程序代码
 
 ### 使用
-1. 安装node.js，下载代码到本地
-2. 在simple目录下执行npm install
-3. 修改simple/conf/目录下的配置文件中的相关路径
-4. 修改simple/bin/目录下的启动脚本中的相关路径
-5. 在simple/bin/目录下启动应用，爬虫脚本：`./script_dev.sh spider/spider.js(脚本相对src的路径)`，后台：`./webApp_dev.sh`
+1. 安装node.js，mongodb，mysql
+2. 下载代码到本地
+3. 在simple目录下执行npm install
+4. 修改simple/conf/目录下的配置文件中的相关路径
+5. 修改simple/bin/目录下的启动脚本中的相关路径
+6. 在simple/bin/目录下启动应用，爬虫脚本：`./script_dev.sh spider/spider.js(脚本相对src的路径)`，后台：`./webApp_dev.sh`
