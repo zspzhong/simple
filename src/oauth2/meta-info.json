@@ -1,0 +1,8 @@
+{
+  "initial": {
+    "name": "oauth2",
+    "realizeJs": "oauth2",
+    "functionName": "oauth2Initial",
+    "comment": "oauth2初始化"
+  }
+}

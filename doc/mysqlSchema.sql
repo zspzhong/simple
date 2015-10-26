@@ -139,6 +139,28 @@ create table if not exists stock_user_trend_history (
 
 #user
 create table if not exists user (
-    username varchar(64) primary key,
+    id varchar(64) primary key,
+    username varchar(64),
     password varchar(64)
+);
+
+create table if not exists oauth_clients (
+    client_id varchar(64),
+    client_secret varchar(64),
+    redirect_uri varchar(128) not null,
+    primary key(client_id, client_secret)
+);
+
+create table if not exists oauth_access_tokens (
+    access_token varchar(128) primary key,
+    client_id varchar(64) not null,
+    user_id varchar(64) not null,
+    expires timestamp not null
+);
+
+create table if not exists oauth_refresh_tokens (
+    refresh_token varchar(128) not null primary key,
+    client_id varchar(64) not null,
+    user_id varchar(64) not null,
+    expires timestamp not null
 );
