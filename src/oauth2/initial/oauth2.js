@@ -5,17 +5,16 @@ exports.oauth2Initial = oauth2Initial;
 function oauth2Initial(expressApp) {
     expressApp.oauth = oauthServer({
         model: require('./model'),
-        grants: ['auth_code', 'password'],
+        grants: ['authorization_code', 'password'],
         debug: true
     });
 
     // Handle token grant requests
-    expressApp.all('/oauth/token', expressApp.oauth.grant());
+    expressApp.all('/svc/oauth/token', expressApp.oauth.grant());
 
-    // Show them the "do you authorise xyz app to access your content?" page
-    expressApp.get('/oauth/authorise', function (req, res, next) {
+    // 用户授权页
+    expressApp.get('/svc/oauth/authorise', function (req, res, next) {
         if (!req.session || !req.session.user) {
-            // If they aren't logged in, send them to your own login implementation
             var loginUrl = '/login?redirect=' + req.path + '&client_id=' + req.query.client_id + '&redirect_uri=' + req.query.redirect_uri;
             res.redirect(loginUrl);
             return;
@@ -27,8 +26,8 @@ function oauth2Initial(expressApp) {
         });
     });
 
-    // Handle authorise
-    expressApp.post('/oauth/authorise', function (req, res, next) {
+    // 处理用户授权完成
+    expressApp.post('/svc/oauth/authorise', function (req, res, next) {
         if (!req.session || !req.session.user) {
             res.redirect('/login?client_id=' + req.query.client_id + '&redirect_uri=' + req.query.redirect_uri);
             return;
@@ -38,11 +37,12 @@ function oauth2Initial(expressApp) {
         // The first param should to indicate an error
         // The second param should a bool to indicate if the user did authorise the app
         // The third param should for the user/uid (only used for passing to saveAuthCode)
-        next(null, req.body['allow'] === 'yes', req.session.user.id, req.session.user);
+        var allow = (req.body['allow'] === 'yes');
+
+        next(null, allow, req.session.user.id);
     }));
 
-    // Show login
-    expressApp.get('/login', function (req, res, next) {
+    expressApp.get('/oauth/login', function (req, res, next) {
         res.render('login', {
             redirect: req.query.redirect,
             client_id: req.query.client_id,
@@ -50,12 +50,10 @@ function oauth2Initial(expressApp) {
         });
     });
 
-    // Handle login
-    expressApp.post('/login', function (req, res, next) {
-        // Insert your own login mechanism
-        // Successful logins should send the user back to the /oauth/authorise
-        // with the client_id and redirect_uri (you could store these in the session)
-        res.redirect((req.body.redirect || '/home') + '?client_id=' + req.body.client_id + '&redirect_uri=' + req.body.redirect_uri);
+    expressApp.post('/oauth/login', function (req, res, next) {
+        var authoriseUrl = (req.body.redirect || '/home') + '?client_id=' + req.body.client_id + '&redirect_uri=' + req.body.redirect_uri;
+
+        res.redirect(authoriseUrl);
     });
 
     expressApp.get('/secret', expressApp.oauth.authorise(), function (req, res) {

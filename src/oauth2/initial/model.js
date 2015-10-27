@@ -7,6 +7,8 @@ exports.getRefreshToken = getRefreshToken;
 exports.grantTypeAllowed = grantTypeAllowed;
 exports.saveAccessToken = saveAccessToken;
 exports.saveRefreshToken = saveRefreshToken;
+exports.getAuthCode = getAuthCode;
+exports.saveAuthCode = saveAuthCode;
 exports.getUser = getUser;
 
 function getAccessToken(bearerToken, callback) {
@@ -69,7 +71,8 @@ function getRefreshToken(bearerToken, callback) {
 
 function grantTypeAllowed(clientId, grantType, callback) {
     if (grantType === 'password') {
-        return callback(false, authorizedClientIds.indexOf(clientId.toLowerCase()) >= 0);
+        callback(false, authorizedClientIds.indexOf(clientId.toLowerCase()) >= 0);
+        return;
     }
 
     callback(false, true);
@@ -97,9 +100,35 @@ function saveRefreshToken(refreshToken, clientId, expires, userId, callback) {
     dataUtils.obj2DB('oauth_refresh_tokens', model, callback);
 }
 
-/*
- * Required to support password grant type
- */
+// Required for authorization_code grant type
+function getAuthCode(authCode, callback) {
+    dataUtils.query('oauth_codes', {auth_code: authCode}, function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        if (_.isEmpty(result)) {
+            callback('wrong auth code.');
+            return;
+        }
+
+        callback(null, result[0]);
+    });
+}
+
+function saveAuthCode(authCode, clientId, expires, userId, callback) {
+    var model = {
+        auth_code: authCode,
+        client_id: clientId,
+        expires: expires,
+        user_id: userId
+    };
+
+    dataUtils.obj2DB('oauth_codes', model, callback);
+}
+
+// Required to support password grant type
 function getUser(username, password, callback) {
     dataUtils.query('user', {username: username, password: password}, ['id'], function (err, result) {
         if (err) {

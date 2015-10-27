@@ -164,3 +164,10 @@ create table if not exists oauth_refresh_tokens (
     user_id varchar(64) not null,
     expires timestamp not null
 );
+
+create table if not exists oauth_codes (
+    auth_code varchar(64) not null primary key,
+    client_id varchar(64) not null,
+    user_id varchar(64) not null,
+    expires timestamp not null
+);
