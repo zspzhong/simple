@@ -4,5 +4,8 @@
     "realizeJs": "oauth2",
     "functionName": "oauth2Initial",
     "comment": "oauth2初始化"
-  }
+  },
+  "views": [
+    "jade"
+  ]
 }
