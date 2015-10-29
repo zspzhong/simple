@@ -9,7 +9,7 @@
   "applicationList": [
     "image",
     "stock",
-    "oauth2"
+    "oauth"
   ],
   "mysqlPool": {
     "connectionLimit": 10,
