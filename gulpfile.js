@@ -6,6 +6,7 @@ var htmlMin = require('gulp-htmlmin');
 var useRef = require('gulp-useref');
 var RevAll = require('gulp-rev-all');
 var filter = require('gulp-filter');
+var less = require('gulp-less');
 var del = require('del');
 
 var assets = useRef.assets();
@@ -14,13 +15,19 @@ var replaceStatic = rename(function (path) {
     return path;
 });
 
+gulp.task('less', function () {
+    gulp.src(['src/**/static/css/*.less'])
+        .pipe(less())
+        .pipe(gulp.dest('src/'));
+});
+
 gulp.task('cleanRelease', function (callback) {
     del(['release']).then(function () {
         callback(null);
     });
 });
 
-gulp.task('html-pro', ['cleanRelease'], function () {
+gulp.task('html-pro', ['cleanRelease', 'less'], function () {
     var jsFilter = filter(['**/*.js', '!**/*.min.js'], {restore: true});
     var cssFilter = filter('**/*.css', {restore: true});
     var htmlFilter = filter('**/*.html', {restore: true});
@@ -59,7 +66,7 @@ gulp.task('cleanDev', function (callback) {
     });
 });
 
-gulp.task('html-dev', ['cleanDev'], function () {
+gulp.task('html-dev', ['cleanDev', 'less'], function () {
     var write2Dev = gulp.dest('dev');
 
     gulp.src(['src/**/static/*.html'])
