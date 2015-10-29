@@ -4,5 +4,5 @@ access.log
 error.log
 node_modules
 release
-*.css
 dev
+**/static/css/*.css
