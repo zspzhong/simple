@@ -42,13 +42,15 @@ function oauth2Initial(expressApp) {
         next(null, allow, req.session.user.id);
     }));
 
-    expressApp.get('/oauth/login', function (req, res, next) {
-        res.render('login', {
-            redirect: req.query.redirect,
-            client_id: req.query.client_id,
-            redirect_uri: req.query.redirect_uri
-        });
-    });
+    //expressApp.get('/oauth/login', function (req, res, next) {
+    //
+    //
+    //    res.render('login', {
+    //        redirect: req.query.redirect,
+    //        client_id: req.query.client_id,
+    //        redirect_uri: req.query.redirect_uri
+    //    });
+    //});
 
     expressApp.post('/oauth/login', function (req, res, next) {
         var authoriseUrl = (req.body.redirect || '/home') + '?client_id=' + req.body.client_id + '&redirect_uri=' + req.body.redirect_uri;
