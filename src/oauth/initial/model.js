@@ -79,11 +79,11 @@ function grantTypeAllowed(clientId, grantType, callback) {
     callback(false, true);
 }
 
-function saveAccessToken(accessToken, clientId, expires, userId, callback) {
+function saveAccessToken(accessToken, clientId, expires, user, callback) {
     var model = {
         access_token: accessToken,
         client_id: clientId,
-        user_id: userId,
+        user_id: user.id,
         expires: expires
     };
 
@@ -114,7 +114,15 @@ function getAuthCode(authCode, callback) {
             return;
         }
 
-        callback(null, result[0]);
+        result = result[0];
+        var oauthCode = {
+            authCode: result.auth_code,
+            clientId: result.client_id,
+            expires: result.expires,
+            userId: result.user_id
+        };
+
+        callback(null, oauthCode);
     });
 }
 
@@ -137,6 +145,6 @@ function getUser(username, password, callback) {
             return;
         }
 
-        callback(null, _.isEmpty(result) ? false : result[0]);
+        callback(null, _.isEmpty(result) ? false : result[0].id);
     });
 }
