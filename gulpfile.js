@@ -9,7 +9,6 @@ var filter = require('gulp-filter');
 var less = require('gulp-less');
 var del = require('del');
 
-var assets = useRef.assets();
 var replaceStatic = rename(function (path) {
     path.dirname = path.dirname.replace('/static', '');
     return path;
@@ -17,7 +16,6 @@ var replaceStatic = rename(function (path) {
 
 var replaceJadeDev = rename(function (path) {
     path.dirname = path.dirname.replace('jade-dev', 'jade');
-    console.log(path);
     return path;
 });
 
@@ -32,41 +30,11 @@ gulp.task('less', ['clean'], function () {
         .pipe(gulp.dest('src/'));
 });
 
-gulp.task('jade', ['less'], function () {
-    var jsFilter = filter(['**/*.js', '!**/*.min.js'], {restore: true});
-    var cssFilter = filter('**/*.css', {restore: true});
-    var jadeFilter = filter('**/*.jade', {restore: true});
-    var notJadeFilter = filter(['**/*', '!**/*.jade'], {restore: true});
-
-    var revAll = new RevAll({
-        dontRenameFile: ['.jade'],
-        prefix: 'http://www.amsimple.com'
-    });
-
-    gulp.src(['src/**/static/jade-dev/*.jade'])
-        .pipe(assets)
-        .pipe(assets.restore())
-        .pipe(useRef())
-
-        .pipe(cssFilter)
-        .pipe(cssMin())
-        .pipe(cssFilter.restore)
-
-        .pipe(jsFilter)
-        .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
-        .pipe(jsFilter.restore)
-
-        .pipe(revAll.revision())
-        .pipe(jadeFilter)
-        .pipe(replaceJadeDev)
-        .pipe(gulp.dest('src/'))
-        .pipe(jadeFilter.restore)
-        .pipe(notJadeFilter)
-        .pipe(gulp.dest('release/'))
-        .pipe(gulp.dest('dev/'));
-});
+gulp.task('jade', ['less'], jadeHandle());
+gulp.task('jadeDev', ['less'], jadeHandle('dev'));
 
 gulp.task('html-pro', ['jade'], function () {
+    var assets = useRef.assets();
     var jsFilter = filter(['**/*.js', '!**/*.min.js'], {restore: true});
     var cssFilter = filter('**/*.css', {restore: true});
     var htmlFilter = filter('**/*.html', {restore: true});
@@ -98,14 +66,59 @@ gulp.task('html-pro', ['jade'], function () {
         .pipe(gulp.dest('release/'));
 });
 
-gulp.task('html-dev', ['jade'], function () {
+gulp.task('html-dev', ['jadeDev'], function () {
+    var assets = useRef.assets();
+
     gulp.src(['src/**/static/*.html'])
         .pipe(assets)
         .pipe(assets.restore())
         .pipe(useRef())
         .pipe(replaceStatic)
-        .pipe(gulp.dest('dev'));
+        .pipe(gulp.dest('dev/'));
 });
 
 gulp.task('default', ['html-pro']);
 gulp.task('dev', ['html-dev']);
+
+
+function jadeHandle(env) {
+    return function () {
+        var assets = useRef.assets();
+        var jsFilter = filter(['**/*.js', '!**/*.min.js'], {restore: true});
+        var cssFilter = filter('**/*.css', {restore: true});
+        var jadeFilter = filter('**/*.jade', {restore: true});
+        var notJadeFilter = filter(['**/*', '!**/*.jade'], {restore: true});
+
+        var prefix = 'http://www.amsimple.com';
+        if (env === 'dev') {
+            prefix = 'http://localhost:8001'
+        }
+
+        var revAll = new RevAll({
+            dontRenameFile: ['.jade'],
+            prefix: prefix
+        });
+
+        gulp.src(['src/**/static/jade-dev/*.jade'])
+            .pipe(assets)
+            .pipe(assets.restore())
+            .pipe(useRef())
+
+            .pipe(cssFilter)
+            .pipe(cssMin())
+            .pipe(cssFilter.restore)
+
+            .pipe(jsFilter)
+            .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
+            .pipe(jsFilter.restore)
+
+            .pipe(revAll.revision())
+            .pipe(jadeFilter)
+            .pipe(replaceJadeDev)
+            .pipe(gulp.dest('src/'))
+            .pipe(jadeFilter.restore)
+            .pipe(notJadeFilter)
+            .pipe(gulp.dest('release/'))
+            .pipe(gulp.dest('dev/'));
+    };
+}

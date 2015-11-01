@@ -53,7 +53,8 @@ function getClient(clientId, clientSecret, callback) {
 
         callback(null, {
             clientId: client.client_id,
-            clientSecret: client.client_secret
+            clientSecret: client.client_secret,
+            redirectUri: client.redirect_uri
         });
     });
 }

@@ -1,4 +1,7 @@
 var oauthServer = require('oauth2-server');
+var commonDao = require(global['libDir'] + '/dao/common.js');
+var utils = require(global['libDir'] + '/utils/commonUtils.js');
+var md5 = require('MD5');
 
 exports.oauth2Initial = oauth2Initial;
 
@@ -14,48 +17,81 @@ function oauth2Initial(expressApp) {
 
     // 用户授权页
     expressApp.get('/svc/oauth/authorise', function (req, res, next) {
+        var query = {
+            redirect: req.path,
+            client_id: req.query.client_id,
+            redirect_uri: req.query.redirect_uri,
+            response_type: req.query.response_type
+        };
+
         if (!req.session || !req.session.user) {
-            var loginUrl = '/login?redirect=' + req.path + '&client_id=' + req.query.client_id + '&redirect_uri=' + req.query.redirect_uri;
+            var loginUrl = '/svc/oauth/login?' + utils.transQuery2Str(query);
             res.redirect(loginUrl);
             return;
         }
 
-        res.render('authorise', {
-            client_id: req.query.client_id,
-            redirect_uri: req.query.redirect_uri
-        });
+        delete query.redirect;
+        var authoriseUrl = '/svc/oauth/authorise?' + utils.transQuery2Str(query);
+
+        res.render('authorise.jade', {authoriseUrl: authoriseUrl});
     });
 
     // 处理用户授权完成
     expressApp.post('/svc/oauth/authorise', function (req, res, next) {
+        var clientId = req.body.clientId;
+        var redirectUri = req.body.redirectUri;
+
         if (!req.session || !req.session.user) {
-            res.redirect('/login?client_id=' + req.query.client_id + '&redirect_uri=' + req.query.redirect_uri);
+            var loginUrl = '/svc/oauth/login?redirect=' + req.path + '&client_id=' + clientId + '&redirect_uri=' + redirectUri;
+            res.redirect(loginUrl);
             return;
         }
+
         next();
     }, expressApp.oauth.authCodeGrant(function (req, next) {
-        // The first param should to indicate an error
-        // The second param should a bool to indicate if the user did authorise the app
-        // The third param should for the user/uid (only used for passing to saveAuthCode)
-        var allow = (req.body['allow'] === 'yes');
-
-        next(null, allow, req.session.user.id);
+        next(null, true, req.session.user.id);
     }));
 
-    expressApp.get('/oauth/login', function (req, res, next) {
-
+    expressApp.get('/svc/oauth/login', function (req, res, next) {
+        var loginUrl = '/svc/oauth/login?' + utils.transQuery2Str(req.query);
 
         res.render('login.jade', {
-            redirect: req.query.redirect,
-            client_id: req.query.client_id,
-            redirect_uri: req.query.redirect_uri
+            username: '',
+            loginUrl: loginUrl
         });
     });
 
-    expressApp.post('/oauth/login', function (req, res, next) {
-        var authoriseUrl = (req.body.redirect || '/home') + '?client_id=' + req.body.client_id + '&redirect_uri=' + req.body.redirect_uri;
+    expressApp.post('/svc/oauth/login', function (req, res, next) {
+        var redirect = req.query.redirect || '/';
 
-        res.redirect(authoriseUrl);
+        var queryCopy = _.clone(req.query);
+        delete queryCopy.redirect;
+
+        var authoriseUrl = redirect + '?' + utils.transQuery2Str(queryCopy);
+
+        var username = req.body.username;
+        var password = req.body.password;
+
+        commonDao.queryUserByUserName(username, function (err, user) {
+            if (err) {
+                next(err);
+                return;
+            }
+
+            var loginUrl = '/svc/oauth/login?' + utils.transQuery2Str(req.query);
+            var option = {
+                username: username,
+                loginUrl: loginUrl
+            };
+
+            if (_.isEmpty(user) || user.password !== md5(password)) {
+                res.render('login.jade', option);
+                return;
+            }
+
+            req.session.user = user;
+            res.redirect(authoriseUrl);
+        });
     });
 
     expressApp.get('/secret', expressApp.oauth.authorise(), function (req, res) {
@@ -67,7 +103,4 @@ function oauth2Initial(expressApp) {
         // Does not require an access_token
         res.send('Public area');
     });
-
-    // Error handling
-    expressApp.use(expressApp.oauth.errorHandler());
 }
