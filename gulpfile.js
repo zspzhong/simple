@@ -15,24 +15,62 @@ var replaceStatic = rename(function (path) {
     return path;
 });
 
-gulp.task('less', function () {
+var replaceJadeDev = rename(function (path) {
+    path.dirname = path.dirname.replace('jade-dev', 'jade');
+    console.log(path);
+    return path;
+});
+
+gulp.task('clean', function () {
+    del.sync(['dev']);
+    del.sync(['release']);
+});
+
+gulp.task('less', ['clean'], function () {
     gulp.src(['src/**/static/css/*.less'])
         .pipe(less())
         .pipe(gulp.dest('src/'));
 });
 
-gulp.task('cleanRelease', function (callback) {
-    del(['release']).then(function () {
-        callback(null);
+gulp.task('jade', ['less'], function () {
+    var jsFilter = filter(['**/*.js', '!**/*.min.js'], {restore: true});
+    var cssFilter = filter('**/*.css', {restore: true});
+    var jadeFilter = filter('**/*.jade', {restore: true});
+    var notJadeFilter = filter(['**/*', '!**/*.jade'], {restore: true});
+
+    var revAll = new RevAll({
+        dontRenameFile: ['.jade'],
+        prefix: 'http://www.amsimple.com'
     });
+
+    gulp.src(['src/**/static/jade-dev/*.jade'])
+        .pipe(assets)
+        .pipe(assets.restore())
+        .pipe(useRef())
+
+        .pipe(cssFilter)
+        .pipe(cssMin())
+        .pipe(cssFilter.restore)
+
+        .pipe(jsFilter)
+        .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
+        .pipe(jsFilter.restore)
+
+        .pipe(revAll.revision())
+        .pipe(jadeFilter)
+        .pipe(replaceJadeDev)
+        .pipe(gulp.dest('src/'))
+        .pipe(jadeFilter.restore)
+        .pipe(notJadeFilter)
+        .pipe(gulp.dest('release/'))
+        .pipe(gulp.dest('dev/'));
 });
 
-gulp.task('html-pro', ['cleanRelease', 'less'], function () {
+gulp.task('html-pro', ['jade'], function () {
     var jsFilter = filter(['**/*.js', '!**/*.min.js'], {restore: true});
     var cssFilter = filter('**/*.css', {restore: true});
     var htmlFilter = filter('**/*.html', {restore: true});
 
-    var write2Release = gulp.dest('release/');
     var revAll = new RevAll({
         dontRenameFile: ['.html'],
         prefix: 'http://www.amsimple.com'
@@ -57,24 +95,16 @@ gulp.task('html-pro', ['cleanRelease', 'less'], function () {
 
         .pipe(revAll.revision())
         .pipe(replaceStatic)
-        .pipe(write2Release);
+        .pipe(gulp.dest('release/'));
 });
 
-gulp.task('cleanDev', function (callback) {
-    del(['dev']).then(function () {
-        callback(null);
-    });
-});
-
-gulp.task('html-dev', ['cleanDev', 'less'], function () {
-    var write2Dev = gulp.dest('dev');
-
+gulp.task('html-dev', ['jade'], function () {
     gulp.src(['src/**/static/*.html'])
         .pipe(assets)
         .pipe(assets.restore())
         .pipe(useRef())
         .pipe(replaceStatic)
-        .pipe(write2Dev);
+        .pipe(gulp.dest('dev'));
 });
 
 gulp.task('default', ['html-pro']);

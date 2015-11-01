@@ -1,0 +1,21 @@
+doctype html
+html
+    head
+        include ../../../jade-template/head
+
+        <link rel="stylesheet" href="http://www.amsimple.com/global/3rd/css/login-lib.min.35fa3e8c.css">
+
+        <link rel="stylesheet" href="http://www.amsimple.com/oauth/css/login.min.2ce3dea9.css">
+
+        title Simple
+    body
+        div.container
+            form.form-signin
+                h2.form-signin-heading 登陆 Simple
+                label.sr-only(for='account-input') 帐号
+                input#account-input.form-control(type='text' placeholder='帐号' required='' autofocus='')
+
+                label.sr-only(for='password-input')
+                input#password-input.form-control(type='password' placeholder='密码' required='')
+
+                button.btn.btn-lg.btn-primary.btn-block(type='submit') 登陆

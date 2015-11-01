@@ -6,6 +6,6 @@
     "comment": "oauth2初始化"
   },
   "views": [
-    "jade"
+    "static/jade"
   ]
 }
