@@ -80,7 +80,8 @@ function oauth2Initial(expressApp) {
                 return;
             }
 
-            var loginUrl = '/svc/oauth/login?' + utils.transQuery2Str(req.query);
+            var queryStr = utils.transQuery2Str(req.query);
+            var loginUrl = '/svc/oauth/login' + (queryStr ? '?' + queryStr : '');
             var option = {
                 username: username,
                 loginUrl: loginUrl
