@@ -53,7 +53,8 @@ function oauth2Initial(expressApp) {
     }));
 
     expressApp.get('/svc/oauth/login', function (req, res, next) {
-        var loginUrl = '/svc/oauth/login?' + utils.transQuery2Str(req.query);
+        var queryStr = utils.transQuery2Str(req.query);
+        var loginUrl = '/svc/oauth/login' + (queryStr ? '?' + queryStr : '');
 
         res.render('login.jade', {
             username: '',
@@ -67,7 +68,8 @@ function oauth2Initial(expressApp) {
         var queryCopy = _.clone(req.query);
         delete queryCopy.redirect;
 
-        var authoriseUrl = redirect + '?' + utils.transQuery2Str(queryCopy);
+        var queryStr = utils.transQuery2Str(queryCopy);
+        var authoriseUrl = redirect + (queryStr ? '?' + queryStr : '');
 
         var username = req.body.username;
         var password = req.body.password;
