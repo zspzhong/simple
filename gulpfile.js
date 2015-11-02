@@ -44,7 +44,7 @@ gulp.task('html-pro', ['jade'], function () {
         prefix: 'http://www.amsimple.com'
     });
 
-    gulp.src(['src/**/static/*.html'])
+    gulp.src(['src/**/static/*.html', 'src/index.html'])
         .pipe(assets)
         .pipe(assets.restore())
         .pipe(useRef())
@@ -69,7 +69,7 @@ gulp.task('html-pro', ['jade'], function () {
 gulp.task('html-dev', ['jadeDev'], function () {
     var assets = useRef.assets();
 
-    gulp.src(['src/**/static/*.html'])
+    gulp.src(['src/**/static/*.html', 'src/index.html'])
         .pipe(assets)
         .pipe(assets.restore())
         .pipe(useRef())
@@ -79,7 +79,6 @@ gulp.task('html-dev', ['jadeDev'], function () {
 
 gulp.task('default', ['html-pro']);
 gulp.task('dev', ['html-dev']);
-
 
 function jadeHandle(env) {
     return function () {
