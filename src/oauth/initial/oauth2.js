@@ -10,6 +10,7 @@ function oauth2Initial(expressApp) {
     expressApp.oauth = oauthServer({
         model: require('./model'),
         grants: ['authorization_code', 'password'],
+        accessTokenLifetime: 7200,
         debug: true
     });
 
@@ -121,7 +122,7 @@ function oauth2Initial(expressApp) {
 
             var token = JSON.parse(body).access_token;
             req.session.user.access_token = token;
-            res.end(token);
+            res.end(body);
         });
     });
 
