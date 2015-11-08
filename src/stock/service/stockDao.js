@@ -4,6 +4,7 @@ var iconv = require('iconv-lite');
 
 exports.queryStock = queryStock;
 exports.queryCodePool = queryCodePool;
+exports.updateCodePoolList = updateCodePoolList;
 exports.queryStockHistoryHighAndLowPrice = queryStockHistoryHighAndLowPrice;
 exports.queryStockPriceFromSina = queryStockPriceFromSina;
 exports.addDayFollowingInfo = addDayFollowingInfo;
@@ -40,6 +41,10 @@ function queryStock(code, callback) {
 
 function queryCodePool(callback) {
     dataUtils.query('stock_code_pool', {}, callback);
+}
+
+function updateCodePoolList(list, callback) {
+    dataUtils.updateList2DB('stock_code_poll', list, 'hold_state', 'code', callback);
 }
 
 // return: {code1: {code, lowIntervalMinPrice, highIntervalMaxPrice}, code2: {code, lowIntervalMinPrice, highIntervalMaxPrice}, ...]}

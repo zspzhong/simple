@@ -14,7 +14,7 @@ function run() {
     var code2LowAndHighPrice = {};
     var code2CurrentPrice = {};
 
-    async.series([_isAllowTrade, _queryCodePool, _queryUserPosition, _filterCodeWithoutEnoughData, _queryHistoryHighAndLowPrice, _queryCurrentPrice, _sendEmail], function (err) {
+    async.series([_isAllowTrade, _queryCodePool, _queryUserPosition, _filterCodeWithoutEnoughData, _queryHistoryHighAndLowPrice, _queryCurrentPrice, _updatePoolHoldState, _sendEmail], function (err) {
         if (err) {
             logger.error(err);
             process.exit(1);
@@ -162,6 +162,25 @@ function run() {
 
             callback(null);
         });
+    }
+
+    function _updatePoolHoldState(callback) {
+        var operateList = _operateList();
+
+        if (_.isEmpty(operateList)) {
+            callback(null);
+            return;
+        }
+
+        var codePool = [];
+        _.each(operateList, function (item) {
+            codePool.push({
+                code: item.code,
+                hold_state: item.operate === 'buy' ? 1 : 0
+            });
+        });
+
+        stockDao.updateCodePoolList(codePool, callback);
     }
 
     function _sendEmail(callback) {
