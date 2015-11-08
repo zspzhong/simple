@@ -7,6 +7,7 @@ var useRef = require('gulp-useref');
 var RevAll = require('gulp-rev-all');
 var filter = require('gulp-filter');
 var less = require('gulp-less');
+var jade = require('gulp-jade');
 var del = require('del');
 
 var replaceStatic = rename(function (path) {
@@ -23,7 +24,6 @@ gulp.task('clean', function () {
     del.sync(['dev']);
     del.sync(['release']);
 });
-
 gulp.task('less', ['clean'], function () {
     gulp.src(['src/**/static/css/*.less'])
         .pipe(less())
@@ -33,43 +33,22 @@ gulp.task('less', ['clean'], function () {
 gulp.task('jade', ['less'], jadeHandle());
 gulp.task('jadeDev', ['less'], jadeHandle('dev'));
 
-gulp.task('html-pro', ['jade'], function () {
+gulp.task('htmlPro', ['jade'], production);
+gulp.task('htmlDev', ['jadeDev'], function () {
     var assets = useRef.assets();
-    var jsFilter = filter(['**/*.js', '!**/*.min.js'], {restore: true});
-    var cssFilter = filter('**/*.css', {restore: true});
-    var htmlFilter = filter('**/*.html', {restore: true});
+    var jadeFilter = filter('**/*.jade', {restore: true});
 
-    var revAll = new RevAll({
-        dontRenameFile: ['.html'],
-        prefix: 'http://www.amsimple.com'
-    });
+    var fileList = [
+        'src/**/static/**/*.html',
+        'src/index.html',
+        'src/blog/**/*.jade',
+        'src/**/static/*.jade'
+    ];
 
-    gulp.src(['src/**/static/*.html', 'src/index.html'])
-        .pipe(assets)
-        .pipe(assets.restore())
-        .pipe(useRef())
-
-        .pipe(htmlFilter)
-        .pipe(htmlMin({collapseWhitespace: true}))
-        .pipe(htmlFilter.restore)
-
-        .pipe(cssFilter)
-        .pipe(cssMin())
-        .pipe(cssFilter.restore)
-
-        .pipe(jsFilter)
-        .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
-        .pipe(jsFilter.restore)
-
-        .pipe(revAll.revision())
-        .pipe(replaceStatic)
-        .pipe(gulp.dest('release/'));
-});
-
-gulp.task('html-dev', ['jadeDev'], function () {
-    var assets = useRef.assets();
-
-    gulp.src(['src/**/static/*.html', 'src/index.html'])
+    gulp.src(fileList, {base: 'src'})
+        .pipe(jadeFilter)
+        .pipe(jade())
+        .pipe(jadeFilter.restore)
         .pipe(assets)
         .pipe(assets.restore())
         .pipe(useRef())
@@ -77,8 +56,8 @@ gulp.task('html-dev', ['jadeDev'], function () {
         .pipe(gulp.dest('dev/'));
 });
 
-gulp.task('default', ['html-pro']);
-gulp.task('dev', ['html-dev']);
+gulp.task('default', ['htmlPro']);
+gulp.task('dev', ['htmlDev']);
 
 function jadeHandle(env) {
     return function () {
@@ -120,4 +99,49 @@ function jadeHandle(env) {
             .pipe(gulp.dest('release/'))
             .pipe(gulp.dest('dev/'));
     };
+}
+
+function production() {
+    var assets = useRef.assets();
+    var jsFilter = filter(['**/*.js', '!**/*.min.js'], {restore: true});
+    var cssFilter = filter('**/*.css', {restore: true});
+    var htmlFilter = filter('**/*.html', {restore: true});
+    var jadeFilter = filter('**/*.jade', {restore: true});
+
+    var revAll = new RevAll({
+        dontRenameFile: ['.html'],
+        prefix: 'http://www.amsimple.com'
+    });
+
+    var fileList = [
+        'src/**/static/**/*.html',
+        'src/index.html',
+        'src/blog/**/*.jade',
+        'src/**/static/*.jade'
+    ];
+
+    gulp.src(fileList, {base: 'src'})
+        .pipe(jadeFilter)
+        .pipe(jade())
+        .pipe(jadeFilter.restore)
+
+        .pipe(assets)
+        .pipe(assets.restore())
+        .pipe(useRef())
+
+        .pipe(htmlFilter)
+        .pipe(htmlMin({collapseWhitespace: true}))
+        .pipe(htmlFilter.restore)
+
+        .pipe(cssFilter)
+        .pipe(cssMin())
+        .pipe(cssFilter.restore)
+
+        .pipe(jsFilter)
+        .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
+        .pipe(jsFilter.restore)
+
+        .pipe(revAll.revision())
+        .pipe(replaceStatic)
+        .pipe(gulp.dest('release/'));
 }
