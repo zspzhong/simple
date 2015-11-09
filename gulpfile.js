@@ -109,7 +109,7 @@ function production() {
     var jadeFilter = filter('**/*.jade', {restore: true});
 
     var revAll = new RevAll({
-        dontRenameFile: ['.html'],
+        dontRenameFile: ['.html', '.jade'],
         prefix: 'http://www.amsimple.com'
     });
 
@@ -120,7 +120,7 @@ function production() {
         'src/**/static/*.jade'
     ];
 
-    gulp.src(fileList, {base: 'src'})
+    gulp.src(fileList, {base: process.cwd() + '/src'})
         .pipe(jadeFilter)
         .pipe(jade())
         .pipe(jadeFilter.restore)
@@ -143,5 +143,8 @@ function production() {
 
         .pipe(revAll.revision())
         .pipe(replaceStatic)
+        .pipe(gulp.dest('release/'))
+
+        .pipe(revAll.manifestFile())
         .pipe(gulp.dest('release/'));
 }
