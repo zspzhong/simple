@@ -44,7 +44,7 @@ function queryCodePool(callback) {
 }
 
 function updateCodePoolList(list, callback) {
-    dataUtils.updateList2DB('stock_code_poll', list, 'hold_state', 'code', callback);
+    dataUtils.updateList2DB('stock_code_pool', list, 'hold_state', 'code', callback);
 }
 
 // return: {code1: {code, lowIntervalMinPrice, highIntervalMaxPrice}, code2: {code, lowIntervalMinPrice, highIntervalMaxPrice}, ...]}
