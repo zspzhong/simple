@@ -28,7 +28,12 @@ gulp.task('clean', function () {
     del.sync(['release']);
 });
 gulp.task('less', ['clean'], function () {
-    gulp.src(['src/**/static/css/*.less'])
+    var fileList = [
+        'src/**/static/css/*.less',
+        'src/**/common/css/*.less'
+    ];
+
+    gulp.src(fileList)
         .pipe(less())
         .pipe(gulp.dest('src/'));
 });
