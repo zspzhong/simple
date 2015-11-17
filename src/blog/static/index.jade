@@ -2,5 +2,16 @@ doctype html
 html
     head
         include ../../jade-template/blog-head.jade
-    body
-        h1 这是我的博客
+    body.blog-home
+        div.head
+            h2 Am Simple's Blog
+            h4 It looks hard, it's harder than it looks
+
+        ul.index
+            each blog in blogList
+                li.item
+                    div.title
+                        a(href='#{blog.link}' target='_blank') #{blog.title}
+                        span.time #{blog.time}
+
+                    div.preview #{blog.preview}

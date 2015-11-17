@@ -8,7 +8,10 @@ var RevAll = require('gulp-rev-all');
 var filter = require('gulp-filter');
 var less = require('gulp-less');
 var jade = require('gulp-jade');
+var data = require('gulp-data');
 var del = require('del');
+var blogIndex = require('./src/blog/blogIndex.js');
+var _ = require('lodash');
 
 var replaceStatic = rename(function (path) {
     path.dirname = path.dirname.replace('/static', '');
@@ -30,6 +33,7 @@ gulp.task('less', ['clean'], function () {
         .pipe(gulp.dest('src/'));
 });
 
+// 通过服务端render的jade模版,从static/jade-dev -> static/jade, 同时处理js/css合并和压缩
 gulp.task('jade', ['less'], jadeHandle());
 gulp.task('jadeDev', ['less'], jadeHandle('dev'));
 
@@ -47,6 +51,7 @@ gulp.task('htmlDev', ['jadeDev'], function () {
 
     gulp.src(fileList, {base: 'src'})
         .pipe(jadeFilter)
+        .pipe(data(blogIndexData))
         .pipe(jade())
         .pipe(jadeFilter.restore)
         .pipe(assets)
@@ -122,6 +127,7 @@ function production() {
 
     gulp.src(fileList, {base: process.cwd() + '/src'})
         .pipe(jadeFilter)
+        .pipe(data(blogIndexData))
         .pipe(jade())
         .pipe(jadeFilter.restore)
 
@@ -147,4 +153,21 @@ function production() {
 
         .pipe(revAll.manifestFile())
         .pipe(gulp.dest('release/'));
+}
+
+
+function blogIndexData(file, callback) {
+    if (!_.contains(file.path, 'index.jade')) {
+        callback(null, {});
+        return;
+    }
+
+    blogIndex.indexData(function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        callback(null, {blogList: result});
+    });
 }
