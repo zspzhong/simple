@@ -8,19 +8,10 @@ html
             h4 It looks hard, it's harder than it looks
 
         ul.index
-            li.item
-                div.title
-                    a(href='http://www.baidu.com' target='_blank') gulp-useref不支持min html的解决办法
-                    span.time 2015-11-8 22:32
+            each blog in blogList
+                li.item
+                    div.title
+                        a(href='#{blog.link}' target='_blank') #{blog.title}
+                        span.time #{blog.time}
 
-                div.preview.
-                    前段时间跟一个常年在国外的同事合作写几个小页面，看他用的jade，第一感觉：简洁、好看。
-                    刚好最近准备写博客，所以打算用jade来写，顺便学习一下jade语法...
-            li.item
-                div.title
-                    a(href='http://www.baidu.com' target='_blank') gulp-useref不支持min html的解决办法
-                    span.time 2015-11-8 22:32
-
-                div.preview.
-                    前段时间跟一个常年在国外的同事合作写几个小页面，看他用的jade，第一感觉：简洁、好看。
-                    刚好最近准备写博客，所以打算用jade来写，顺便学习一下jade语法...
+                    div.preview #{blog.preview}

@@ -1,26 +1,25 @@
+require(process.cwd() + '/lib/utils/globalExtend.js');
+
 var fs = require('fs');
 var glob = require('glob');
 var jade = require('jade');
 var _ = require('lodash');
 var cheerio = require('cheerio');
 
-exports.generate = generate;
+exports.indexData = indexData;
 
-generate(function (err, result) {
-    console.log(result);
-});
-
-function generate(callback) {
+function indexData(callback) {
     var indexList = [];
+    var src = process.cwd() + '/src/blog/static/**/*.jade';
 
-    glob('static/**/*.jade', function (err, files) {
+    glob(src, function (err, files) {
         if (err) {
             callback(err);
             return;
         }
 
         _.each(files, function (item) {
-            if (_.contains(['static/index.jade'], item)) {
+            if (_.contains(item, 'static/index.jade')) {
                 return;
             }
 
@@ -28,7 +27,7 @@ function generate(callback) {
         });
 
         indexList = _.sortBy(indexList, function (item) {
-            return new Date(item.time).getTime();
+            return -(new Date(item.time).getTime());
         });
 
         callback(null, indexList);
@@ -38,7 +37,7 @@ function generate(callback) {
         var html = jade.renderFile(filePath);
         var $ = cheerio.load(html);
 
-        var link = filePath.replace('static', '').replace('.jade', '.html');
+        var link = '.' + filePath.split('static')[1].replace('jade', 'html');
         var title = $(':header:first-child').text();
         var time = fs.statSync(filePath).ctime;
         var preview = $('p').text().replace(/(\n\r)|(\n)/g, ' ').substring(0, 120) + '...';
@@ -46,12 +45,8 @@ function generate(callback) {
         return {
             link: link,
             title: title,
-            time: _formatDate(time),
+            time: time.format('yyyy-MM-dd hh:mm'),
             preview: preview
         };
-    }
-
-    function _formatDate(date) {
-        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes()
     }
 }
