@@ -11,7 +11,7 @@ html
             each blog in blogList
                 li.item
                     div.title
-                        a(href='#{blog.link}' target='_blank') #{blog.title}
                         span.time #{blog.time}
+                        a(href='#{blog.link}' target='_blank') #{blog.title}
 
                     div.preview #{blog.preview}
