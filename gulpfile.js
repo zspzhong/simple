@@ -120,7 +120,7 @@ function production() {
 
     var revAll = new RevAll({
         dontRenameFile: ['.html', '.jade'],
-        prefix: 'http://localhost:8001'
+        prefix: 'http://www.amsimple.com'
     });
 
     var fileList = [
