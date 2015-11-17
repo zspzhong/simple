@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var gulp = require('gulp');
 var cssMin = require('gulp-minify-css');
 var rename = require('gulp-rename');
@@ -11,7 +12,7 @@ var jade = require('gulp-jade');
 var data = require('gulp-data');
 var del = require('del');
 var blogIndex = require('./src/blog/blogIndex.js');
-var _ = require('lodash');
+var gulpSequence = require('gulp-sequence');
 
 var replaceStatic = rename(function (path) {
     path.dirname = path.dirname.replace('/static', '');
@@ -27,7 +28,8 @@ gulp.task('clean', function () {
     del.sync(['dev']);
     del.sync(['release']);
 });
-gulp.task('less', ['clean'], function () {
+
+gulp.task('less', function () {
     var fileList = [
         'src/**/static/css/*.less',
         'src/**/common/css/*.less'
@@ -39,11 +41,11 @@ gulp.task('less', ['clean'], function () {
 });
 
 // 通过服务端render的jade模版,从static/jade-dev -> static/jade, 同时处理js/css合并和压缩
-gulp.task('jade', ['less'], jadeHandle());
-gulp.task('jadeDev', ['less'], jadeHandle('dev'));
+gulp.task('jade', jadeHandle());
+gulp.task('jadeDev', jadeHandle('dev'));
 
-gulp.task('htmlPro', ['jade'], production);
-gulp.task('htmlDev', ['jadeDev'], function () {
+gulp.task('htmlPro', production);
+gulp.task('htmlDev', function () {
     var assets = useRef.assets();
     var jadeFilter = filter('**/*.jade', {restore: true});
 
@@ -66,8 +68,13 @@ gulp.task('htmlDev', ['jadeDev'], function () {
         .pipe(gulp.dest('dev/'));
 });
 
-gulp.task('default', ['htmlPro']);
-gulp.task('dev', ['htmlDev']);
+gulp.task('default', function () {
+    gulpSequence('clean', 'less', 'jade', 'htmlPro');
+});
+
+gulp.task('dev', function () {
+    gulpSequence('clean', 'less', 'jadeDev', 'htmlDev');
+});
 
 function jadeHandle(env) {
     return function () {
@@ -120,7 +127,7 @@ function production() {
 
     var revAll = new RevAll({
         dontRenameFile: ['.html', '.jade'],
-        prefix: 'http://www.amsimple.com'
+        prefix: 'http://localhost:8001'
     });
 
     var fileList = [
