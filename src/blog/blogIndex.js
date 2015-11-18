@@ -39,7 +39,8 @@ function indexData(callback) {
 
         var link = '/blog' + filePath.split('static')[1].replace('jade', 'html');
         var title = $(':header:first-child').text();
-        var time = fs.statSync(filePath).ctime;
+        var timeInPage = $('time').text();
+        var time = (timeInPage ? new Date(timeInPage) : '') || fs.statSync(filePath).ctime;
         var preview = $('p').text().replace(/(\n\r)|(\n)/g, ' ').substring(0, 120) + '...';
 
         return {
