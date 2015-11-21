@@ -24,7 +24,7 @@ gulp.task('jade', function () {
 
     var revAll = new RevAll({
         dontRenameFile: ['.jade'],
-        prefix: 'http://www.amsimple.com'
+        prefix: 'http://s.amsimple.com'
     });
 
     gulp.src(['src/**/static/jade-dev/*.jade'])

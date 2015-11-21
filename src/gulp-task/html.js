@@ -26,7 +26,7 @@ gulp.task('html', function () {
 
     var revAll = new RevAll({
         dontRenameFile: ['.html', '.jade'],
-        prefix: 'http://www.amsimple.com'
+        prefix: 'http://s.amsimple.com'
     });
 
     var fileList = [
