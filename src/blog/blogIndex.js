@@ -37,7 +37,7 @@ function indexData(callback) {
         var html = jade.renderFile(filePath);
         var $ = cheerio.load(html);
 
-        var link = '/blog' + filePath.split('static')[1].replace('jade', 'html');
+        var link = '.' + filePath.split('static')[1].replace('jade', 'html');
         var title = $(':header:first-child').text();
         var timeInPage = $('time').text();
         var time = (timeInPage ? new Date(timeInPage) : '') || fs.statSync(filePath).ctime;
