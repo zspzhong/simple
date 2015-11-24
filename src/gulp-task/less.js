@@ -11,7 +11,9 @@ var replaceStatic = rename(function (path) {
 gulp.task('less-build', function () {
     var fileList = [
         'src/**/static/css/*.less',
-        'src/**/common/css/*.less'
+        'src/**/common/css/*.less',
+        'src/**/static/css/*.css',
+        'src/**/common/css/*.css'
     ];
 
     return gulp.src(fileList)
