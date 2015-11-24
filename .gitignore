@@ -3,6 +3,7 @@ result
 node_modules
 release
 dev
+build
 logs
 **/static/css/*.css
 **/static/jade

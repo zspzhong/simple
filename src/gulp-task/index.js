@@ -14,7 +14,7 @@ gulp.task('build', function (callback) {
 });
 
 gulp.task('dev', function (callback) {
-    runSequence('build', 'html-dev', 'clean-build', callback);
+    runSequence('build', 'html-dev', callback);
 });
 
 gulp.task('default', function (callback) {
