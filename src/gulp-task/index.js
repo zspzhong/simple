@@ -1,6 +1,22 @@
+var gulp = require('gulp');
+var runSequence = require('run-sequence');
+
 require('./clean.js');
 require('./less.js');
 require('./jade.js');
-require('./jade-dev.js');
 require('./html.js');
-require('./html-dev.js');
+require('./js.js');
+require('./serverJade.js');
+require('./blogIndex.js');
+
+gulp.task('build', function (callback) {
+    runSequence('clean-all', ['less-build', 'jade-build', 'html-build', 'js-build', 'blog-build'], callback);
+});
+
+gulp.task('dev', function (callback) {
+    runSequence('build', 'html-dev', 'clean-build', callback);
+});
+
+gulp.task('default', function (callback) {
+    runSequence('build', 'html', 'clean-build', callback);
+});

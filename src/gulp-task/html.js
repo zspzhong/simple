@@ -7,14 +7,35 @@ var htmlMin = require('gulp-htmlmin');
 var useRef = require('gulp-useref');
 var RevAll = require('gulp-rev-all');
 var filter = require('gulp-filter');
-var less = require('gulp-less');
-var jade = require('gulp-jade');
-var data = require('gulp-data');
-var blogIndex = require('../blog/blogIndex.js');
 
-var replaceStatic = rename(function (path) {
-    path.dirname = path.dirname.replace('/static', '');
-    return path;
+gulp.task('html-build', function () {
+    var fileList = [
+        'src/**/static/**/*.html',
+        'src/index.html'
+    ];
+
+    var replaceStatic = rename(function (path) {
+        path.dirname = path.dirname.replace('/static', '');
+        return path;
+    });
+
+    return gulp.src(fileList, {base: process.cwd() + '/src'})
+        .pipe(replaceStatic)
+        .pipe(gulp.dest('build/'));
+});
+
+gulp.task('html-dev', function () {
+    var assets = useRef.assets();
+
+    var fileList = [
+        'build/**/*.html'
+    ];
+
+    return gulp.src(fileList, {base: 'build'})
+        .pipe(assets)
+        .pipe(assets.restore())
+        .pipe(useRef())
+        .pipe(gulp.dest('dev/'));
 });
 
 gulp.task('html', function () {
@@ -22,7 +43,6 @@ gulp.task('html', function () {
     var jsFilter = filter(['**/*.js', '!**/*.min.js'], {restore: true});
     var cssFilter = filter('**/*.css', {restore: true});
     var htmlFilter = filter('**/*.html', {restore: true});
-    var jadeFilter = filter('**/*.jade', {restore: true});
 
     var revAll = new RevAll({
         dontRenameFile: ['.html', '.jade'],
@@ -31,18 +51,10 @@ gulp.task('html', function () {
     });
 
     var fileList = [
-        'src/**/static/**/*.html',
-        'src/index.html',
-        'src/blog/**/*.jade',
-        'src/**/static/*.jade'
+        'build/**/*.html'
     ];
 
-    gulp.src(fileList, {base: process.cwd() + '/src'})
-        .pipe(jadeFilter)
-        .pipe(data(blogIndexData))
-        .pipe(jade())
-        .pipe(jadeFilter.restore)
-
+    return gulp.src(fileList, {base: process.cwd() + '/build'})
         .pipe(assets)
         .pipe(assets.restore())
         .pipe(useRef())
@@ -60,25 +72,8 @@ gulp.task('html', function () {
         .pipe(jsFilter.restore)
 
         .pipe(revAll.revision())
-        .pipe(replaceStatic)
         .pipe(gulp.dest('release/'))
 
         .pipe(revAll.manifestFile())
         .pipe(gulp.dest('release/'));
 });
-
-function blogIndexData(file, callback) {
-    if (!_.contains(file.path, 'index.jade')) {
-        callback(null, {});
-        return;
-    }
-
-    blogIndex.indexData(function (err, result) {
-        if (err) {
-            callback(err);
-            return;
-        }
-
-        callback(null, {blogList: result});
-    });
-}
