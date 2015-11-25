@@ -20,7 +20,7 @@ gulp.task('less-build', function () {
         .pipe(lessFilter.restore)
         .pipe(rename(function (path) {
             path.dirname = path.dirname.replace('/static', '');
-            path.extname = 'css';
+            path.extname = '.css';
             return path;
         }))
         .pipe(gulp.dest('build/'));
