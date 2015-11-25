@@ -4,11 +4,6 @@ var less = require('gulp-less');
 var rename = require('gulp-rename');
 var filter = require('gulp-filter');
 
-var replaceStatic = rename(function (path) {
-    path.dirname = path.dirname.replace('/static', '');
-    return path;
-});
-
 gulp.task('less-build', function () {
     var lessFilter = filter('*.less', {restore: true});
 
@@ -23,6 +18,10 @@ gulp.task('less-build', function () {
         .pipe(lessFilter)
         .pipe(less())
         .pipe(lessFilter.restore)
-        .pipe(replaceStatic)
+        .pipe(rename(function (path) {
+            path.dirname = path.dirname.replace('/static', '');
+            path.extname = 'css';
+            return path;
+        }))
         .pipe(gulp.dest('build/'));
 });
