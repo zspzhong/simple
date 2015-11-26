@@ -57,7 +57,6 @@ function oauth2Initial(expressApp) {
         var queryStr = utils.transQuery2Str(req.query);
         var loginUrl = '/svc/oauth/login' + (queryStr ? '?' + queryStr : '');
 
-        console.log(1);
         res.render('login.jade', {
             username: '',
             loginUrl: loginUrl
