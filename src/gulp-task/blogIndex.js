@@ -29,7 +29,7 @@ gulp.task('blog-build', function () {
 
 function indexData(callback) {
     var indexList = [];
-    var src = process.cwd() + '/src/blog/static/**/*.jade';
+    var src = process.cwd() + '/src/blog/static/article/**/*.jade';
 
     glob(src, function (err, files) {
         if (err) {

@@ -10,13 +10,13 @@ require('./serverJade.js');
 require('./blogIndex.js');
 
 gulp.task('build', function (callback) {
-    runSequence('clean-all', ['less-build', 'jade-build', 'html-build', 'js-build', 'blog-build'], callback);
+    runSequence('clean-all', ['less-build', 'jade-build', 'html-build', 'js-build', 'server-jade-copy', 'blog-build'], callback);
 });
 
 gulp.task('dev', function (callback) {
-    runSequence('build', 'html-dev', callback);
+    runSequence('build', 'server-jade-dev', 'html-dev', callback);
 });
 
 gulp.task('default', function (callback) {
-    runSequence('build', 'html', 'clean-build', callback);
+    runSequence('build', 'server-jade', 'html', 'clean-build', callback);
 });

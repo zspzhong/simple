@@ -6,15 +6,10 @@ meta(name='viewport' content='width=device-width, initial-scale=1')
 link(href='/blog/css/blog.css' rel='stylesheet')
 link(href='/common/css/base.css' rel='stylesheet')
 link(href='/common/css/common.css' rel='stylesheet')
-link(href='/common/css/markdown.css' rel='stylesheet')
-link(href='/common/3rd/highlight/css/default.css' rel='stylesheet')
+link(href='/common/external/css/markdown.css' rel='stylesheet')
+link(href='/common/external/css/hl-default.css' rel='stylesheet')
 <!-- endbuild -->
 
-<!-- build:js /common/3rd/js/blog-lib.min.js -->
-script(src='/common/3rd/highlight/highlight.min.js' type='text/javascript')
-<!-- endbuild -->
-
-script(type='text/javascript')
-    | hljs.initHighlightingOnLoad();
+script(src='/blog/js/blog.js' type='text/javascript' sync)
 
 title Am Simple's Blog

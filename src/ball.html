@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body style="height: 100%;">
+<div style="width: 100%;height: 100%;position: relative;">
+    <h1 id="info">
+
+    </h1>
+
+    <div id="ball"
+         style="width: 20px;height: 20px; border-radius: 50%;position: absolute;background: black;top: 10px; left: 10px;">
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var angleB;
+    var angleG;
+
+    var ratio = 50;
+    var fullAcceleration = 10;// 最大加速度
+    var preTimeSnapshot = new Date().getTime() / 1000; // 前一个时刻
+    var activeAngle = 30;// 有效倾斜角度
+
+    var preAY = 0;// 前一个时刻Y方向加速度
+    var preVY = 0; // 前一个时刻的Y方向速度
+
+    var preAX = 0;// 前一个时刻Y方向加速度
+    var preVX = 0; // 前一个时刻的Y方向速度
+
+    var currentTop = 0;
+    var currentLeft = 0;
+
+    var edge = getEdge();
+
+    window.ondeviceorientation = playBall;
+
+    function playBall(event) {
+        var currentTime = new Date().getTime() / 1000;
+        calculateTop(event.beta, currentTime);
+        calculateLeft(event.gamma, currentTime);
+        preTimeSnapshot = currentTime;
+
+        document.getElementById('ball').style.top = currentTop + 'px';
+        document.getElementById('ball').style.left = currentLeft + 'px';
+        document.getElementById('info').innerHTML = 'beta: ' + parseInt(event.beta) + '<br/>gamma: ' + parseInt(event.gamma);
+    }
+
+    function calculateTop(angleB, currentTime) {
+        if (angleB > 90) {
+            angleB = 180 - angleB;
+        }
+        if (angleB < -90) {
+            angleB = -(180 + angleB);
+        }
+
+        var aRatio = angleB / activeAngle;
+        aRatio = aRatio > 1 ? 1 : aRatio;
+        aRatio = aRatio < -1 ? -1 : aRatio;
+
+        var currentAY = aRatio * fullAcceleration;
+
+        var avgAY = (preAY + currentAY) / 2;
+
+        var deltaTime = currentTime - preTimeSnapshot;
+        var currentVY = preVY + avgAY * deltaTime;
+
+        currentTop += currentVY * deltaTime * ratio;
+
+        preVY = currentVY;
+        preAY = currentAY;
+
+        if (currentTop <= edge.minY || currentTop >= edge.maxY) {
+            preVY = preVY * -0.618;
+            preAY = 0;
+        }
+
+        if (currentTop <= edge.minY) {
+            currentTop = edge.minY;
+        }
+
+        if (currentTop >= edge.maxY) {
+            currentTop = edge.maxY;
+        }
+    }
+
+    function calculateLeft(angleG, currentTime) {
+        var aRatio = angleG / activeAngle;
+        aRatio = aRatio > 1 ? 1 : aRatio;
+        aRatio = aRatio < -1 ? -1 : aRatio;
+
+        var currentAX = aRatio * fullAcceleration;
+        var avgAX = (preAX + currentAX) / 2;
+
+        var deltaTime = currentTime - preTimeSnapshot;
+        var currentVX = preVX + avgAX * deltaTime;
+
+        currentLeft += currentVX * deltaTime * ratio;
+
+        preVX = currentVX;
+        preAX = currentAX;
+
+        if (currentLeft <= edge.minX || currentLeft >= edge.maxX) {
+            preVX = preVX * -0.618;
+            preAX = 0;
+        }
+
+        if (currentLeft <= edge.minX) {
+            currentLeft = edge.minX;
+        }
+
+        if (currentLeft >= edge.maxX) {
+            currentLeft = edge.maxX;
+        }
+    }
+
+    function getEdge() {
+        return {
+            minX: 10,
+            minY: 10,
+            maxX: document.body.offsetWidth - 30,
+            maxY: document.body.offsetHeight - 30
+        };
+    }
+
+</script>
+</html>

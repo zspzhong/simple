@@ -1,8 +1,6 @@
 var _ = require('lodash');
 var gulp = require('gulp');
-var cssMin = require('gulp-minify-css');
 var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
 var htmlMin = require('gulp-htmlmin');
 var useRef = require('gulp-useref');
 var RevAll = require('gulp-rev-all');
@@ -28,7 +26,8 @@ gulp.task('html-dev', function () {
     var assets = useRef.assets();
 
     var fileList = [
-        'build/**/*.html'
+        'build/**/*.html',
+        'build/**/*.js'
     ];
 
     return gulp.src(fileList, {base: 'build'})
@@ -40,8 +39,6 @@ gulp.task('html-dev', function () {
 
 gulp.task('html', function () {
     var assets = useRef.assets();
-    var jsFilter = filter(['**/*.js', '!**/*.min.js'], {restore: true});
-    var cssFilter = filter('**/*.css', {restore: true});
     var htmlFilter = filter('**/*.html', {restore: true});
 
     var revAll = new RevAll({
@@ -62,14 +59,6 @@ gulp.task('html', function () {
         .pipe(htmlFilter)
         .pipe(htmlMin({collapseWhitespace: true}))
         .pipe(htmlFilter.restore)
-
-        .pipe(cssFilter)
-        .pipe(cssMin())
-        .pipe(cssFilter.restore)
-
-        .pipe(jsFilter)
-        .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
-        .pipe(jsFilter.restore)
 
         .pipe(revAll.revision())
         .pipe(gulp.dest('release/'))

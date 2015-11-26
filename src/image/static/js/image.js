@@ -1,3 +1,6 @@
+var $ = require('jquery');
+var angular = require('angular');
+
 angular.module('image', []).controller('ImageController', function ($scope) {
     $scope.currentImageUrl = '';
 

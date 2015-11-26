@@ -1,10 +1,10 @@
 doctype html
 html
     head
-        include ../../../jade-template/head.jade
+        include ../../../common/template/head.jade
 
-        <!-- build:css /common/3rd/css/authorise-lib.min.css -->
-        link(href='/common/3rd/bootstrap/css/bootstrap.min.css' rel='stylesheet')
+        <!-- build:css /common/external/css/authorise-lib.min.css -->
+        link(href='/common/external/bootstrap/css/bootstrap.min.css' rel='stylesheet')
         <!-- endbuild -->
     body
         form.form(action='#{authoriseUrl}' method='post')

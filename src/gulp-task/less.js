@@ -3,6 +3,7 @@ var gulp = require('gulp');
 var less = require('gulp-less');
 var rename = require('gulp-rename');
 var filter = require('gulp-filter');
+var cssMin = require('gulp-minify-css');
 
 gulp.task('less-build', function () {
     var lessFilter = filter('*.less', {restore: true});
@@ -18,6 +19,9 @@ gulp.task('less-build', function () {
         .pipe(lessFilter)
         .pipe(less())
         .pipe(lessFilter.restore)
+
+        .pipe(cssMin())
+
         .pipe(rename(function (path) {
             path.dirname = path.dirname.replace('/static', '');
             path.extname = '.css';
