@@ -48,7 +48,8 @@ gulp.task('html', function () {
     });
 
     var fileList = [
-        'build/**/*.html'
+        'build/**/*.html',
+        'build/**/*.js'
     ];
 
     return gulp.src(fileList, {base: process.cwd() + '/build'})
