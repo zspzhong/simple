@@ -4,7 +4,7 @@ var exec = require('child_process').exec;
 exports.gitWebHook = gitWebHook;
 
 function gitWebHook(req, res, callback) {
-    exec('git pull origin master', function (err) {
+    exec('git pull origin master', {cwd: '/root/simple'}, function (err) {
         if (err) {
             logger.error(err);
             callback(err);
