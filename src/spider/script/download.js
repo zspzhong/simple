@@ -1,10 +1,10 @@
-exports.run = run;
-
 var request = require('request');
 var fs = require('fs');
-var downloadDao = require('./downloadDao.js');
+var downloadDao = require('../service/downloadDao.js');
 var logger = global.logger;
 var alreadyDownload = 0;
+
+exports.run = run;
 
 function run() {
     downloadDao.queryDownloadImage(1000, function (err, imageList) {

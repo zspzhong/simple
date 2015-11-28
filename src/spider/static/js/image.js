@@ -17,7 +17,7 @@ angular.module('image', []).controller('ImageController', function ($scope) {
     $scope.nextImage();
 
     function randomImageUrl(callback) {
-        $.get('/svc/image/randomUrl', function (result, status) {
+        $.get('/svc/spider/imageUrl', function (result, status) {
             if (status !== 'success') {
                 callback(null, '');
                 return;

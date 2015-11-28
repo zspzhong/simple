@@ -1,10 +1,8 @@
-exports.run = run;
-
 var cheerio = require('cheerio');
 var uuid = require('uuid');
 var urlModule = require('url');
 var browserRequest = require('./browserRequest.js');
-var spiderDao = require('./spiderDao.js');
+var spiderDao = require('../service/spiderDao.js');
 var logger = global.logger;
 var queueLength = 0;//队列长度
 var alreadySpider = 0;//本次已爬取url数量
@@ -12,6 +10,8 @@ var oneTimesSpiderLimit = 10000;//每次url爬取队列上限
 var recordDetailInfo = false;
 
 var queue = null;
+
+exports.run = run;
 
 function run() {
     spiderDao.querySpiderUrl(function (err, result) {

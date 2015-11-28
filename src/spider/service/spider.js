@@ -1,13 +1,14 @@
 var logger = global.logger;
-var imageDao = require('./imageDao.js');
+var spiderDao = require('./spiderDao.js');
 
-exports.randomUrl = randomUrl;
+exports.imageUrl = imageUrl;
 
 var imageCount = Math.ceil(100000 * Math.random());
 var imageUrlPool = [];
+
 initImageCountAsync();
 
-function randomUrl(req, res, callback) {
+function imageUrl(req, res, callback) {
     callback(null, imageUrlPool.pop() || '');
 
     _fillPool(function (err) {
@@ -23,7 +24,7 @@ function randomUrl(req, res, callback) {
         }
 
         var randomOffset = Math.ceil(Math.random() * imageCount);
-        imageDao.queryImageUrl(randomOffset, 50, function (err, result) {
+        spiderDao.queryImageUrl(randomOffset, 50, function (err, result) {
             if (err) {
                 callback(err);
                 return;
@@ -36,7 +37,7 @@ function randomUrl(req, res, callback) {
 }
 
 function initImageCountAsync() {
-    imageDao.queryImageCount(function (err, count) {
+    spiderDao.queryImageCount(function (err, count) {
         if (err) {
             logger.error(err);
             return;

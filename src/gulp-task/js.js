@@ -8,7 +8,7 @@ var filter = require('gulp-filter');
 
 var webpackFileList = [
     'src/blog/static/js/blog.js',
-    'src/image/static/js/image.js'
+    'src/spider/static/js/image.js'
 ];
 var webpackConfig = buildWebpackConf(webpackFileList);
 

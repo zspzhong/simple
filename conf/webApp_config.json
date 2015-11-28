@@ -7,7 +7,7 @@
   "libDir": "/root/simple/lib",
   "baseUrl": "http://127.0.0.1:8001",
   "applicationList": [
-    "image",
+    "spider",
     "stock",
     "oauth",
     "deploy"
