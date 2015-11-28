@@ -1,0 +1,11 @@
+{
+  "serviceList": [
+    {
+      "name": "gitWebHook",
+      "path": "/deploy/gitWebHook",
+      "realizeJs": "deploy",
+      "functionName": "gitWebHook",
+      "method": "post"
+    }
+  ]
+}
