@@ -1,5 +1,4 @@
 var dataUtils = require(global['libDir'] + '/dao/dataUtils.js');
-var mysql = require(global['libDir'] + '/dao/mysql.js');
 
 exports.queryImageUrl = queryImageUrl;
 exports.queryImageCount = queryImageCount;

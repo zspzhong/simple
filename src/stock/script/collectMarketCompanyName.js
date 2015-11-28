@@ -1,4 +1,4 @@
-// 根据已有的code获取对应的股票名称、并存入stock_code_name
+/** 根据已有的code获取对应的股票名称、并存入stock_code_name */
 var request = require('request');
 var dataUtils = require(global['libDir'] + '/dao/dataUtils.js');
 var iconv = require('iconv-lite');

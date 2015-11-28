@@ -1,5 +1,5 @@
 // 更新关注股票的日数据
-var stockDao = require('./service/stockDao.js');
+var stockDao = require('../service/stockDao.js');
 var mailUtils = require(global['libDir'] + '/utils/mailUtils.js');
 
 exports.run = run;

@@ -1,7 +1,7 @@
 // 模拟趋势追踪，计算所有上市公司股票的收益
 var logger = global.logger;
 var dataUtils = require(global['libDir'] + '/dao/dataUtils.js');
-var stockCalculate = require('../stock/service/stock.js');
+var stockCalculate = require('../service/stock.js');
 
 exports.run = run;
 

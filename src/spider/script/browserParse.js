@@ -1,6 +1,4 @@
-/*
-* 模拟浏览器环境渲染页面
-* */
+/** 模拟浏览器环境渲染页面 */
 
 var system = require('system');
 var webPage = require('webpage');

@@ -1,4 +1,4 @@
-var stockDao = require('./service/stockDao.js');
+var stockDao = require('../service/stockDao.js');
 var logger = global.logger;
 var mailUtils = require(global['libDir'] + '/utils/mailUtils.js');
 
