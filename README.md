@@ -1,11 +1,6 @@
 ## simple
 **simple**是一个用node.js实现的web server，主要用于个人业余学习和实践
 
-### 主要用途
-* 网站html、css、js合并及压缩
-* 提供应用后台API
-* 爬虫脚本
-
 ### 目录结构
 * bin：启动脚本
 * conf：配置文件
