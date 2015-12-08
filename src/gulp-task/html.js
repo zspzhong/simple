@@ -11,14 +11,12 @@ gulp.task('html-build', function () {
         'src/**/static/**/*.html',
         'src/index.html'
     ];
-
-    var replaceStatic = rename(function (path) {
-        path.dirname = path.dirname.replace('/static', '');
-        return path;
-    });
-
+    
     return gulp.src(fileList, {base: process.cwd() + '/src'})
-        .pipe(replaceStatic)
+        .pipe(rename(function (path) {
+            path.dirname = path.dirname.replace('/static', '');
+            return path;
+        }))
         .pipe(gulp.dest('build/'));
 });
 

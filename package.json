@@ -20,6 +20,7 @@
     "lodash": "2.4.1",
     "mysql": "2.5.4",
     "nodemailer": "1.4.0",
+    "npm-zepto": "^1.1.7",
     "oauth2-server": "2.4.0",
     "passport": "0.3.0",
     "request": "2.51.0",

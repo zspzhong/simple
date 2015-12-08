@@ -20,3 +20,11 @@ gulp.task('dev', function (callback) {
 gulp.task('default', function (callback) {
     runSequence('build', 'server-jade', 'html', 'clean-build', callback);
 });
+
+gulp.task('blog-dev', function (callback) {
+    runSequence(['less-build', 'jade-build', 'html-build', 'blog-build'], 'html-dev', callback);
+});
+
+gulp.task('watch', function () {
+    gulp.watch('src/blog/**/*.jade', ['blog-dev']);
+});
