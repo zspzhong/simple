@@ -1,5 +1,6 @@
 include ../../template/blog-head.jade
 body
+    time.none 2015-11-29 00:40
     article.article.markdown-body
         h1 关于gulp构建
         p.
@@ -110,7 +111,7 @@ body
                 ...
 
         p
-            | 提示信息表明, 流关闭后继续写入, 导致异常.
+            | 大意是, 流关闭后继续写入, 导致异常.
             | 定位后发现是因为
             code.javascript var replaceStatic
             | 声明在task外部, gulp-rename返回的的流对象在task jade-build中多次使用引发的问题.
