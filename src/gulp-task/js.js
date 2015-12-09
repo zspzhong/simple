@@ -2,7 +2,7 @@
 var _ = require('lodash');
 var gulp = require('gulp');
 var rename = require('gulp-rename');
-var webpack = require('gulp-webpack');
+var gulpWebpack = require('gulp-webpack');
 var uglify = require('gulp-uglify');
 var filter = require('gulp-filter');
 
@@ -26,7 +26,7 @@ gulp.task('js-build', function () {
 
     return gulp.src(fileList, {base: 'src'})
         .pipe(webpackFilter)
-        .pipe(webpack(webpackConfig))
+        .pipe(gulpWebpack(webpackConfig))
         .pipe(webpackFilter.restore)
 
         .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
@@ -36,7 +36,6 @@ gulp.task('js-build', function () {
         }))
         .pipe(gulp.dest('build/'));
 });
-
 
 function buildWebpackConf(fileList) {
     var config = {
