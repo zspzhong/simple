@@ -11,7 +11,7 @@ gulp.task('html-build', function () {
         'src/**/static/**/*.html',
         'src/index.html'
     ];
-    
+
     return gulp.src(fileList, {base: process.cwd() + '/src'})
         .pipe(rename(function (path) {
             path.dirname = path.dirname.replace('/static', '');
