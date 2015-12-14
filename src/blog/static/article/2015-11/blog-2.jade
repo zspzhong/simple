@@ -1,40 +1,46 @@
-include ../../template/blog-head.jade
-body
-    time.none 2015-11-25 23:20
-    article.article.markdown-body
-        h1 gulp-useref不支持已压缩文件的解决办法
-        p.
-            前段时间跟一个常年在国外的同事合作写几个小页面, 看他用的jade, 第一感觉: 清爽, 简洁, 美观.
-            刚好最近准备写博客, 所以打算用jade来写, 顺便学习一下jade语法.
-        p.
-            网站的前端文件通过gulp来构建, 自然就想到用gulp插件来完成jade转html.
-            决定使用gulp-jade后, 开始动手写gulp task.
-        pre
-            code.javascript.
-                gulp.task('blog-jade', function () {
-                    gulp.src(['src/blog/**/*.jade'])
-                        .pipe(jade())
-                        .pipe(gulp.dest('release/'));
-                }
-        p.
-            第一步挺顺利! 可当我使用gulp-useref去合并css/js引用时, 最终输出的html却是空白的 － －、
-        pre
-            code.javascript.
-                gulp.task('blog-jade', function () {
-                    gulp.src(['src/blog/**/*.jade'])
-                        .pipe(jade())
-                        .pipe(assets)
-                        .pipe(assets.restore())
-                        .pipe(useRef())
-                        .pipe(gulp.dest('release/'));
-                }
-        p.
-            经调查, 是因为gulp-useref不支持min html导致(官方文档中提到: It can handle file concatenation but not minification).
-            查看源码发现gulp-useref内部依赖file中的换行符号进行相应的替换工作, 所以只好在准备替换之前将file中应该有的换行符补齐就好了.
-            因为最终我会使用gulp-htmlmin压缩html, 所以这一步输出的html有换行符并无关系.
-        - var temp = "content = content.replace(/><!--/g, '>\\r\\n<!--')\n.replace(/--></g, '-->\\r\\n<')\n.replace(/><link/g, '>\\r\\n<link')\n.replace(/><script/g, '>\\r\\n<script');"
-        pre
-            code.javascript #{temp}
-        p.
-            这么做实属无奈, 更合理的方式也许是在github上给库的作者提个issue, 可作者已特意声明不支持压缩, 只好放弃.
-            自己先这么凑合着用, 哪天有更好的方式再采用新的.
+doctype html
+html
+    head
+        include ../../template/blog-head.jade
+
+    body
+        time.none 2015-11-25 23:20
+        article.article.markdown-body
+            h1 gulp-useref不支持已压缩文件的解决办法
+            p.
+                前段时间跟一个常年在国外的同事合作写几个小页面, 看他用的jade, 第一感觉: 清爽, 简洁, 美观.
+                刚好最近准备写博客, 所以打算用jade来写, 顺便学习一下jade语法.
+            p.
+                网站的前端文件通过gulp来构建, 自然就想到用gulp插件来完成jade转html.
+                决定使用gulp-jade后, 开始动手写gulp task.
+            pre
+                code.javascript.
+                    gulp.task('blog-jade', function () {
+                        gulp.src(['src/blog/**/*.jade'])
+                            .pipe(jade())
+                            .pipe(gulp.dest('release/'));
+                    }
+            p.
+                第一步挺顺利! 可当我使用gulp-useref去合并css/js引用时, 最终输出的html却是空白的 － －、
+            pre
+                code.javascript.
+                    gulp.task('blog-jade', function () {
+                        gulp.src(['src/blog/**/*.jade'])
+                            .pipe(jade())
+                            .pipe(assets)
+                            .pipe(assets.restore())
+                            .pipe(useRef())
+                            .pipe(gulp.dest('release/'));
+                    }
+            p.
+                经调查, 是因为gulp-useref不支持min html导致(官方文档中提到: It can handle file concatenation but not minification).
+                查看源码发现gulp-useref内部依赖file中的换行符号进行相应的替换工作, 所以只好在准备替换之前将file中应该有的换行符补齐就好了.
+                因为最终我会使用gulp-htmlmin压缩html, 所以这一步输出的html有换行符并无关系.
+            - var temp = "content = content.replace(/><!--/g, '>\\r\\n<!--')\n.replace(/--></g, '-->\\r\\n<')\n.replace(/><link/g, '>\\r\\n<link')\n.replace(/><script/g, '>\\r\\n<script');"
+            pre
+                code.javascript #{temp}
+            p.
+                这么做实属无奈, 更合理的方式也许是在github上给库的作者提个issue, 可作者已特意声明不支持压缩, 只好放弃.
+                自己先这么凑合着用, 哪天有更好的方式再采用新的.
+
+    include ../../template/blog-script.jade

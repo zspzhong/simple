@@ -15,9 +15,25 @@
   height: 6rem;
 }
 
-.blog-home .index {
+.blog-home .content {
+  overflow: hidden;
+}
+
+.content .index {
+  float: left;
+  width: 60%;
   margin-top: 8rem;
-  padding: 0 30% 0 10%;
+  margin-left: 10%;
+}
+
+.content .tags {
+  float: left;
+  width: 20%;
+  margin-top: 8rem;
+  margin-left: 4rem;
+  padding: 0.5rem;
+  border: 1px solid lightgray;
+  border-radius: 2px;
 }
 
 .index .item {
@@ -27,7 +43,18 @@
   border: 1px solid rgb(247, 247, 247);
   border-radius: 0.2rem;
   background-color: rgb(247, 247, 247);
+}
+
+.index .item:hover {
   box-shadow: 0 0 2rem rgba(0, 0, 0, 0.2);
+}
+
+.index .item:first-child {
+  margin-top: 0;
+}
+
+.index .item:last-child {
+  margin-bottom: 1rem;
 }
 
 .index .title {

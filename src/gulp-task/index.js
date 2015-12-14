@@ -27,5 +27,5 @@ gulp.task('blog-dev', function (callback) {
 });
 
 gulp.task('watch', function () {
-    gulp.watch('src/blog/**/*.jade', ['blog-dev']);
+    gulp.watch('src/blog/**/*', ['blog-dev']);
 });

@@ -7,3 +7,4 @@ build
 logs
 **/static/css/*.css
 **/static/jade
+component/**/*.css

@@ -6,13 +6,13 @@ var gulpWebpack = require('gulp-webpack');
 var uglify = require('gulp-uglify');
 var filter = require('gulp-filter');
 
-var webpackFileList = [
-    'src/blog/static/js/blog.js',
-    'src/spider/static/js/image.js'
-];
-var webpackConfig = buildWebpackConf(webpackFileList);
-
 gulp.task('js-build', function () {
+    var webpackFileList = [
+        'blog/static/js/blog.js',
+        'spider/static/js/image.js'
+    ];
+    var webpackConfig = buildWebpackConf(webpackFileList);
+
     var webpackFilter = filter(function (file) {
         return !_.isEmpty(_.filter(webpackFileList, function (item) {
             return _.contains(file.path, item);
@@ -39,6 +39,10 @@ gulp.task('js-build', function () {
 
 function buildWebpackConf(fileList) {
     var config = {
+        resolve: {
+            root: [process.cwd() + '/component', process.cwd() + '/node_modules']
+        },
+        context: process.cwd() + '/src',
         entry: {},
         output: {
             filename: '[name]'
@@ -46,7 +50,7 @@ function buildWebpackConf(fileList) {
     };
 
     _.each(fileList, function (item) {
-        var name = item.replace('/static/', '/').replace('src/', '');
+        var name = item.replace('/static/', '/');
         config.entry[name] = './' + item;
     });
 
