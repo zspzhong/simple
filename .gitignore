@@ -8,3 +8,4 @@ logs
 **/static/css/*.css
 **/static/jade
 component/**/*.css
+src/common/css/base.css
