@@ -7,15 +7,8 @@ html
             h2 Am Simple's Blog
             h4 It looks hard, it's harder than it looks
         div.content
-            ul.index
-                each blog in blogList
-                    li.item
-                        div.title
-                            span.time #{blog.time}
-                            a(href='#{blog.link}' target='_blank') #{blog.title}
+            div#catalog.catalog
 
-                        div.preview #{blog.preview}
-
-            ul#tags.tags
+            div#tags.tags
 
     include ./template/blog-script.jade

@@ -1,0 +1,1 @@
+module.exports = require('babel?presets[]=react&presets[]=es2015!./js/catalog.jsx');

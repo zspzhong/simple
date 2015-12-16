@@ -6,10 +6,10 @@ exports.init = init;
 
 var BlogTags = React.createClass({
     render: function () {
-        return <div className="r-tags">
-            {this.props.tags.map(function (item) {
-                return <div>{item}</div>
-                })}
+        return <div id='blog-tags'>
+            {this.props.tags.map(function (item, index) {
+                return <div key={index}>{item}</div>
+            })}
         </div>;
     }
 });

@@ -8,8 +8,7 @@ var filter = require('gulp-filter');
 
 gulp.task('js-build', function () {
     var webpackFileList = [
-        'blog/static/js/blog.js',
-        'spider/static/js/image.js'
+        'blog/static/js/blog.js'
     ];
     var webpackConfig = buildWebpackConf(webpackFileList);
 
