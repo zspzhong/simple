@@ -1,5 +1,5 @@
 doctype html
-html(en='zh-CN')
+html
     head
         meta(charset='utf8')
         meta(http-equiv='X-UA-Compatible' content='IE=edge')
@@ -14,3 +14,8 @@ html(en='zh-CN')
         <!-- endbuild -->
 
         title Am Simple's Blog
+
+    body
+        block article
+
+    script(src='/blog/js/blog.js' type='text/javascript' sync)

@@ -1,8 +1,7 @@
-doctype html
-html
-    head
-        include ./template/blog-head.jade
-    body.blog-home
+extends ./template/blog-layout.jade
+
+block article
+    div.blog-home
         div.head
             h2 Am Simple's Blog
             h4 It looks hard, it's harder than it looks
@@ -10,5 +9,3 @@ html
             div#catalog.catalog
 
             div#tags.tags
-
-    include ./template/blog-script.jade

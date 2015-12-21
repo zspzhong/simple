@@ -1,14 +1,9 @@
-doctype html
-html
-    head
-        include ../../template/blog-head.jade
+extends ../../template/blog-layout.jade
 
-    body
-        time.none 2015-11-10 22:20
-        article.article.markdown-body
-            h1 第一篇博客
+block article
+    time.none 2015-11-10 22:20
+    article.article.markdown-body
+        h1 第一篇博客
 
-            p.
-                留个白, 哪天来更新个人介绍...
-
-    include ../../template/blog-script.jade
+        p.
+            留个白, 哪天来更新个人介绍...

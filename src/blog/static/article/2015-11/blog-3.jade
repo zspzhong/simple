@@ -1,121 +1,116 @@
-doctype html
-html
-    head
-        include ../../template/blog-head.jade
+extends ../../template/blog-layout.jade
 
-    body
-        time.none 2015-11-29 00:40
-        article.article.markdown-body
-            h1 关于gulp构建
-            p.
-                最近在弄blog站, 涉及到一些静态资源处理.
-                选择使用比较流行gulp来构建, 本文记录自己gulp task的组织方式, 以及过程中遇到的一些问题.
+block article
+    time.none 2015-11-29 00:40
+    article.article.markdown-body
+        h1 关于gulp构建
+        p.
+            最近在弄blog站, 涉及到一些静态资源处理.
+            选择使用比较流行gulp来构建, 本文记录自己gulp task的组织方式, 以及过程中遇到的一些问题.
 
-            h4 将构建过程划分成不同阶段
-            p 项目构建过程主要完成以下几点功能
-            ul
-                li 1. less编译成css再压缩
-                li 2. 部分js使用webpack打包再丑化和压缩
-                li 3. jade编译成html
-                li 4. 合并以及替换html中依赖的css、js引用
-                li 5. 每个模块的静态资源都在自己模块的static目录下面, 发布路径中删除static
-            p.
-                因为不同gulp task的流不能串起来, 如果不划分成不同阶段, 上述的几个操作要集中在一个task中完成.
-                task内容过长, 每个步骤之间相互依赖, 出现问题难定位, 因此将构建划分成2个阶段
-            ul
-                li 1. 单个文件的转化, 如: less to css、jade to html、js webpack等
-                li 2. 合并以及替换html中的css、js引用
+        h4 将构建过程划分成不同阶段
+        p 项目构建过程主要完成以下几点功能
+        ul
+            li 1. less编译成css再压缩
+            li 2. 部分js使用webpack打包再丑化和压缩
+            li 3. jade编译成html
+            li 4. 合并以及替换html中依赖的css、js引用
+            li 5. 每个模块的静态资源都在自己模块的static目录下面, 发布路径中删除static
+        p.
+            因为不同gulp task的流不能串起来, 如果不划分成不同阶段, 上述的几个操作要集中在一个task中完成.
+            task内容过长, 每个步骤之间相互依赖, 出现问题难定位, 因此将构建划分成2个阶段
+        ul
+            li 1. 单个文件的转化, 如: less to css、jade to html、js webpack等
+            li 2. 合并以及替换html中的css、js引用
 
-            p.
-                第一阶段的gulp task从src目录读取文件, 处理后输出到build目录.
-                第二阶段的gulp task从build目录读取文件, 处理后输出到真正的部署目录.
+        p.
+            第一阶段的gulp task从src目录读取文件, 处理后输出到build目录.
+            第二阶段的gulp task从build目录读取文件, 处理后输出到真正的部署目录.
 
-            h4 拆分不同的gulp task
-            p 如果把所有的task都写在gulpfile.js中, 文件内容过长, 不便于阅读, 也不利于维护, 因此根据不同职责, 拆分成不同的task文件.
+        h4 拆分不同的gulp task
+        p 如果把所有的task都写在gulpfile.js中, 文件内容过长, 不便于阅读, 也不利于维护, 因此根据不同职责, 拆分成不同的task文件.
 
-            p gulpfile.js内容
-            pre
-                code.javascript.
-                    require('./src/gulp-task');
+        p gulpfile.js内容
+        pre
+            code.javascript.
+                require('./src/gulp-task');
 
-            p src/gulp-task目录结构
-            pre.
-                ┬ gulp-task
-                ├── blogIndex.js // 根据blog目录渲染blog/index.jade, 深度定制的特殊task
-                ├── clean.js // 清理旧的资源以及中间状态
-                ├── html.js // html中的css, js引用替换(合并css、加md5后缀、加cdn前缀), 压缩html
-                ├── index.js
-                ├── jade.js // jade to html
-                ├── js.js // webpack打包, 丑化, 压缩等
-                ├── less.js // less to css
-                └── serverJade.js // 服务端jade处理, jade中的css, js引用替换(合并css、加md5后缀、加cdn前缀)
+        p src/gulp-task目录结构
+        pre.
+            ┬ gulp-task
+            ├── blogIndex.js // 根据blog目录渲染blog/index.jade, 深度定制的特殊task
+            ├── clean.js // 清理旧的资源以及中间状态
+            ├── html.js // html中的css, js引用替换(合并css、加md5后缀、加cdn前缀), 压缩html
+            ├── index.js
+            ├── jade.js // jade to html
+            ├── js.js // webpack打包, 丑化, 压缩等
+            ├── less.js // less to css
+            └── serverJade.js // 服务端jade处理, jade中的css, js引用替换(合并css、加md5后缀、加cdn前缀)
 
-            h4 开发态和部署态打包区分
-            p.
-                开发时有调试需求, js不应该丑化和压缩, html中css、js引用替换时不能加cdn前缀等.
-                解决办法是给这些相应的task写一个dev版本, 然后组织起来成为一个dev task.
-                由于task本身拆分的比较细, 很多可以复用, 需要额外写的代码很少.
+        h4 开发态和部署态打包区分
+        p.
+            开发时有调试需求, js不应该丑化和压缩, html中css、js引用替换时不能加cdn前缀等.
+            解决办法是给这些相应的task写一个dev版本, 然后组织起来成为一个dev task.
+            由于task本身拆分的比较细, 很多可以复用, 需要额外写的代码很少.
 
-            h4 gulp-useref不支持已压缩文件
-            p
-                | 这点单独
-                a(href='./blog-2.html') 写过
-                | , 不再叙述.
+        h4 gulp-useref不支持已压缩文件
+        p
+            | 这点单独
+            a(href='./blog-2.html') 写过
+            | , 不再叙述.
 
-            h4 gulp-rev-all引用替换问题
-            p 项目中有个image.js文件, 其中angular初始化代码
-            pre
-                code.javascript angular.module('image', ...);
-            p 用gulp构建后, angular报错, 排查后发现是因为gulp-rev-all引用处理错误导致. 压缩后的文件内容变成
-            pre
-                code.javascript angular.module('image.w2s5s0b4', ...);
+        h4 gulp-rev-all引用替换问题
+        p 项目中有个image.js文件, 其中angular初始化代码
+        pre
+            code.javascript angular.module('image', ...);
+        p 用gulp构建后, angular报错, 排查后发现是因为gulp-rev-all引用处理错误导致. 压缩后的文件内容变成
+        pre
+            code.javascript angular.module('image.w2s5s0b4', ...);
 
-            p
-                | 文件内的module名被当成文件引用, 替换成带hash后缀的格式, 导致angular module找不到.
-                | 可以修改module名避免该问题, 或者按照原库
-                a(href='https://github.com/smysnk/gulp-rev-all#annotater--replacer' target='_blank') 建议
-                | 的方式修改打包过程.
+        p
+            | 文件内的module名被当成文件引用, 替换成带hash后缀的格式, 导致angular module找不到.
+            | 可以修改module名避免该问题, 或者按照原库
+            a(href='https://github.com/smysnk/gulp-rev-all#annotater--replacer' target='_blank') 建议
+            | 的方式修改打包过程.
 
-            h4 gulp-watch异常退出
-            p 有一个watch task, 每当第二次修改文件, watch会异常退出. watch task代码
-            pre
-                code.javascript.
-                    var gulp = require('gulp');
-                    var rename = require('gulp-rename');
-                    var jade = require('gulp-jade');
+        h4 gulp-watch异常退出
+        p 有一个watch task, 每当第二次修改文件, watch会异常退出. watch task代码
+        pre
+            code.javascript.
+                var gulp = require('gulp');
+                var rename = require('gulp-rename');
+                var jade = require('gulp-jade');
 
-                    var replaceStatic = rename(function (path) {
-                        path.dirname = path.dirname.replace('/static', '');
-                        return path;
-                    });
+                var replaceStatic = rename(function (path) {
+                    path.dirname = path.dirname.replace('/static', '');
+                    return path;
+                });
 
-                    gulp.task('jade-build', function () {
-                        return gulp.src('src/**/static/**/*.jade', {base: process.cwd() + '/src'})
-                            .pipe(jade())
-                            .pipe(replaceStatic)
-                            .pipe(gulp.dest('build/'));
-                    });
-            pre
-                code.javascript.
-                    var gulp = require('gulp');
+                gulp.task('jade-build', function () {
+                    return gulp.src('src/**/static/**/*.jade', {base: process.cwd() + '/src'})
+                        .pipe(jade())
+                        .pipe(replaceStatic)
+                        .pipe(gulp.dest('build/'));
+                });
+        pre
+            code.javascript.
+                var gulp = require('gulp');
 
-                    gulp.task('watch', function () {
-                        gulp.watch('src/blog/**/*.jade', ['jade-build']);
-                    });
+                gulp.task('watch', function () {
+                    gulp.watch('src/blog/**/*.jade', ['jade-build']);
+                });
 
-            p 错误提示
-            pre.
-                events.js:85
-                      throw er; // Unhandled 'error' event
-                            ^
-                Error: write after end
-                    ......
+        p 错误提示
+        pre.
+            events.js:85
+                  throw er; // Unhandled 'error' event
+                        ^
+            Error: write after end
+                ......
 
-            p
-                | 大意是, 流关闭后继续写入, 导致异常.
-                | 定位后发现是因为
-                code.javascript var replaceStatic
-                | 声明在task外部, gulp-rename返回的的流对象在task jade-build中多次使用引发的问题.
-                | 改改代码, 把var replaceStatic移到task内部就好了.
-
-    include ../../template/blog-script.jade
+        p
+            | 大意是, 流关闭后继续写入, 导致异常.
+            | 定位后发现是因为
+            code.javascript var replaceStatic
+            | 声明在task外部, gulp-rename返回的的流对象在task jade-build中多次使用引发的问题.
+            | 改改代码, 把var replaceStatic移到task内部就好了.
