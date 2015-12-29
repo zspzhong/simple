@@ -7,6 +7,20 @@ var jade = require('jade');
 var _ = require('lodash');
 var cheerio = require('cheerio');
 var gulp = require('gulp');
+var rename = require('gulp-rename');
+var gulpJade = require('gulp-jade');
+
+gulp.task('blog-build', function () {
+    var replaceStatic = rename(function (path) {
+        path.dirname = path.dirname.replace('/static', '');
+        return path;
+    });
+
+    return gulp.src('src/blog/static/index.jade', {base: process.cwd() + '/src'})
+        .pipe(gulpJade())
+        .pipe(replaceStatic)
+        .pipe(gulp.dest('build/'));
+});
 
 gulp.task('blog-catalog', function (callback) {
     catalogData(function (err, result) {
