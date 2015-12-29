@@ -9,6 +9,12 @@ tags.init(document.getElementById('tags'), blogTags);
 
 var blogList = [
     {
+        link: './article/2015-12/blog-1.html',
+        title: 'H5开发',
+        time: '2015-12-21 22:48',
+        preview: '最近配合市场部门做了几个H5营销小游戏, 本文记录一些常见小问题...'
+    },
+    {
         link: './article/2015-11/blog-3.html',
         title: '关于gulp构建',
         time: '2015-11-29 00:40',

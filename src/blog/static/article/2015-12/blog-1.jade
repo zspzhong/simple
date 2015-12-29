@@ -1,0 +1,133 @@
+extends ../../template/blog-layout.jade
+
+block article
+    time.none 2015-12-21 22:48
+    article.article.markdown-body
+        h1 H5开发
+
+        p.
+            最近配合市场部门做了几个H5营销小游戏, 本文记录一些常见问题.
+
+        h4 loading页面
+        p.
+            loading页面尽量不要使用img, 因为img本身加载需要时间, 且大部分安卓机在页面加载时对图片的渲染和绘制效果不理想.
+            如必须使用图片, 尽量将图片进行base64编码后嵌入html页面, 避免loading页面图片加载时间过长.
+        p.
+            loading进度条, 获取页面上所有的img, 绑定onload事件,然后计算加载进度.
+            H5绝大部分时间都花费在加载图片上, 这种计算方式能较真实的反应页面实际加载进度.
+
+        h4 元素大小与定位
+        p.
+            为了尽量适配不同的手机屏幕, 保持页面内容不错乱.
+            所采用的做法: 通过js计算让一个div大小比例与设计图相同, 保持div居中且不出现滚动条, 然后在div中放置其他内容.
+            并且div中的元素都使用百分比来确定大小和位置.
+
+        pre
+            xmp.
+                // 整个页面的wrap
+                <div class="wrap">
+                    // 不同的单页, width, height与window相同
+                    <div class="container">
+                        // 位置无需适配的背景元素, 如纯色的背景, 紧贴window边框的元素等
+                        <div></div>
+                        <img />
+                        ...
+
+                        // 通过js计算大小的内容区域
+                        <div class="content">
+                            <img />
+                            <img />
+                            <img />
+                            <div class="text">xxx</div>
+                            ...
+                        </div>
+                    </div>
+
+                    <div class="container">
+                        ...
+                    </div>
+                    ...
+                </div>
+
+        h4 img标签与css属性background-image
+        p 这两种用来展示图片的方式有比较大的差异, H5推荐尽量使用img标签的方式展示图片.
+        p.
+            主要是加载的区别
+            <br>1. img标签在不可见的时候也会加载图片资源, background-image属性必须在元素可见的的时候才会加载图片资源.
+            <br>2. img标签有onload事件, 可被利用计算加载进度, background-image属性则不行.
+            <br>3. img标签预先加载了图片资源, 在后续显示和隐藏的操作中, render&paint会更快.
+            background-image属性在元素显示后才开始请求图片资源, 经常能看到图片从上到下一点点显示出来的效果, 体验不好.
+
+        h4 动画效果
+        p 通过animation与transform实现位移, 旋转, 缩放动画.
+        p 移动并逐渐显现
+        pre
+            xmp.
+                // 以下css没有加各种浏览器内核前缀, 请在正式使用时一定一定加浏览器内核
+                // 或通过一些gulp插件自动补全浏览器内核前缀
+                .demo {
+                    animation: move-in 0.8s ease-in-out;
+                }
+
+                @keyframe move-in {
+                    0% {
+                        transform: translate3d(0, 50px, 0);
+                        opacity: 0;
+                    }
+
+                    100% {
+                        transform: translate3d(0, 0, 0);
+                        opacity: 1;
+                    }
+                }
+
+        p 持续旋转
+        pre
+            xmp.
+                // 以下css没有加各种浏览器内核前缀, 请在正式使用时一定一定加浏览器内核
+                // 或通过一些gulp插件自动补全浏览器内核前缀
+                .demo {
+                    animation: keep-rotate 2s linear infinite;
+                }
+
+                @keyframe keep-rotate {
+                    0% {
+                        transform: rotate(0deg);
+                    }
+
+                    100% {
+                        transform: rotate(360deg);
+                    }
+                }
+
+        p 突入
+        pre
+            xmp.
+                // 以下css没有加各种浏览器内核前缀, 请在正式使用时一定一定加浏览器内核
+                // 或通过一些gulp插件自动补全浏览器内核前缀
+                .demo {
+                    animation: instant-in 0.4s ease-in-out infinite;
+                }
+
+                @keyframe keep-rotate {
+                    0% {
+                        transform: scale(12);
+                    }
+
+                    100% {
+                        transform: scale(1);
+                    }
+                }
+
+        h4 webpack
+        p.
+            使用gulp-webpack打包.
+            <br>优点: 能用写node.js的风格写前端js, 代码模块化重用更方便, 减少js请求数.
+            <br>缺点: 打包增加了额外的开发时间.
+
+
+        h4 CDN部署
+        p.
+            我们第一个H5, 没有使用CDN, 靠服务器临时加带宽撑过来的.
+            后面都是把静态资源托管到CDN上, 省钱, 省时, 稳定.
+            做H5的各位, 请一定记得将静态资源托管到CDN上.

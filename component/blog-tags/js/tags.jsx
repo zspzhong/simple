@@ -15,5 +15,9 @@ var BlogTags = React.createClass({
 });
 
 function init(ele, tags) {
+    if (!ele) {
+        return;
+    }
+
     ReactDOM.render(<BlogTags tags={tags}/>, ele);
 }

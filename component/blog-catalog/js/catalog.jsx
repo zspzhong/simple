@@ -33,5 +33,9 @@ var BlogPreview = React.createClass({
 });
 
 function init(ele, blogList) {
+    if (!ele) {
+        return;
+    }
+
     ReactDOM.render(<BlogPreview blogList={blogList}/>, ele);
 }
