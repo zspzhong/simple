@@ -7,11 +7,11 @@ require('./jade.js');
 require('./html.js');
 require('./js.js');
 require('./serverJade.js');
-require('./blogIndex.js');
+require('./blogCatalog.js');
 require('./copy.js');
 
 gulp.task('build', function (callback) {
-    runSequence('clean-all', ['less-build', 'jade-build', 'html-build', 'js-build', 'server-jade-copy', 'blog-build'], callback);
+    runSequence('clean-all', ['less-build', 'jade-build', 'html-build', 'js-build', 'server-jade-copy'], callback);
 });
 
 gulp.task('dev', function (callback) {
@@ -23,7 +23,7 @@ gulp.task('default', function (callback) {
 });
 
 gulp.task('blog-dev', function (callback) {
-    runSequence(['less-build', 'jade-build', 'html-build', 'blog-build'], 'html-dev', callback);
+    runSequence(['less-build', 'jade-build', 'html-build'], 'html-dev', callback);
 });
 
 gulp.task('watch', function () {

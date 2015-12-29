@@ -1,4 +1,4 @@
-/** 针对blog index.jade 生成目录 **/
+/** 生成blog目录数据 **/
 require(process.cwd() + '/lib/utils/globalExtend.js');
 
 var fs = require('fs');
@@ -7,27 +7,21 @@ var jade = require('jade');
 var _ = require('lodash');
 var cheerio = require('cheerio');
 var gulp = require('gulp');
-var gulpJade = require('gulp-jade');
-var data = require('gulp-data');
-var rename = require('gulp-rename');
 
-gulp.task('blog-build', function () {
-    var replaceStatic = rename(function (path) {
-        path.dirname = path.dirname.replace('/static', '');
-        return path;
+gulp.task('blog-catalog', function (callback) {
+    catalogData(function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        var blogIndex = 'module.exports = ' + JSON.stringify(result) + ';';
+        fs.writeFileSync(process.cwd() + '/src/blog/static/js/blogCatalog.js', new Buffer(blogIndex));
+        callback(null);
     });
-
-    return gulp.src('src/blog/static/index.jade', {base: process.cwd() + '/src'})
-        .pipe(data(function (file, callback) {
-            indexData(callback);
-        }))
-        .pipe(gulpJade())
-        .pipe(replaceStatic)
-        .pipe(gulp.dest('build/'));
 });
 
-
-function indexData(callback) {
+function catalogData(callback) {
     var indexList = [];
     var src = process.cwd() + '/src/blog/static/article/**/*.jade';
 
@@ -49,7 +43,7 @@ function indexData(callback) {
             return -(new Date(item.time).getTime());
         });
 
-        callback(null, {blogList: indexList});
+        callback(null, indexList);
     });
 
     function _getInfo(filePath) {

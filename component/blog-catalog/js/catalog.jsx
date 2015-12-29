@@ -23,7 +23,7 @@ var BlogPreview = React.createClass({
         return <ul id='blog-catalog'>
             {this.props.blogList.map(function (item, index) {
                 return <PreviewItem key={index}
-                                    datetime={item.time}
+                                    time={item.time}
                                     title={item.title}
                                     link={item.link}
                                     preview={item.preview}/>;
