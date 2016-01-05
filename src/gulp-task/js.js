@@ -27,8 +27,7 @@ gulp.task('js-build', function () {
         .pipe(webpackFilter)
         .pipe(gulpWebpack(webpackConfig))
         .pipe(webpackFilter.restore)
-
-        //.pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
+        .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
         .pipe(rename(function (path) {
             path.dirname = path.dirname.replace('/static', '');
             return path;
