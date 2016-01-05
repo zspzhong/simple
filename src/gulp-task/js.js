@@ -23,11 +23,18 @@ gulp.task('js-build', function () {
         'src/**/common/**/*.js'
     ];
 
+    // 需要丑化的js filter, 因为js 使用es2015语法导致丑化报错
+    var needUglify = filter(function (file) {
+        return !_.contains(file.path, 'blogCatalog.js');
+    }, {restore: true});
+
     return gulp.src(fileList, {base: 'src'})
         .pipe(webpackFilter)
         .pipe(gulpWebpack(webpackConfig))
         .pipe(webpackFilter.restore)
+        .pipe(needUglify)
         .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
+        .pipe(needUglify.restore)
         .pipe(rename(function (path) {
             path.dirname = path.dirname.replace('/static', '');
             return path;
