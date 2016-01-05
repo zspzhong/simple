@@ -1,0 +1,11 @@
+#head {
+  padding-left: 10%;
+  background-color: #26bbe3;
+  opacity: 0.92;
+  color: white;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  height: 6rem;
+}

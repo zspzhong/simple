@@ -1,0 +1,17 @@
+#content {
+  overflow: hidden;
+  margin-top: 6rem;
+  padding-top: 2rem;
+}
+#content #catalog {
+  float: left;
+  width: 60%;
+  margin-left: 10%;
+}
+#content #tags {
+  float: left;
+  width: 20%;
+  margin-left: 4rem;
+  position: fixed;
+  left: 70%;
+}

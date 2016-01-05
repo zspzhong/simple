@@ -29,7 +29,7 @@ gulp.task('blog-catalog', function (callback) {
             return;
         }
 
-        var blogIndex = 'module.exports = ' + JSON.stringify(result) + ';';
+        var blogIndex = 'export default ' + JSON.stringify(result) + ';';
         fs.writeFileSync(process.cwd() + '/src/blog/static/js/blogCatalog.js', new Buffer(blogIndex));
         callback(null);
     });

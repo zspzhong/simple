@@ -1,11 +1,10 @@
-#blog-tags {
+#tags {
   overflow: hidden;
   border: 1px solid lightgray;
   padding: 0.4rem;
   border-radius: 2px;
 }
-
-#blog-tags > * {
+#tags > * {
   display: inline-block;
   float: left;
   padding: 0.3rem 0.5rem;
@@ -15,7 +14,6 @@
   font-size: small;
   cursor: pointer;
 }
-
-#blog-tags > *:hover {
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, .2);
+#tags > *:hover {
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 }

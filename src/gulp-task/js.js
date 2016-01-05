@@ -28,7 +28,7 @@ gulp.task('js-build', function () {
         .pipe(gulpWebpack(webpackConfig))
         .pipe(webpackFilter.restore)
 
-        .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
+        //.pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
         .pipe(rename(function (path) {
             path.dirname = path.dirname.replace('/static', '');
             return path;
@@ -45,6 +45,12 @@ function buildWebpackConf(fileList) {
         entry: {},
         output: {
             filename: '[name]'
+        },
+        module: {
+            loaders: [
+                {test: /\.less$/, loaders: ['style', 'css', 'less']},
+                {test: /(\.jsx$)|(\.js$)/, loaders: ['babel?presets[]=react&presets[]=es2015']}
+            ]
         }
     };
 
