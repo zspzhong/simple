@@ -144,6 +144,7 @@ create table if not exists user (
     password varchar(64)
 );
 
+#oauth相关表
 create table if not exists oauth_clients (
     client_id varchar(64),
     client_secret varchar(64),
@@ -170,4 +171,40 @@ create table if not exists oauth_codes (
     client_id varchar(64) not null,
     user_id varchar(64) not null,
     expires timestamp not null
+);
+
+#院校匹配相关表 sa:study_abroad
+#留学计划
+create table if not exists sa_plan (
+    id varchar(64) primary key,
+    hope_in_country varchar(64) comment '想去的国家',
+    hope_in_year varchar(32) comment '计划出国时间',
+    grade_course_major varchar(64) comment '目前就读年级',
+    degree_course varchar(32) comment '想读学位',
+    degree_title varchar(32) comment '想读学位的title',
+    grade_in_school varchar(64) comment '最近就读学校',
+    grade_in_major varchar(64) comment '最近就读专业',
+    grade_gpa float comment '期中期末考试平均分',
+    hope_in_major varchar(64) comment '希望就读专业',
+    hope_in_major_sub varchar(64) comment '希望就读专业细分',
+    language_key varchar(32) comment '语言成绩类别',
+    language_value float comment '语言成绩分'
+);
+
+#推荐类别
+create table if not exists sa_recommend_cate (
+    id varchar(64) primary key,
+    plan_id varchar(64) comment '计划id',
+    name varchar(32) comment '类别名',
+    school_count int comment '学校数'
+);
+
+#推荐学校列表
+create table if not exists sa_recommend_school (
+    id varchar(64) primary key,
+    plan_id varchar(64) comment '计划id',
+    cate_id varchar(64) comment '类别id',
+    c_name varchar(128) comment '中文名',
+    e_name varchar(128) comment '英文名字',
+    degree_name varchar(64) comment '学位等级'
 );
