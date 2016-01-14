@@ -7,8 +7,8 @@ var uglify = require('gulp-uglify');
 var filter = require('gulp-filter');
 
 gulp.task('js-build', function () {
-    //'blog/static/js/blog.js',
     var webpackFileList = [
+        'blog/static/js/blog.js',
         '51offer/static/js/index.jsx'
     ];
     var webpackConfig = buildWebpackConf(webpackFileList);
@@ -34,7 +34,7 @@ gulp.task('js-build', function () {
         .pipe(gulpWebpack(webpackConfig))
         .pipe(webpackFilter.restore)
         .pipe(needUglify)
-        //.pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
+        .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
         .pipe(needUglify.restore)
         .pipe(rename(function (path) {
             path.dirname = path.dirname.replace('/static', '');
