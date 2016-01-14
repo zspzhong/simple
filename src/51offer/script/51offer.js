@@ -95,7 +95,7 @@ function run() {
             intention: {
                 hope_in_country: country2Code['英国'],
                 hope_in_year: '2016',
-                grade_course_major: grade2Code['本科大四'],
+                current_grade: grade2Code['本科大四'],
                 region: '0086',
                 mobile: '18565663420'
             },
@@ -117,7 +117,7 @@ function run() {
 
             _.assign(one.intention, {hope_in_country: country2Code[country]});
             _.each(gradeOption, function (grade) {
-                _.assign(one.intention, {grade_course_major: grade2Code[grade]});
+                _.assign(one.intention, {current_grade: grade2Code[grade]});
                 _.each(majorOption, function (major) {
                     _.assign(one.baseInfo, {grade_in_major: major, hope_in_major1: major});
                     stateList.push(_.cloneDeep(one));
@@ -420,7 +420,7 @@ function spiderByOneState(state, callback) {
                 id: state.id,
                 hope_in_country: code2Country[state.intention.hope_in_country],
                 hope_in_year: state.intention.hope_in_year,
-                grade_course_major: code2Grade[state.intention.grade_course_major],
+                current_grade: code2Grade[state.intention.current_grade],
                 degree_course: state.degree.course,
                 degree_title: state.degree.title,
                 grade_in_school: state.baseInfo.school,

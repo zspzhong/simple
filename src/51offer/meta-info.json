@@ -1,0 +1,18 @@
+{
+  "serviceList": [
+    {
+      "name": "planList",
+      "path": "/51offer/planList",
+      "realizeJs": "51offer",
+      "functionName": "planList",
+      "method": "get"
+    },
+    {
+      "name": "schoolOfPlan",
+      "path": "/51offer/schoolOfPlan/:planId",
+      "realizeJs": "51offer",
+      "functionName": "schoolOfPlan",
+      "method": "get"
+    }
+  ]
+}

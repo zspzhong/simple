@@ -7,8 +7,9 @@ var uglify = require('gulp-uglify');
 var filter = require('gulp-filter');
 
 gulp.task('js-build', function () {
+    //'blog/static/js/blog.js',
     var webpackFileList = [
-        'blog/static/js/blog.js'
+        '51offer/static/js/index.jsx'
     ];
     var webpackConfig = buildWebpackConf(webpackFileList);
 
@@ -33,10 +34,11 @@ gulp.task('js-build', function () {
         .pipe(gulpWebpack(webpackConfig))
         .pipe(webpackFilter.restore)
         .pipe(needUglify)
-        .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
+        //.pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
         .pipe(needUglify.restore)
         .pipe(rename(function (path) {
             path.dirname = path.dirname.replace('/static', '');
+            path.extname = path.extname.replace('jsx', 'js');
             return path;
         }))
         .pipe(gulp.dest('build/'));
@@ -45,7 +47,7 @@ gulp.task('js-build', function () {
 function buildWebpackConf(fileList) {
     var config = {
         resolve: {
-            root: [process.cwd() + '/component', process.cwd() + '/node_modules']
+            root: [process.cwd() + '/node_modules'] // 可配全局library目录
         },
         context: process.cwd() + '/src',
         entry: {},

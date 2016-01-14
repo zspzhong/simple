@@ -179,7 +179,7 @@ create table if not exists sa_plan (
     id varchar(64) primary key,
     hope_in_country varchar(64) comment '想去的国家',
     hope_in_year varchar(32) comment '计划出国时间',
-    grade_course_major varchar(64) comment '目前就读年级',
+    current_grade varchar(64) comment '目前就读年级',
     degree_course varchar(32) comment '想读学位',
     degree_title varchar(32) comment '想读学位的title',
     grade_in_school varchar(64) comment '最近就读学校',

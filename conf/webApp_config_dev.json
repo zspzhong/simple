@@ -10,7 +10,8 @@
     "spider",
     "stock",
     "oauth",
-    "deploy"
+    "deploy",
+    "51offer"
   ],
   "mysqlPool": {
     "connectionLimit": 10,

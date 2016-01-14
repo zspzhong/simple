@@ -33,6 +33,7 @@
     "gulp-webpack": "^1.5.0",
     "highlight.js": "^8.9.1",
     "iconv-lite": "0.4.11",
+    "isomorphic-fetch": "^2.2.0",
     "jade": "^1.11.0",
     "jquery": "^2.1.4",
     "less": "^2.5.3",
@@ -45,10 +46,12 @@
     "passport": "0.3.0",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
+    "redux-thunk": "^1.0.3",
     "request": "2.51.0",
     "run-sequence": "^1.1.4",
     "style-loader": "^0.13.0",
     "uuid": "2.0.1",
-    "webpack": "^1.12.9"
+    "webpack": "^1.12.9",
+    "whatwg-fetch": "^0.10.1"
   }
 }
