@@ -69,7 +69,7 @@ var UPDATE_BASE_INFO_URL = 'http://www.51offer.com/threeSteps/addDcApplys.do';
 var CATEGORY_URL = 'http://www.51offer.com/chooseApi/autoApi.do?&url=/pick/plans';
 var UNIVERSITY_LIST_URL = 'http://www.51offer.com/chooseApi/autoApi.do?query=&template_id={template_id}&country_id={country_id}&sort={sort}&category_id={category_id}&page={page}&url=/pick/schools';
 
-var COOKIE = 'aliyungf_tc=AQAAAGFTcVqpCwsAwo0Rt/UxWhuRcS8F; visitId=8a2c2e305119dc52015119fa91a41318; bdshare_firstime=1448852600108; CNZZDATA1255230918=682124449-1448849339-null%7C1448849339; pinggudiv=1; is_show_email=0; _bi_cid=f9579e60a689cbc0c10c77c4d31d6; _bi_vid=00f1fcd39c407ff351c8c087d5217; cookieId=823c859bdcc6ef5022d279482164a87d; _gat=1; islogin=1; username=offer1129247; salt=9d9b4afc-6da4-444a-8c18-f4126902eedd; uid=1129247; referer=http%3A%2F%2Faccount.51offer.com%2FuserLogin.html; JSESSIONID=4D71B61C64496BE10F9EC37308E1381A; type=; src=; source_uid=; service_uid=; nTalk_CACHE_DATA={uid:kf_9600_ISME9754_1129247,tid:1452477055152870}; NTKF_T2D_CLIENTID=guest90581195-2745-9ADC-464A-19FA93BA76CB; _ga=GA1.2.605144285.1447839638; Hm_lvt_2d817197f98b64841ffa5cf9d56d54dd=1452132126,1452134640; Hm_lpvt_2d817197f98b64841ffa5cf9d56d54dd=1452477095';
+var COOKIE = 'aliyungf_tc=AQAAAGFTcVqpCwsAwo0Rt/UxWhuRcS8F; visitId=8a2c2e305119dc52015119fa91a41318; bdshare_firstime=1448852600108; CNZZDATA1255230918=682124449-1448849339-null%7C1448849339; pinggudiv=1; is_show_email=0; _bi_cid=f9579e60a689cbc0c10c77c4d31d6; _bi_vid=00f1fcd39c407ff351c8c087d5217; cookieId=8a755e2f74b82ce5221b38a0529b118a; islogin=1; username=offer1129247; salt=9d9b4afc-6da4-444a-8c18-f4126902eedd; uid=1129247; referer=http%3A%2F%2Faccount.51offer.com%2Flogin.html%3FreturnUrl%3Dhttp%253A%252F%252Fwww.51offer.com%252F; _gat=1; JSESSIONID=111B81361767E475460EBD3E53DE64BB; _ga=GA1.2.605144285.1447839638; type=; src=; source_uid=; service_uid=; Hm_lvt_2d817197f98b64841ffa5cf9d56d54dd=1452132126,1452134640; Hm_lpvt_2d817197f98b64841ffa5cf9d56d54dd=1452763174; nTalk_CACHE_DATA={uid:kf_9600_ISME9754_1129247,tid:1452761998613874}; NTKF_T2D_CLIENTID=guest90581195-2745-9ADC-464A-19FA93BA76CB';
 
 function run() {
     var stateList = _buildStateList();
@@ -95,7 +95,7 @@ function run() {
             intention: {
                 hope_in_country: country2Code['英国'],
                 hope_in_year: '2016',
-                current_grade: grade2Code['本科大四'],
+                grade_course_major: grade2Code['本科大四'],
                 region: '0086',
                 mobile: '18565663420'
             },
@@ -117,7 +117,7 @@ function run() {
 
             _.assign(one.intention, {hope_in_country: country2Code[country]});
             _.each(gradeOption, function (grade) {
-                _.assign(one.intention, {current_grade: grade2Code[grade]});
+                _.assign(one.intention, {grade_course_major: grade2Code[grade]});
                 _.each(majorOption, function (major) {
                     _.assign(one.baseInfo, {grade_in_major: major, hope_in_major1: major});
                     stateList.push(_.cloneDeep(one));
@@ -188,7 +188,7 @@ function spiderByOneState(state, callback) {
                 return;
             }
 
-            callback('调用失败');
+            callback('request error: ' + UPDATE_INTENTION_URL);
         });
     }
 
@@ -420,7 +420,7 @@ function spiderByOneState(state, callback) {
                 id: state.id,
                 hope_in_country: code2Country[state.intention.hope_in_country],
                 hope_in_year: state.intention.hope_in_year,
-                current_grade: code2Grade[state.intention.current_grade],
+                current_grade: code2Grade[state.intention.grade_course_major],
                 degree_course: state.degree.course,
                 degree_title: state.degree.title,
                 grade_in_school: state.baseInfo.school,
