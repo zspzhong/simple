@@ -38,9 +38,9 @@ block article
             大致流程: 开发者服务器向微信服务器获取access_token, 然后用access_token获取jsapi_ticket, 最后使用jsapi_ticket与一些其他参数计算生成签名字符串发送给客户端使用.
         p.
             文档中明确提醒开发者必须全局缓存access_token与jsapi_ticket, 这点请一定遵从.
-            否则当调用达到数量上限将导致api调用受限, 不能在获取有效的access_token或者jsapi_ticket, 客户端JS-SDK不能正确初始化.
+            否则当调用次数达到数量上限将导致api调用受限, 不能再获取有效的access_token和jsapi_ticket, 因而客户端JS-SDK不能正确初始化.
         p.
-            官方没有找到具体的调用次数限制说明, 如果调用达到上线后, 需要等到晚上12点后重新计数.
+            官方没有找到具体的调用次数限制说明. 如果调用达到上线后, 需要等到晚上12点后重新计数.
 
         h4 繁体语言-没有分享按钮
         p.
