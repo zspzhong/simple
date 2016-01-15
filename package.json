@@ -54,6 +54,7 @@
     "style-loader": "^0.13.0",
     "uuid": "2.0.1",
     "webpack": "^1.12.9",
+    "webpack-dev-middleware": "^1.4.0",
     "whatwg-fetch": "^0.10.1"
   }
 }

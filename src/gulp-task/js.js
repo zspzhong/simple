@@ -5,14 +5,13 @@ var rename = require('gulp-rename');
 var gulpWebpack = require('gulp-webpack');
 var uglify = require('gulp-uglify');
 var filter = require('gulp-filter');
+var webpackConfig = require(process.cwd() + '/conf/webpackDevConfig');
 
 gulp.task('js-build', function () {
     var webpackFileList = [
         'blog/static/js/blog.js',
         '51offer/static/js/index.jsx'
     ];
-    var webpackConfig = buildWebpackConf(webpackFileList);
-
     var webpackFilter = filter(function (file) {
         return !_.isEmpty(_.filter(webpackFileList, function (item) {
             return _.contains(file.path, item);
@@ -33,9 +32,11 @@ gulp.task('js-build', function () {
         .pipe(webpackFilter)
         .pipe(gulpWebpack(webpackConfig))
         .pipe(webpackFilter.restore)
+
         .pipe(needUglify)
         .pipe(uglify({mangle: {except: ['require', 'exports', 'module', 'window', '$scope']}}))
         .pipe(needUglify.restore)
+
         .pipe(rename(function (path) {
             path.dirname = path.dirname.replace('/static', '');
             path.extname = path.extname.replace('jsx', 'js');
@@ -43,29 +44,3 @@ gulp.task('js-build', function () {
         }))
         .pipe(gulp.dest('build/'));
 });
-
-function buildWebpackConf(fileList) {
-    var config = {
-        resolve: {
-            root: [process.cwd() + '/node_modules'] // 可配全局library目录
-        },
-        context: process.cwd() + '/src',
-        entry: {},
-        output: {
-            filename: '[name]'
-        },
-        module: {
-            loaders: [
-                {test: /\.less$/, loaders: ['style', 'css', 'less']},
-                {test: /(\.jsx$)|(\.js$)/, loaders: ['babel?presets[]=react&presets[]=es2015']}
-            ]
-        }
-    };
-
-    _.each(fileList, function (item) {
-        var name = item.replace('/static/', '/');
-        config.entry[name] = './' + item;
-    });
-
-    return config;
-}

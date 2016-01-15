@@ -16,6 +16,3 @@ ReactDOM.render(<Provider store={store}>
 fetch('/svc/51offer/planList')
     .then(res => res.json())
     .then(json => store.dispatch(addPlanList(json.result)));
-
-
-//store.dispatch(fetchPlanSchool('0327c1c8489a7e64b607283cf22ad70b'));
