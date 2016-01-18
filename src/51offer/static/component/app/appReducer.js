@@ -22,9 +22,16 @@ export default function school(state = [], action) {
                 return item;
             }
 
-            item.school = Object.assign({
+            item.school = {
                 currentCateId: school.cateList[0].cateId
-            }, school);
+            };
+
+            for (var key in school) {
+                item.school[key] = school[key];
+            }
+            //item.school = Object.assign({
+            //    currentCateId: school.cateList[0].cateId
+            //}, school);
             return item;
         });
     }
