@@ -52,8 +52,13 @@ export default class PlanList extends React.Component {
                 <div>希望就读学位</div>
                 <div>院校数量</div>
                 <div>
-                    <div onClick={() => {this.props.previousPage()}}>上一页</div>
-                    <div onClick={() => {this.props.nextPage()}}>下一页</div>
+                    <div>
+                        {this.props.page.index + 1}/{this.props.page.maxIndex + 1}
+                    </div>
+                    <div>
+                        <span onClick={() => {this.props.previousPage()}}>上一页</span>
+                        <span onClick={() => {this.props.nextPage()}}>下一页</span>
+                    </div>
                 </div>
             </div>
 

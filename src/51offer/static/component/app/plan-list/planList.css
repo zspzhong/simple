@@ -8,8 +8,13 @@
   background: #fafafa;
 }
 #list .list-item:first-child {
+  height: 3.5rem;
   position: fixed;
+  top: 2rem;
   width: 100%;
+}
+#list .list-item:nth-child(2) {
+  margin-top: 5.5rem;
 }
 #list .list-item:nth-child(4n - 2) {
   background: #eeeef9;

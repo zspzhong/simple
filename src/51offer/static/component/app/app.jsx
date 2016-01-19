@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 class App extends React.Component {
     render() {
         return (<PlanList planList={this.props.planList}
+                          page={this.props.page}
                           spreadOutPlan={(planId) => this.props.dispatch(fetchPlanSchool(planId))}
                           previousPage={() => this.props.dispatch(requestPreviousPage())}
                           nextPage={() => this.props.dispatch(requestNextPage())}/>);
