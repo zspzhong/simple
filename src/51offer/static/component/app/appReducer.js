@@ -3,7 +3,7 @@ import { REPLACE_PLAN_LIST, REQUEST_PLAN_SCHOOL, RECEIVE_PLAN_SCHOOL, TOGGLE_PLA
 import fetch from 'isomorphic-fetch';
 import { combineReducers } from 'redux';
 
-function school(state = [], action) {
+function plan(state = [], action) {
     // 替换计划列表
     if (action.type === REPLACE_PLAN_LIST) {
         return [...action.planList];
@@ -50,7 +50,7 @@ function school(state = [], action) {
     return state;
 }
 
-function page(state = {index: -1, size: 50, maxIndex: 41}, action) {
+function page(state = {}, action) {
     if (action.type === CHANGE_PAGE_INDEX) {
         return {
             index: action.index,
@@ -63,6 +63,6 @@ function page(state = {index: -1, size: 50, maxIndex: 41}, action) {
 }
 
 export default combineReducers({
-    school: school,
+    plan: plan,
     page: page
 });

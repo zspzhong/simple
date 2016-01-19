@@ -13,6 +13,13 @@
       "realizeJs": "51offer",
       "functionName": "schoolOfPlan",
       "method": "get"
+    },
+    {
+      "name": "allPlanCount",
+      "path": "/51offer/allPlanCount",
+      "realizeJs": "51offer",
+      "functionName": "allPlanCount",
+      "method": "get"
     }
   ]
 }

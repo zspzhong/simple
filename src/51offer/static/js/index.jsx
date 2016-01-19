@@ -7,10 +7,23 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import fetch from 'isomorphic-fetch';
 
-const store = configureStore();
+const pageSize = 50;
 
-ReactDOM.render(<Provider store={store}>
-    <App />
-</Provider>, document.getElementById('root'));
+fetch('/svc/51offer/allPlanCount')
+    .then(res => res.json())
+    .then(json => {
+        const store = configureStore({
+            plan: [],
+            page: {
+                index: -1,
+                size: pageSize,
+                maxIndex: Math.ceil((json.result / pageSize) - 1)
+            }
+        });
 
-store.dispatch(requestNextPage());
+        ReactDOM.render(<Provider store={store}>
+            <App />
+        </Provider>, document.getElementById('root'));
+
+        store.dispatch(requestNextPage());
+    });

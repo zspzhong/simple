@@ -2,6 +2,7 @@ var dao = require('./51offerDao');
 
 exports.planList = planList;
 exports.schoolOfPlan = schoolOfPlan;
+exports.allPlanCount = allPlanCount;
 
 function planList(req, res, callback) {
     var index = Number(req.query.index || 0);
@@ -39,4 +40,8 @@ function schoolOfPlan(req, res, callback) {
             cateList: cateList
         });
     });
+}
+
+function allPlanCount(req, res, callback) {
+    dao.queryPlanCount(callback);
 }

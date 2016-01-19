@@ -17,7 +17,7 @@ class App extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        planList: state.school,
+        planList: state.plan,
         page: state.page
     }
 }

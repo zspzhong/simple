@@ -2,6 +2,7 @@ var dataUtils = require(global['libDir'] + '/dao/dataUtils.js');
 
 exports.queryPlanListWithPageIndexSizeAndSortField = queryPlanListWithPageIndexSizeAndSortField;
 exports.querySchoolByPlanId = querySchoolByPlanId;
+exports.queryPlanCount = queryPlanCount;
 
 function queryPlanListWithPageIndexSizeAndSortField(index, size, sortField, sortWay, callback) {
     var planList = [];
@@ -75,4 +76,18 @@ function querySchoolByPlanId(planId, callback) {
         ' where a.plan_id = :planId;';
 
     dataUtils.execSql(sql, {planId: planId}, callback);
+}
+
+function queryPlanCount(callback) {
+    var sql = 'select count(1) as count' +
+        ' from sa_plan;';
+
+    dataUtils.execSql(sql, {}, function (err, result) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        callback(null, result[0].count);
+    });
 }

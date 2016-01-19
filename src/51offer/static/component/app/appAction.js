@@ -27,11 +27,18 @@ export function togglePlanSchoolVisible(planId) {
     };
 }
 
+export function changePageIndex(index) {
+    return {
+        type: CHANGE_PAGE_INDEX,
+        index: index
+    }
+}
+
 export function fetchPlanSchool(planId) {
     return (dispatch, getState) => {
         dispatch(requestPlanSchool(planId));
 
-        if (!_shouldFetch(getState().school, planId)) {
+        if (!_shouldFetch(getState().plan, planId)) {
             dispatch(togglePlanSchoolVisible(planId));
             return;
         }
@@ -55,13 +62,6 @@ export function fetchPlanSchool(planId) {
         }
 
         return flag;
-    }
-}
-
-export function changePageIndex(index) {
-    return {
-        type: CHANGE_PAGE_INDEX,
-        index: index
     }
 }
 
