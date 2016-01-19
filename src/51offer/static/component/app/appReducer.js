@@ -1,4 +1,11 @@
-import { REPLACE_PLAN_LIST, REQUEST_PLAN_SCHOOL, RECEIVE_PLAN_SCHOOL, TOGGLE_PLAN_SCHOOL_VISIBLE, CHANGE_PAGE_INDEX} from './appAction';
+import {
+    REPLACE_PLAN_LIST,
+    REQUEST_PLAN_SCHOOL,
+    RECEIVE_PLAN_SCHOOL,
+    TOGGLE_PLAN_SCHOOL_VISIBLE,
+    CHANGE_PAGE_INDEX,
+    CHANGE_SORT_OPTION
+} from './appAction';
 
 import fetch from 'isomorphic-fetch';
 import { combineReducers } from 'redux';
@@ -62,7 +69,19 @@ function page(state = {}, action) {
     return state;
 }
 
+function sortOption(state = {field: 'id', way: 'desc'}, action) {
+    if (action.type === CHANGE_SORT_OPTION) {
+        return {
+            field: action.field,
+            way: action.way
+        };
+    }
+
+    return state;
+}
+
 export default combineReducers({
     plan: plan,
-    page: page
+    page: page,
+    sortOption: sortOption
 });

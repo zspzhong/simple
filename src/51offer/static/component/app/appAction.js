@@ -3,6 +3,7 @@ export const REQUEST_PLAN_SCHOOL = 'FETCH_PLAN_SCHOOL';
 export const RECEIVE_PLAN_SCHOOL = 'RECEIVE_PLAN_SCHOOL';
 export const TOGGLE_PLAN_SCHOOL_VISIBLE = 'TOGGLE_PLAN_SCHOOL_VISIBLE';
 export const CHANGE_PAGE_INDEX = 'CHANGE_PAGE_INDEX';
+export const CHANGE_SORT_OPTION = 'CHANGE_SORT_OPTION';
 
 import fetch from 'isomorphic-fetch';
 
@@ -32,6 +33,21 @@ export function changePageIndex(index) {
         type: CHANGE_PAGE_INDEX,
         index: index
     }
+}
+
+export function changeSortOption(field, way) {
+    return {
+        type: CHANGE_SORT_OPTION,
+        field: field,
+        way: way
+    };
+}
+
+export function receivePlanSchool(school) {
+    return {
+        type: RECEIVE_PLAN_SCHOOL,
+        school: school
+    };
 }
 
 export function fetchPlanSchool(planId) {
@@ -67,7 +83,7 @@ export function fetchPlanSchool(planId) {
 
 export function requestPreviousPage() {
     return (dispatch, getState) => {
-        var page = getState().page;
+        let page = getState().page;
         if (page.index <= 0) {
             alert('当前已是第一页');
             return;
@@ -83,7 +99,7 @@ export function requestPreviousPage() {
 
 export function requestNextPage() {
     return (dispatch, getState) => {
-        var page = getState().page;
+        let page = getState().page;
         if (page.index >= page.maxIndex) {
             alert('当前已是最后页');
             return;
@@ -97,9 +113,25 @@ export function requestNextPage() {
     };
 }
 
-export function receivePlanSchool(school) {
-    return {
-        type: RECEIVE_PLAN_SCHOOL,
-        school: school
+export function switchSortOption(field) {
+    return (dispatch, getState) => {
+        let sortOption = getState().sortOption;
+        let page = getState().page;
+
+        let way = sortOption.way;
+        // 同一个字段排序, 切换排序方式
+        if (field === sortOption.field) {
+            way = sortOption.way === 'desc' ? 'asc' : 'desc';
+        }
+        dispatch(changeSortOption(field, way));
+
+        let url = '/svc/51offer/planList?index='
+            + page.index
+            + '&size=' + page.size
+            + '&sort=' + field
+            + '&way=' + way;
+
+        fetch(url).then(res => res.json())
+            .then(json => dispatch(replacePlanList(json.result)));
     };
 }

@@ -44,10 +44,22 @@ export default class PlanList extends React.Component {
 
         return (<div id='list'>
             <div className='list-item'>
-                <div>想去国家</div>
-                <div>在读学校</div>
-                <div>GPA</div>
-                <div>在读专业</div>
+                <div onClick={() => {this.props.sortBy('hope_in_country')}}
+                     className='hand-point'>
+                    想去国家
+                </div>
+                <div onClick={() => {this.props.sortBy('grade_in_school')}}
+                     className='hand-point'>
+                    在读学校
+                </div>
+                <div onClick={() => {this.props.sortBy('grade_gpa')}}
+                     className='hand-point'>
+                    GPA
+                </div>
+                <div onClick={() => {this.props.sortBy('grade_in_major')}}
+                     className='hand-point'>
+                    在读专业
+                </div>
                 <div>希望就读专业</div>
                 <div>希望就读学位</div>
                 <div>院校数量</div>
