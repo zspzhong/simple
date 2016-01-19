@@ -1,9 +1,9 @@
 var dataUtils = require(global['libDir'] + '/dao/dataUtils.js');
 
-exports.queryAllPlanList = queryAllPlanList;
+exports.queryPlanListWithPageIndexSizeAndSortField = queryPlanListWithPageIndexSizeAndSortField;
 exports.querySchoolByPlanId = querySchoolByPlanId;
 
-function queryAllPlanList(callback) {
+function queryPlanListWithPageIndexSizeAndSortField(index, size, sortField, sortWay, callback) {
     var planList = [];
 
     async.series([_queryPlan, _queryCate], function (err) {
@@ -16,7 +16,17 @@ function queryAllPlanList(callback) {
     });
 
     function _queryPlan(callback) {
-        dataUtils.query('sa_plan', {}, function (err, result) {
+        var sql = 'select * from sa_plan' +
+            ' order by ' + (sortField || 'id') +
+            ' ' + sortWay +
+            ' limit :start, :size;';
+
+        var value = {
+            start: index * size,
+            size: size
+        };
+
+        dataUtils.execSql(sql, value, function (err, result) {
             if (err) {
                 callback(err);
                 return;

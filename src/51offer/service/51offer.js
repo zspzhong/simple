@@ -4,7 +4,12 @@ exports.planList = planList;
 exports.schoolOfPlan = schoolOfPlan;
 
 function planList(req, res, callback) {
-    dao.queryAllPlanList(callback);
+    var index = Number(req.query.index || 0);
+    var size = Number(req.query.size || 100);
+    var sortField = req.query.sort || 'id';
+    var sortWay = req.query.way || 'asc';
+
+    dao.queryPlanListWithPageIndexSizeAndSortField(index, size, sortField, sortWay, callback);
 }
 
 function schoolOfPlan(req, res, callback) {

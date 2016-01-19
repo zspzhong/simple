@@ -1,11 +1,12 @@
-import { ADD_PLAN_LIST, REQUEST_PLAN_SCHOOL, RECEIVE_PLAN_SCHOOL, TOGGLE_PLAN_SCHOOL_VISIBLE, receivePlanSchool } from './appAction';
+import { REPLACE_PLAN_LIST, REQUEST_PLAN_SCHOOL, RECEIVE_PLAN_SCHOOL, TOGGLE_PLAN_SCHOOL_VISIBLE, CHANGE_PAGE_INDEX} from './appAction';
 
 import fetch from 'isomorphic-fetch';
+import { combineReducers } from 'redux';
 
-export default function school(state = [], action) {
-    // 添加计划列表
-    if (action.type === ADD_PLAN_LIST) {
-        return [...state, ...action.planList];
+function school(state = [], action) {
+    // 替换计划列表
+    if (action.type === REPLACE_PLAN_LIST) {
+        return [...action.planList];
     }
 
     // 开始请求计划对应的学校
@@ -22,16 +23,9 @@ export default function school(state = [], action) {
                 return item;
             }
 
-            item.school = {
-                currentCateId: school.cateList[0].cateId
-            };
+            item.school = school;
+            item.school.currentCateId = school.cateList[0].cateId;
 
-            for (var key in school) {
-                item.school[key] = school[key];
-            }
-            //item.school = Object.assign({
-            //    currentCateId: school.cateList[0].cateId
-            //}, school);
             return item;
         });
     }
@@ -55,3 +49,20 @@ export default function school(state = [], action) {
 
     return state;
 }
+
+function page(state = {index: -1, size: 50, maxIndex: 41}, action) {
+    if (action.type === CHANGE_PAGE_INDEX) {
+        return {
+            index: action.index,
+            size: state.size,
+            maxIndex: state.maxIndex
+        };
+    }
+
+    return state;
+}
+
+export default combineReducers({
+    school: school,
+    page: page
+});

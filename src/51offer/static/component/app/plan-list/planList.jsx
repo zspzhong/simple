@@ -16,7 +16,8 @@ class Item extends React.Component {
 
         return (<div className='list-item'>
             <div>{item.hope_in_country}</div>
-            <div>{item.current_grade}</div>
+            <div>{item.grade_in_school}</div>
+            <div>{item.grade_gpa}</div>
             <div>{item.grade_in_major}</div>
             <div>{item.hope_in_major}</div>
             <div>{item.degree_title}</div>
@@ -44,12 +45,16 @@ export default class PlanList extends React.Component {
         return (<div id='list'>
             <div className='list-item'>
                 <div>想去国家</div>
-                <div>在读年级</div>
+                <div>在读学校</div>
+                <div>GPA</div>
                 <div>在读专业</div>
                 <div>希望就读专业</div>
                 <div>希望就读学位</div>
                 <div>院校数量</div>
-                <div></div>
+                <div>
+                    <div onClick={() => {this.props.previousPage()}}>上一页</div>
+                    <div onClick={() => {this.props.nextPage()}}>下一页</div>
+                </div>
             </div>
 
             {listItemWhitDetail}
