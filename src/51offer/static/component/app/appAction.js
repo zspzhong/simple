@@ -84,54 +84,57 @@ export function fetchPlanSchool(planId) {
 export function requestPreviousPage() {
     return (dispatch, getState) => {
         let page = getState().page;
+
         if (page.index <= 0) {
             alert('当前已是第一页');
             return;
         }
 
         dispatch(changePageIndex(page.index - 1));
-
-        fetch('/svc/51offer/planList?index=' + (page.index - 1) + '&size=' + page.size)
-            .then(res => res.json())
-            .then(json => dispatch(replacePlanList(json.result)));
+        refreshPlan(dispatch, getState);
     };
 }
 
 export function requestNextPage() {
     return (dispatch, getState) => {
         let page = getState().page;
+
         if (page.index >= page.maxIndex) {
             alert('当前已是最后页');
             return;
         }
 
         dispatch(changePageIndex(page.index + 1));
-
-        fetch('/svc/51offer/planList?index=' + (page.index + 1) + '&size=' + page.size)
-            .then(res => res.json())
-            .then(json => dispatch(replacePlanList(json.result)));
+        refreshPlan(dispatch, getState);
     };
 }
 
 export function switchSortOption(field) {
     return (dispatch, getState) => {
         let sortOption = getState().sortOption;
-        let page = getState().page;
 
         let way = sortOption.way;
         // 同一个字段排序, 切换排序方式
         if (field === sortOption.field) {
             way = sortOption.way === 'desc' ? 'asc' : 'desc';
         }
+
         dispatch(changeSortOption(field, way));
-
-        let url = '/svc/51offer/planList?index='
-            + page.index
-            + '&size=' + page.size
-            + '&sort=' + field
-            + '&way=' + way;
-
-        fetch(url).then(res => res.json())
-            .then(json => dispatch(replacePlanList(json.result)));
+        refreshPlan(dispatch, getState);
     };
+}
+
+function refreshPlan(dispatch, getState) {
+    let sortOption = getState().sortOption;
+    let page = getState().page;
+
+    let url = '/svc/51offer/planList?index='
+        + page.index
+        + '&size=' + page.size
+        + '&sort=' + sortOption.field
+        + '&way=' + sortOption.way;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(json => dispatch(replacePlanList(json.result)));
 }
