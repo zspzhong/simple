@@ -2,7 +2,7 @@
   "initial": {
     "name": "oauth2",
     "realizeFile": "oauth2",
-    "functionName": "oauth2Initial",
+    "realizeFunction": "oauth2Initial",
     "comment": "oauth2初始化"
   },
   "views": [

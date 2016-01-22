@@ -4,7 +4,7 @@
       "name": "gitWebHook",
       "path": "/deploy/gitWebHook",
       "realizeFile": "deploy",
-      "functionName": "gitWebHook",
+      "realizeFunction": "gitWebHook",
       "method": "post"
     }
   ]

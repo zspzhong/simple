@@ -4,7 +4,7 @@
       "name": "imageUrl",
       "path": "/spider/imageUrl",
       "realizeFile": "spider",
-      "functionName": "imageUrl",
+      "realizeFunction": "imageUrl",
       "method": "get"
     }
   ]

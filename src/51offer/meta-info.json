@@ -4,21 +4,21 @@
       "name": "planList",
       "path": "/51offer/planList",
       "realizeFile": "51offer",
-      "functionName": "planList",
+      "realizeFunction": "planList",
       "method": "get"
     },
     {
       "name": "schoolOfPlan",
       "path": "/51offer/schoolOfPlan/:planId",
       "realizeFile": "51offer",
-      "functionName": "schoolOfPlan",
+      "realizeFunction": "schoolOfPlan",
       "method": "get"
     },
     {
       "name": "allPlanCount",
       "path": "/51offer/allPlanCount",
       "realizeFile": "51offer",
-      "functionName": "allPlanCount",
+      "realizeFunction": "allPlanCount",
       "method": "get"
     }
   ]
