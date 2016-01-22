@@ -3,7 +3,7 @@
     {
       "name": "calculateProfit",
       "path": "/stock/calculateProfit/:stockCode",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "calculateProfit",
       "method": "post",
       "comment": "根据买卖时间以及量计算收益"
@@ -11,7 +11,7 @@
     {
       "name": "followTrendOperateInfo",
       "path": "/stock/followTrendOperateInfo/:stockCode",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "followTrendOperateInfo",
       "method": "get",
       "comment": "使用趋势追踪获取股票买卖点"
@@ -19,7 +19,7 @@
     {
       "name": "followTrend",
       "path": "/stock/followTrend/:stockCode",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "followTrend",
       "method": "get",
       "comment": "使用趋势追踪获取股票买卖点并计算收益"
@@ -27,7 +27,7 @@
     {
       "name": "addStock2Pool",
       "path": "/stock/addStock2Pool/:stockCode",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "addStock2Pool",
       "method": "get",
       "comment": "添加股票到自选之中"
@@ -35,7 +35,7 @@
     {
       "name": "marketCompanyCode2Name",
       "path": "/stock/marketCompanyCode2Name",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "marketCompanyCode2Name",
       "method": "get",
       "comment": "获取所有股票的公司代码对应的公司名称"
@@ -43,7 +43,7 @@
     {
       "name": "userFavoriteData",
       "path": "/stock/userFavoriteData/:username",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "userFavoriteData",
       "method": "get",
       "comment": "用户的关注股票"
@@ -51,7 +51,7 @@
     {
       "name": "addFavorite",
       "path": "/stock/addFavorite",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "addFavorite",
       "method": "post",
       "comment": "添加用户关注股票"
@@ -59,7 +59,7 @@
     {
       "name": "deleteFavorite",
       "path": "/stock/deleteFavorite",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "deleteFavorite",
       "method": "post",
       "comment": "删除用户关注股票"
@@ -67,7 +67,7 @@
     {
       "name": "moveFavorite",
       "path": "/stock/moveFavorite",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "moveFavorite",
       "method": "post",
       "comment": "移动用户关注股票顺序"
@@ -75,7 +75,7 @@
     {
       "name": "userPositionData",
       "path": "/stock/userPositionData/:username",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "userPositionData",
       "method": "get",
       "comment": "用户持仓股票"
@@ -83,7 +83,7 @@
     {
       "name": "changePosition",
       "path": "/stock/changePosition",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "changePosition",
       "method": "post",
       "comment": "增减用户持仓"
@@ -91,7 +91,7 @@
     {
       "name": "movePosition",
       "path": "/stock/movePosition",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "movePosition",
       "method": "post",
       "comment": "移动用户持仓股票顺序"
@@ -99,7 +99,7 @@
     {
       "name": "userHistoryData",
       "path": "/stock/userHistoryData/:username",
-      "realizeJs": "stock",
+      "realizeFile": "stock",
       "functionName": "userHistoryData",
       "method": "get",
       "comment": "用户历史交易"

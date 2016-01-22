@@ -3,7 +3,7 @@
     {
       "name": "gitWebHook",
       "path": "/deploy/gitWebHook",
-      "realizeJs": "deploy",
+      "realizeFile": "deploy",
       "functionName": "gitWebHook",
       "method": "post"
     }
