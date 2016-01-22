@@ -1,6 +1,6 @@
 var oauthServer = require('oauth2-server');
 var commonDao = require(global['libDir'] + '/dao/common.js');
-var utils = require(global['libDir'] + '/utils/commonUtils.js');
+var queryString = require('querystring');
 var md5 = require('MD5');
 var request = require('request');
 
@@ -26,13 +26,13 @@ function oauth2Initial(expressApp) {
         };
 
         if (!req.session || !req.session.user) {
-            var loginUrl = '/svc/oauth/login?' + utils.transQuery2Str(query);
+            var loginUrl = '/svc/oauth/login?' + queryString.stringify(query);
             res.redirect(loginUrl);
             return;
         }
 
         delete query.redirect;
-        var authoriseUrl = '/svc/oauth/authorise?' + utils.transQuery2Str(query);
+        var authoriseUrl = '/svc/oauth/authorise?' + queryString.stringify(query);
 
         res.render('authorise.jade', {authoriseUrl: authoriseUrl});
     });
@@ -54,7 +54,7 @@ function oauth2Initial(expressApp) {
     }));
 
     expressApp.get('/svc/oauth/login', function (req, res, next) {
-        var queryStr = utils.transQuery2Str(req.query);
+        var queryStr = queryString.stringify(req.query);
         var loginUrl = '/svc/oauth/login' + (queryStr ? '?' + queryStr : '');
 
         res.render('login.jade', {
@@ -69,7 +69,7 @@ function oauth2Initial(expressApp) {
         var queryCopy = _.clone(req.query);
         delete queryCopy.redirect;
 
-        var queryStr = utils.transQuery2Str(queryCopy);
+        var queryStr = queryString.stringify(queryCopy);
         var authoriseUrl = redirect + (queryStr ? '?' + queryStr : '');
 
         var username = req.body.username;
@@ -81,7 +81,7 @@ function oauth2Initial(expressApp) {
                 return;
             }
 
-            var queryStr = utils.transQuery2Str(req.query);
+            var queryStr = queryString.stringify(req.query);
             var loginUrl = '/svc/oauth/login' + (queryStr ? '?' + queryStr : '');
             var option = {
                 username: username,
