@@ -39,6 +39,7 @@
     "less": "^2.5.3",
     "less-loader": "^2.2.2",
     "lodash": "^3.10.1",
+    "moment": "^2.11.1",
     "mysql": "2.5.4",
     "nodemailer": "1.4.0",
     "npm-zepto": "^1.1.7",

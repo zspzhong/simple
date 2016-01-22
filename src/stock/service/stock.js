@@ -1,5 +1,6 @@
 var stockDao = require('./stockDao.js');
 var requestUtils = require(global['libDir'] + '/utils/requestUtils.js');
+var moment = require('moment');
 
 exports.calculateProfit = calculateProfit;
 exports.followTrend = followTrend;
@@ -281,7 +282,8 @@ function addFavorite(req, res, callback) {
 
     function _add2Pool(callback) {
         if (username === 'shasharoman') {
-            requestUtils.getResource('/svc/stock/addStock2Pool/' + stockCode, function () {});
+            requestUtils.getResource('/svc/stock/addStock2Pool/' + stockCode, function () {
+            });
         }
 
         callback(null);
@@ -599,7 +601,7 @@ function userHistoryData(req, res, callback) {
             one.operate = (item.type === 'buy' ? '买入(' : '卖出(') + item.volume + ')';
             one.price = item.price.toFixed(2);
             one.total = ((item.type === 'buy' ? -1 : 1) * item.price * item.volume).toFixed(1);
-            one.date = item.date.format();
+            one.date = moment(item.date).format('YYYY-MM-DD');
             one.profit = item.profit.toFixed(1);
 
             list.push(one);

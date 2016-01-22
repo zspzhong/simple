@@ -1,6 +1,5 @@
 /** 生成blog目录数据 **/
-require(process.cwd() + '/lib/utils/globalExtend.js');
-
+var moment = require('moment');
 var fs = require('fs');
 var glob = require('glob');
 var jade = require('jade');
@@ -73,7 +72,7 @@ function catalogData(callback) {
         return {
             link: link,
             title: title,
-            time: time.format('yyyy-MM-dd hh:mm'),
+            time: moment(time).format('YYYY-MM-DD hh:mm'),
             preview: preview
         };
     }

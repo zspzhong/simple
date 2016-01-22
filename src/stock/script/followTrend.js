@@ -1,6 +1,7 @@
 var stockDao = require('../service/stockDao.js');
 var logger = global.logger;
 var mailUtils = require(global['libDir'] + '/utils/mailUtils.js');
+var moment = require('moment');
 
 exports.run = run;
 
@@ -280,7 +281,7 @@ function run() {
             var priceInfo = code2CurrentPrice[code];
 
             if (_.isEmpty(priceInfo)) {
-                errorMsgList.push(new Date().format() + '持仓中' + code + '价格获取失败');
+                errorMsgList.push(moment().format('YYYY-MM-DD') + '持仓中' + code + '价格获取失败');
                 return;
             }
 

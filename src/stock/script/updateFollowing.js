@@ -1,6 +1,7 @@
 // 更新关注股票的日数据
 var stockDao = require('../service/stockDao.js');
 var mailUtils = require(global['libDir'] + '/utils/mailUtils.js');
+var moment = require('moment');
 
 exports.run = run;
 
@@ -88,7 +89,7 @@ function run() {
                 delete item.yesterdayClosePrice;
                 delete item.isCurrentDate;
 
-                item.date = new Date(item.date.format());
+                item.date = moment(item.date).format('YYYY-MM-DD');
                 followingStockPriceList.push(item);
             });
             callback(null);
