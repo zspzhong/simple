@@ -72,7 +72,7 @@ function catalogData(callback) {
         return {
             link: link,
             title: title,
-            time: moment(time).format('YYYY-MM-DD hh:mm'),
+            time: moment(time).format('YYYY-MM-DD HH:mm'),
             preview: preview
         };
     }
