@@ -11,11 +11,11 @@ require('./blogCatalog.js');
 require('./copy.js');
 
 gulp.task('build', function (callback) {
-    runSequence('clean-all', ['less-build', 'jade-build', 'html-build', 'js-build', 'server-jade-copy', 'blog-build'], callback);
+    runSequence(['less-build', 'jade-build', 'html-build', 'js-build', 'server-jade-copy', 'blog-build'], callback);
 });
 
 gulp.task('dev', function (callback) {
-    runSequence('build', 'copy', 'server-jade-dev', 'html-dev', callback);
+    runSequence('clean-all', 'build', 'copy', 'server-jade-dev', 'html-dev', callback);
 });
 
 gulp.task('default', function (callback) {
