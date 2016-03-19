@@ -30,7 +30,7 @@ block article
                         .pipe(gulp.dest('release/'));
                 }
         p.
-            经调查, 是因为gulp-useref不支持min html导致(官方文档中提到: It can handle file concatenation but not minification).
+            经排查, 是因为gulp-useref不支持min html导致.
             查看源码发现gulp-useref内部依赖file中的换行符号进行相应的替换工作, 所以只好在准备替换之前将file中应该有的换行符补齐就好了.
             因为最终我会使用gulp-htmlmin压缩html, 所以这一步输出的html有换行符并无关系.
         - var temp = "content = content.replace(/><!--/g, '>\\r\\n<!--')\n.replace(/--></g, '-->\\r\\n<')\n.replace(/><link/g, '>\\r\\n<link')\n.replace(/><script/g, '>\\r\\n<script');"
